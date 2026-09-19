@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Andy · AI 应用开发工程师 · 个人主页</title>
+<meta name="description" content="AI 应用开发工程师个人主页：RAG 知识库、多 Agent 系统、LLM 网关等项目与经历。" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>" />
+<style>
+  :root{
+    --bg:#fafaf9;
+    --surface:#ffffff;
+    --ink:#1c1917;
+    --muted:#78716c;
+    --line:#e7e5e4;
+    --accent:#4f46e5;
+    --accent-soft:#eef2ff;
+    --radius:18px;
+    --shadow:0 1px 2px rgba(28,25,23,.04), 0 8px 24px rgba(28,25,23,.06);
+    --shadow-hover:0 2px 4px rgba(28,25,23,.05), 0 16px 40px rgba(79,70,229,.12);
+    --maxw:1040px;
+    font-size:16px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px;}
+
+  /* Top bar */
+  header.nav{
+    position:sticky;top:0;z-index:50;
+    backdrop-filter:saturate(180%) blur(12px);
+    background:rgba(250,250,249,.72);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:650;letter-spacing:-.01em;}
+  .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft);}
+  .nav-links{display:flex;align-items:center;gap:20px;font-size:.95rem;color:var(--muted);}
+  .nav-links a:hover{color:var(--ink);}
+  .lang-toggle{
+    display:inline-flex;border:1px solid var(--line);border-radius:999px;
+    background:var(--surface);overflow:hidden;font-size:.82rem;font-weight:600;
+  }
+  .lang-toggle button{
+    border:0;background:transparent;color:var(--muted);cursor:pointer;
+    padding:6px 12px;font:inherit;line-height:1;
+  }
+  .lang-toggle button.active{background:var(--accent);color:#fff;}
+
+  /* Hero */
+  .hero{padding:88px 0 40px;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--accent-soft);color:var(--accent);
+    font-size:.82rem;font-weight:600;letter-spacing:.01em;
+    padding:6px 14px;border-radius:999px;margin-bottom:22px;
+  }
+  .pulse{
+    width:8px;height:8px;border-radius:50%;background:#16a34a;flex:none;
+    box-shadow:0 0 0 3px rgba(22,163,74,.16);
+    animation:pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+  .hero h1{
+    font-size:clamp(2.3rem,5.5vw,3.6rem);line-height:1.08;
+    letter-spacing:-.03em;margin:0 0 18px;font-weight:750;
+  }
+  .hero h1 .accent{color:var(--accent);}
+  .hero p.lead{font-size:clamp(1.05rem,2vw,1.2rem);color:var(--muted);max-width:680px;margin:0 0 30px;}
+  .hero-actions{display:flex;gap:14px;flex-wrap:wrap;}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:12px 22px;border-radius:12px;font-weight:600;font-size:.98rem;
+    border:1px solid transparent;cursor:pointer;transition:.18s ease;
+  }
+  .btn-primary{background:var(--accent);color:#fff;}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(79,70,229,.28);}
+  .btn-ghost{background:var(--surface);border-color:var(--line);color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
+
+  /* Section */
+  section{padding:56px 0;}
+  .sec-head{margin-bottom:30px;}
+  .sec-head h2{font-size:clamp(1.5rem,3vw,2rem);letter-spacing:-.02em;margin:0 0 6px;font-weight:700;}
+  .sec-head p{color:var(--muted);margin:0;}
+  .kicker{color:var(--accent);font-weight:650;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;}
+
+  /* About */
+  .about-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:40px;align-items:start;}
+  .about-grid p{color:#44403c;margin:0 0 16px;}
+  .intent{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px;box-shadow:var(--shadow);
+  }
+  .intent h3{margin:0 0 14px;font-size:1.05rem;letter-spacing:-.01em;}
+  .intent-list{display:grid;gap:12px;margin:0;padding:0;list-style:none;}
+  .intent-list li{display:flex;justify-content:space-between;gap:14px;font-size:.92rem;padding-bottom:12px;border-bottom:1px dashed var(--line);}
+  .intent-list li:last-child{border-bottom:0;padding-bottom:0;}
+  .intent-list .k{color:var(--muted);flex:none;}
+  .intent-list .v{font-weight:600;text-align:right;}
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:34px;}
+  .stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);}
+  .stat b{display:block;font-size:1.5rem;letter-spacing:-.02em;}
+  .stat span{color:var(--muted);font-size:.85rem;}
+
+  /* Experience */
+  .timeline{position:relative;margin:0;padding:0 0 0 28px;list-style:none;}
+  .timeline::before{content:"";position:absolute;left:6px;top:8px;bottom:8px;width:2px;background:var(--line);}
+  .timeline li{position:relative;padding:0 0 30px;}
+  .timeline li:last-child{padding-bottom:0;}
+  .timeline li::before{
+    content:"";position:absolute;left:-28px;top:7px;
+    width:12px;height:12px;border-radius:50%;
+    background:var(--surface);border:3px solid var(--accent);
+  }
+  .tl-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;}
+  .tl-role{font-weight:650;font-size:1.05rem;letter-spacing:-.01em;}
+  .tl-period{color:var(--muted);font-size:.85rem;font-variant-numeric:tabular-nums;}
+  .tl-org{color:var(--accent);font-weight:600;font-size:.92rem;margin-top:2px;}
+  .tl-desc{color:var(--muted);font-size:.94rem;margin-top:6px;max-width:720px;}
+
+  /* Skills */
+  .skills{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;}
+  .skill-card{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px;box-shadow:var(--shadow);transition:.2s ease;
+  }
+  .skill-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-hover);border-color:#ddd6fe;}
+  .skill-head{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+  .skill-icon{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-size:1.2rem;color:#fff;flex:none;}
+  .skill-card h3{margin:0;font-size:1.08rem;letter-spacing:-.01em;}
+  .skill-card .skill-sub{color:var(--muted);font-size:.9rem;margin:0 0 16px;}
+  .pill{
+    display:inline-block;background:var(--bg);border:1px solid var(--line);color:#44403c;
+    font-size:.84rem;font-weight:550;padding:5px 12px;border-radius:999px;
+  }
+
+  /* Works grid */
+  .works{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;}
+  .card{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px;box-shadow:var(--shadow);cursor:pointer;transition:.2s ease;
+    display:flex;flex-direction:column;gap:14px;min-height:210px;
+  }
+  .card:hover{transform:translateY(-4px);box-shadow:var(--shadow-hover);border-color:#ddd6fe;}
+  .card-top{display:flex;align-items:center;justify-content:space-between;}
+  .thumb{width:52px;height:52px;border-radius:13px;display:grid;place-items:center;font-size:1.5rem;color:#fff;}
+  .tag{font-size:.75rem;font-weight:600;color:var(--muted);background:var(--bg);border:1px solid var(--line);padding:4px 10px;border-radius:999px;}
+  .card h3{margin:2px 0 0;font-size:1.22rem;letter-spacing:-.01em;}
+  .card p{margin:0;color:var(--muted);font-size:.95rem;flex:1;}
+  .card .more{font-size:.9rem;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:6px;}
+  .card .more .arrow{transition:transform .2s;}
+  .card:hover .more .arrow{transform:translateX(4px);}
+
+  /* Detail view */
+  #detail{display:none;}
+  .detail-hero{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:34px;box-shadow:var(--shadow);}
+  .back{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-weight:600;margin-bottom:22px;cursor:pointer;background:none;border:0;font:inherit;padding:0;}
+  .back:hover{color:var(--accent);}
+  .detail-head{display:flex;gap:20px;align-items:center;margin-bottom:22px;}
+  .detail-head .thumb{width:68px;height:68px;font-size:2rem;border-radius:16px;}
+  .detail-head h2{margin:0;font-size:clamp(1.6rem,3.5vw,2.2rem);letter-spacing:-.02em;}
+  .detail-head .meta{color:var(--muted);font-size:.9rem;margin-top:4px;}
+  .detail-body p{color:#44403c;margin:0 0 16px;}
+  .detail-body h4{margin:26px 0 12px;font-size:1.05rem;}
+  .list{margin:0;padding:0;list-style:none;display:grid;gap:10px;}
+  .list li{position:relative;padding-left:26px;color:#44403c;}
+  .list li::before{content:"";position:absolute;left:0;top:10px;width:9px;height:9px;border-radius:50%;background:var(--accent);}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+  .chip{background:var(--accent-soft);color:var(--accent);font-size:.82rem;font-weight:600;padding:5px 12px;border-radius:8px;}
+  .detail-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px;}
+
+  /* Contact */
+  .contact-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .contact-card{
+    display:flex;align-items:center;gap:14px;
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    padding:18px 20px;box-shadow:var(--shadow);transition:.18s ease;
+  }
+  .contact-card:hover{transform:translateY(-2px);border-color:#ddd6fe;box-shadow:var(--shadow-hover);}
+  .contact-card .ci{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.25rem;color:#fff;flex:none;}
+  .contact-card b{display:block;font-size:.95rem;}
+  .contact-card span{color:var(--muted);font-size:.85rem;word-break:break-all;}
+
+  footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-size:.9rem;}
+  .foot-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+  .socials{display:flex;gap:16px;}
+  .socials a:hover{color:var(--accent);}
+
+  @media(max-width:760px){
+    .about-grid{grid-template-columns:1fr;gap:26px;}
+    .works{grid-template-columns:1fr;}
+    .skills{grid-template-columns:1fr;}
+    .stats-row{grid-template-columns:1fr 1fr;}
+    .contact-cards{grid-template-columns:1fr;}
+    .nav-links{gap:12px;}
+    .nav-links .link-item{display:none;}
+    .hero{padding:60px 0 28px;}
+  }
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#/"><span class="dot"></span><span data-i18n="brand">Andy</span></a>
+    <nav class="nav-links">
+      <a class="link-item" href="#/#about" data-i18n="nav_about">关于</a>
+      <a class="link-item" href="#/#experience" data-i18n="nav_exp">经历</a>
+      <a class="link-item" href="#/#skills" data-i18n="nav_skills">技能</a>
+      <a class="link-item" href="#/#works" data-i18n="nav_works">项目</a>
+      <a class="link-item" href="#/#contact" data-i18n="nav_contact">联系</a>
+      <div class="lang-toggle" role="group" aria-label="Language">
+        <button id="lang-zh" onclick="setLang('zh')">中</button>
+        <button id="lang-en" onclick="setLang('en')">EN</button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<!-- HOME -->
+<main id="home">
+  <div class="wrap">
+    <section class="hero">
+      <span class="eyebrow"><span class="pulse"></span><span data-i18n="hero_eyebrow">正在看机会 · AI 应用开发工程师</span></span>
+      <h1 data-i18n="hero_title" data-html="1">把大模型能力，做成<span class="accent">可靠上线的产品</span></h1>
+      <p class="lead" data-i18n="hero_lead"></p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#/#works" data-i18n="cta_works">查看项目 →</a>
+        <a class="btn btn-ghost" href="resume.pdf" data-i18n="cta_resume">下载简历</a>
+        <a class="btn btn-ghost" href="#/#contact" data-i18n="cta_contact">联系我</a>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="sec-head">
+        <div class="kicker" data-i18n="about_kicker">About</div>
+        <h2 data-i18n="about_title">关于我</h2>
+      </div>
+      <div class="about-grid">
+        <div>
+          <p data-i18n="about_p1"></p>
+          <p data-i18n="about_p2"></p>
+          <p data-i18n="about_p3"></p>
+        </div>
+        <div class="intent">
+          <h3 data-i18n="intent_title">求职意向</h3>
+          <ul class="intent-list">
+            <li><span class="k" data-i18n="intent_role_k">意向岗位</span><span class="v" data-i18n="intent_role_v">AI 应用开发工程师</span></li>
+            <li><span class="k" data-i18n="intent_exp_k">工作经验</span><span class="v" data-i18n="intent_exp_v">5 年（3 年 AI 应用）</span></li>
+            <li><span class="k" data-i18n="intent_loc_k">工作地点</span><span class="v" data-i18n="intent_loc_v">北京 / 上海 / 远程</span></li>
+            <li><span class="k" data-i18n="intent_status_k">当前状态</span><span class="v" data-i18n="intent_status_v">在职，考虑新机会</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="stat"><b data-i18n="stat1_n">5年</b><span data-i18n="stat1_l">研发经验</span></div>
+        <div class="stat"><b data-i18n="stat2_n">3年</b><span data-i18n="stat2_l">AI 应用开发</span></div>
+        <div class="stat"><b data-i18n="stat3_n">10+</b><span data-i18n="stat3_l">上线项目</span></div>
+        <div class="stat"><b data-i18n="stat4_n">∞</b><span data-i18n="stat4_l">好奇心</span></div>
+      </div>
+    </section>
+
+    <section id="experience">
+      <div class="sec-head">
+        <div class="kicker" data-i18n="exp_kicker">Experience</div>
+        <h2 data-i18n="exp_title">经历</h2>
+      </div>
+      <ul class="timeline">
+        <li>
+          <div class="tl-head">
+            <span class="tl-role" data-i18n="exp1_role">AI 应用开发工程师</span>
+            <span class="tl-period" data-i18n="exp1_period">2023.02 – 至今</span>
+          </div>
+          <div class="tl-org" data-i18n="exp1_org">某互联网公司</div>
+          <p class="tl-desc" data-i18n="exp1_desc"></p>
+        </li>
+        <li>
+          <div class="tl-head">
+            <span class="tl-role" data-i18n="exp2_role">后端开发工程师</span>
+            <span class="tl-period" data-i18n="exp2_period">2021.07 – 2023.01</span>
+          </div>
+          <div class="tl-org" data-i18n="exp2_org">某软件公司</div>
+          <p class="tl-desc" data-i18n="exp2_desc"></p>
+        </li>
+        <li>
+          <div class="tl-head">
+            <span class="tl-role" data-i18n="exp3_role">计算机科学与技术 · 本科</span>
+            <span class="tl-period" data-i18n="exp3_period">2017.09 – 2021.06</span>
+          </div>
+          <div class="tl-org" data-i18n="exp3_org">某大学</div>
+          <p class="tl-desc" data-i18n="exp3_desc"></p>
+        </li>
+      </ul>
+    </section>
+
+    <section id="skills">
+      <div class="sec-head">
+        <div class="kicker" data-i18n="skills_kicker">Skills</div>
+        <h2 data-i18n="skills_title">技术栈</h2>
+        <p data-i18n="skills_sub">围绕 LLM 应用开发的全栈技能。</p>
+      </div>
+      <div class="skills">
+        <div class="skill-card">
+          <div class="skill-head">
+            <div class="skill-icon" style="background:#4f46e5">🧠</div>
+            <h3 data-i18n="skill1_title">LLM 应用开发</h3>
+          </div>
+          <p class="skill-sub" data-i18n="skill1_sub">RAG、Agent、评测与微调，覆盖 LLM 应用全链路。</p>
+          <div class="chips">
+            <span class="pill">Prompt Engineering</span><span class="pill">RAG（分块 · 混合检索 · 重排）</span><span class="pill">Agent & Function Calling</span><span class="pill">MCP</span><span class="pill">结构化输出</span><span class="pill">评测与 Bad Case 闭环</span><span class="pill">微调（LoRA · SFT）</span>
+          </div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-head">
+            <div class="skill-icon" style="background:#0d9488">⚙️</div>
+            <h3 data-i18n="skill2_title">模型与服务</h3>
+          </div>
+          <p class="skill-sub" data-i18n="skill2_sub">多模型接入、推理部署与成本优化。</p>
+          <div class="chips">
+            <span class="pill">OpenAI / DeepSeek / Qwen API</span><span class="pill">vLLM 部署</span><span class="pill">量化（GPTQ · AWQ）</span><span class="pill">Embedding & Rerank</span><span class="pill">Ollama</span>
+          </div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-head">
+            <div class="skill-icon" style="background:#ea580c">🛠️</div>
+            <h3 data-i18n="skill3_title">后端与数据</h3>
+          </div>
+          <p class="skill-sub" data-i18n="skill3_sub">支撑 AI 应用的高并发后端与检索存储。</p>
+          <div class="chips">
+            <span class="pill">Python · FastAPI</span><span class="pill">Node.js</span><span class="pill">MySQL · PostgreSQL · pgvector</span><span class="pill">Redis</span><span class="pill">Milvus · FAISS</span><span class="pill">Elasticsearch</span>
+          </div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-head">
+            <div class="skill-icon" style="background:#db2777">🎨</div>
+            <h3 data-i18n="skill4_title">前端与工程化</h3>
+          </div>
+          <p class="skill-sub" data-i18n="skill4_sub">快速构建好用的 AI 产品界面与交付流程。</p>
+          <div class="chips">
+            <span class="pill">React · Next.js</span><span class="pill">Vue 3</span><span class="pill">TypeScript · Tailwind</span><span class="pill">Docker · Nginx</span><span class="pill">CI/CD · Git</span><span class="pill">Linux</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="works">
+      <div class="sec-head">
+        <div class="kicker" data-i18n="works_kicker">Projects</div>
+        <h2 data-i18n="works_title">项目展示</h2>
+        <p data-i18n="works_sub">点击任意项目，查看背景、方案与成果。</p>
+      </div>
+      <div class="works" id="works-grid"></div>
+    </section>
+
+    <section id="contact">
+      <div class="sec-head">
+        <div class="kicker" data-i18n="contact_kicker">Contact</div>
+        <h2 data-i18n="contact_title">期待与你共事</h2>
+        <p data-i18n="contact_sub"></p>
+      </div>
+      <div class="contact-cards">
+        <a class="contact-card" href="mailto:andy.dev@example.com">
+          <div class="ci" style="background:#4f46e5">✉️</div>
+          <div><b data-i18n="contact_email">邮箱</b><span>andy.dev@example.com</span></div>
+        </a>
+        <a class="contact-card" href="#" onclick="return false">
+          <div class="ci" style="background:#18181b">🐙</div>
+          <div><b>GitHub</b><span>github.com/andy-dev</span></div>
+        </a>
+        <div class="contact-card">
+          <div class="ci" style="background:#16a34a">💬</div>
+          <div><b data-i18n="contact_wechat">微信</b><span>andy-ai-dev</span></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- DETAIL -->
+<main id="detail">
+  <div class="wrap" style="padding-top:40px;padding-bottom:56px;">
+    <div class="detail-hero">
+      <button class="back" onclick="goHome()" data-i18n="back">← 返回项目列表</button>
+      <div id="detail-content"></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot-inner">
+    <span data-i18n="footer_copy">© 2026 Andy · AI 应用开发工程师</span>
+    <div class="socials">
+      <a href="#" onclick="return false" data-i18n="social_gh">GitHub</a>
+      <a href="mailto:andy.dev@example.com" data-i18n="social_mail">邮箱</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---------------- i18n ---------------- */
+const I18N = {
+  zh: {
+    brand:"Andy",
+    nav_about:"关于", nav_exp:"经历", nav_skills:"技能", nav_works:"项目", nav_contact:"联系",
+    hero_eyebrow:"正在看机会 · AI 应用开发工程师",
+    hero_title:'把大模型能力，做成<span class="accent">可靠上线的产品</span>',
+    hero_lead:"我是 Andy，一名 AI 应用开发工程师。三年里从 0 到 1 交付过企业级 RAG 知识库、多 Agent 数据分析和 LLM 网关——擅长把大模型能力工程化为稳定、可评测、可上线的真实产品。",
+    cta_works:"查看项目 →", cta_resume:"下载简历", cta_contact:"联系我",
+    about_kicker:"ABOUT", about_title:"关于我",
+    about_p1:"我聚焦 LLM 应用的工程化落地：RAG 检索增强、Agent 与工具调用、Prompt 设计与评测体系，以及模型服务的性能与成本优化。我相信一个好的 AI 应用 = 70% 的工程 + 30% 的模型——检索质量、评测闭环和稳定性，往往比换一个更大的模型更能决定最终效果。",
+    about_p2:"同时也是一名能独立交付的全栈工程师：Python/FastAPI 后端、React 前端、Docker 部署与监控，我可以独立完成从需求拆解、方案设计、开发到上线运维的全链路闭环。",
+    about_p3:"目前正在寻找新的 AI 应用开发工程师机会。如果你也在做有意思的大模型应用，欢迎和我聊聊。",
+    intent_title:"求职意向",
+    intent_role_k:"意向岗位", intent_role_v:"AI 应用开发工程师",
+    intent_exp_k:"工作经验", intent_exp_v:"5 年（3 年 AI 应用）",
+    intent_loc_k:"工作地点", intent_loc_v:"北京 / 上海 / 远程",
+    intent_status_k:"当前状态", intent_status_v:"在职，考虑新机会",
+    stat1_n:"5年", stat1_l:"研发经验", stat2_n:"3年", stat2_l:"AI 应用开发",
+    stat3_n:"10+", stat3_l:"上线项目", stat4_n:"∞", stat4_l:"好奇心",
+    exp_kicker:"EXPERIENCE", exp_title:"经历",
+    exp1_role:"AI 应用开发工程师", exp1_period:"2023.02 – 至今", exp1_org:"某互联网公司",
+    exp1_desc:"主导企业级 RAG 知识库、多 Agent 数据分析与 LLM 网关等核心系统的架构设计与落地，服务数千名内部用户。",
+    exp2_role:"后端开发工程师", exp2_period:"2021.07 – 2023.01", exp2_org:"某软件公司",
+    exp2_desc:"负责业务中台与数据服务的后端研发，积累了扎实的分布式系统与服务化经验。",
+    exp3_role:"计算机科学与技术 · 本科", exp3_period:"2017.09 – 2021.06", exp3_org:"某大学",
+    exp3_desc:"主修后端与系统方向，多次获校级奖学金。",
+    skills_kicker:"SKILLS", skills_title:"技术栈", skills_sub:"围绕 LLM 应用开发的全栈技能。",
+    skill1_title:"LLM 应用开发", skill1_sub:"RAG、Agent、评测与微调，覆盖 LLM 应用全链路。",
+    skill2_title:"模型与服务", skill2_sub:"多模型接入、推理部署与成本优化。",
+    skill3_title:"后端与数据", skill3_sub:"支撑 AI 应用的高并发后端与检索存储。",
+    skill4_title:"前端与工程化", skill4_sub:"快速构建好用的 AI 产品界面与交付流程。",
+    works_kicker:"PROJECTS", works_title:"项目展示", works_sub:"点击任意项目，查看背景、方案与成果。",
+    contact_kicker:"CONTACT", contact_title:"期待与你共事",
+    contact_sub:"正在寻找 AI 应用开发工程师岗位。如果你在招人，或者想聊聊大模型应用，欢迎随时联系我。",
+    contact_email:"邮箱", contact_wechat:"微信",
+    back:"← 返回项目列表",
+    detail_highlights:"方案亮点", detail_stack:"技术栈", detail_try:"在线体验", detail_code:"查看源码",
+    more:"查看详情", footer_copy:"© 2026 Andy · AI 应用开发工程师",
+    social_gh:"GitHub", social_mail:"邮箱"
+  },
+  en: {
+    brand:"Andy",
+    nav_about:"About", nav_exp:"Experience", nav_skills:"Skills", nav_works:"Projects", nav_contact:"Contact",
+    hero_eyebrow:"Open to work · AI Application Engineer",
+    hero_title:'Turning LLM power into<span class="accent"> reliable, shipped products</span>',
+    hero_lead:"I'm Andy, an AI application engineer. Over the past 3 years I've delivered an enterprise RAG knowledge base, a multi-agent data analyst and an LLM gateway from zero to one — engineering LLM capabilities into stable, evaluable, production-grade products.",
+    cta_works:"View projects →", cta_resume:"Download résumé", cta_contact:"Get in touch",
+    about_kicker:"ABOUT", about_title:"About me",
+    about_p1:"I focus on engineering LLM applications for the real world: RAG, agents & tool use, prompt design and evaluation, plus performance and cost optimization of model serving. I believe a good AI app is 70% engineering and 30% model — retrieval quality, evaluation loops and reliability usually matter more than swapping in a bigger model.",
+    about_p2:"I'm also a full-stack engineer who ships independently: Python/FastAPI backends, React frontends, Docker deployment and monitoring — I can own the whole loop from requirements and design to development, launch and ops.",
+    about_p3:"I'm currently looking for a new AI application engineer role. If you're building something interesting with LLMs, I'd love to chat.",
+    intent_title:"What I'm looking for",
+    intent_role_k:"Target role", intent_role_v:"AI Application Engineer",
+    intent_exp_k:"Experience", intent_exp_v:"5 yrs (3 yrs in AI apps)",
+    intent_loc_k:"Location", intent_loc_v:"Beijing / Shanghai / Remote",
+    intent_status_k:"Status", intent_status_v:"Employed, open to offers",
+    stat1_n:"5 yrs", stat1_l:"software engineering", stat2_n:"3 yrs", stat2_l:"AI application dev",
+    stat3_n:"10+", stat3_l:"projects shipped", stat4_n:"∞", stat4_l:"curiosity",
+    exp_kicker:"EXPERIENCE", exp_title:"Experience",
+    exp1_role:"AI Application Engineer", exp1_period:"Feb 2023 – Present", exp1_org:"Internet company",
+    exp1_desc:"Led architecture and delivery of the enterprise RAG knowledge base, multi-agent analytics and the LLM gateway, serving thousands of internal users.",
+    exp2_role:"Backend Engineer", exp2_period:"Jul 2021 – Jan 2023", exp2_org:"Software company",
+    exp2_desc:"Built business-platform and data services — a solid foundation in distributed systems and service-oriented design.",
+    exp3_role:"B.Sc. in Computer Science", exp3_period:"Sep 2017 – Jun 2021", exp3_org:"University",
+    exp3_desc:"Focused on backend and systems; multiple university scholarships.",
+    skills_kicker:"SKILLS", skills_title:"Tech stack", skills_sub:"Full-stack skills centered on LLM application development.",
+    skill1_title:"LLM App Development", skill1_sub:"RAG, agents, evaluation and fine-tuning across the full LLM app chain.",
+    skill2_title:"Models & Serving", skill2_sub:"Multi-model integration, inference serving and cost optimization.",
+    skill3_title:"Backend & Data", skill3_sub:"High-concurrency backends and retrieval/storage for AI apps.",
+    skill4_title:"Frontend & Tooling", skill4_sub:"Shipping great AI product UX and delivery pipelines.",
+    works_kicker:"PROJECTS", works_title:"Selected projects", works_sub:"Click any project to see the context, approach and results.",
+    contact_kicker:"CONTACT", contact_title:"Let's work together",
+    contact_sub:"I'm looking for an AI application engineer role. If you're hiring — or just want to talk LLM apps — my inbox is open.",
+    contact_email:"Email", contact_wechat:"WeChat",
+    back:"← Back to projects",
+    detail_highlights:"Highlights", detail_stack:"Tech stack", detail_try:"Try it live", detail_code:"Source code",
+    more:"View details", footer_copy:"© 2026 Andy · AI Application Engineer",
+    social_gh:"GitHub", social_mail:"Email"
+  }
+};
+
+/* ---------------- works data ---------------- */
+const WORKS = [
+  {
+    id:"rag-kb", emoji:"📚", color:"#4f46e5",
+    tag:{zh:"RAG · 检索增强",en:"RAG"},
+    period:{zh:"2025.02 – 至今",en:"Feb 2025 – Present"},
+    role:{zh:"架构设计与核心开发",en:"Architect & core developer"},
+    title:{zh:"企业知识库智能问答系统",en:"Enterprise Knowledge-Base QA"},
+    summary:{
+      zh:"面向企业内部资料的智能问答系统：多格式文档解析、混合检索加重排、答案引用溯源，服务数千名员工，是公司内部使用最频繁的 AI 工具之一。",
+      en:"An internal Q&A system over company knowledge: multi-format document parsing, hybrid retrieval with reranking and citation-backed answers — serving thousands of employees as one of the most-used internal AI tools."
+    },
+    desc:{
+      zh:"从 0 到 1 完成架构设计与核心研发。接入 Wiki、PDF、飞书文档等数十万篇内部资料，针对“答非所问”与幻觉两大痛点，设计了“分块调优 + BM25/向量混合检索 + Rerank 重排”的多级检索链路，并以引用溯源和“无依据不回答”策略守住可信底线。同时建立了离线评测集与 Bad Case 回流机制，让检索与问答质量可以量化、可持续迭代。",
+      en:"I designed the architecture end to end and built the core. It ingests hundreds of thousands of internal docs (Wiki, PDF, Feishu). To tackle irrelevant answers and hallucination, I built a multi-stage retrieval pipeline — chunking tuning, BM25 + vector hybrid search and a reranker — plus citation grounding and a “no evidence, no answer” policy. An offline eval set and a bad-case feedback loop keep quality measurable and improving."
+    },
+    highlights:{
+      zh:[
+        "多级检索链路：分块策略调优、BM25 + 向量混合召回、Cross-Encoder 重排，回答准确率显著提升",
+        "答案引用溯源 + “无依据不回答”策略，可信可审计",
+        "流式输出、多轮对话与权限隔离，贴合企业真实场景",
+        "离线评测集 + Bad Case 回流机制，质量可量化、可持续迭代"
+      ],
+      en:[
+        "Multi-stage retrieval: chunking tuning, BM25 + vector hybrid recall and cross-encoder reranking — major accuracy gains",
+        "Citation grounding and a “no evidence, no answer” policy for trustworthy, auditable answers",
+        "Streaming output, multi-turn context and permission isolation for real enterprise scenarios",
+        "Offline eval set + bad-case feedback loop: quality stays measurable and keeps improving"
+      ]
+    },
+    stack:["Python","FastAPI","LangChain","Milvus","Elasticsearch","Redis","React","vLLM"]
+  },
+  {
+    id:"agent-bi", emoji:"🤖", color:"#0d9488",
+    tag:{zh:"Agent · 智能体",en:"Agents"},
+    period:{zh:"2024.05 – 2025.01",en:"May 2024 – Jan 2025"},
+    role:{zh:"主导设计与开发",en:"Led design & development"},
+    title:{zh:"多 Agent 数据分析助手",en:"Multi-Agent Data Analyst"},
+    summary:{
+      zh:"用自然语言问数据：Agent 自动拆解问题、生成并自检 SQL、执行分析，最后输出图表与结论式报告，让业务同学无需写 SQL 也能自助分析。",
+      en:"Ask data in plain language: agents decompose the question, generate and self-check SQL, run the analysis, then return charts and a conclusion-style report — self-serve analytics without writing SQL."
+    },
+    desc:{
+      zh:"面向业务同学的“随身数据分析师”。基于 Function Calling 与多 Agent 协作：规划 Agent 负责拆解问题与分析路径，Text2SQL Agent 结合 schema linking 生成 SQL 并自检修正，分析 Agent 完成归因、可视化与结论生成。所有 SQL 在只读沙箱中执行，配合白名单校验与超时熔断，保证数据安全。",
+      en:"A pocket data analyst for business teams. Built on function calling and multi-agent collaboration: a planner decomposes the question and picks the analysis path, a Text2SQL agent generates SQL with schema linking and self-checks it, and an analyst agent handles attribution, charts and conclusions. Every query runs in a read-only sandbox with allowlist validation and timeouts for data safety."
+    },
+    highlights:{
+      zh:[
+        "规划 / Text2SQL / 分析 多 Agent 协作流，复杂问题可拆解执行",
+        "Schema linking + SQL 自检重试，生成准确率经评测集持续优化",
+        "只读沙箱 + SQL 白名单 + 超时熔断，安全可控",
+        "自动产出 ECharts 图表与结论式分析报告"
+      ],
+      en:[
+        "Planner / Text2SQL / analyst agent workflow that decomposes complex questions",
+        "Schema linking + SQL self-check & retry, tuned against a held-out eval set",
+        "Read-only sandbox, SQL allowlist and timeouts — safe and controllable",
+        "Auto-generated ECharts visuals and conclusion-style analysis reports"
+      ]
+    },
+    stack:["Python","LangGraph","Function Calling","MySQL","ECharts","Next.js","DeepSeek"]
+  },
+  {
+    id:"llm-gateway", emoji:"⚡", color:"#ea580c",
+    tag:{zh:"模型服务 · MaaS",en:"Model Serving"},
+    period:{zh:"2023.11 – 2024.04",en:"Nov 2023 – Apr 2024"},
+    role:{zh:"从 0 到 1 主导建设",en:"Built from zero to one"},
+    title:{zh:"LLM 网关与推理加速平台",en:"LLM Gateway & Inference Platform"},
+    summary:{
+      zh:"统一接入十余个大模型的内部网关：兼容 OpenAI 协议、多租户限流、语义缓存、故障降级与全链路成本观测，让上层应用像调用一个函数一样使用大模型。",
+      en:"An internal gateway unifying a dozen models: OpenAI-compatible API, multi-tenant rate limiting, semantic caching, failover routing and full-chain cost observability — so apps consume LLMs like a single function call."
+    },
+    desc:{
+      zh:"随着内部 AI 应用增多，模型调用散落各处、成本与稳定性失控。我主导搭建了统一的 LLM 网关：兼容 OpenAI 协议让存量应用零成本迁移，基于 Embedding 相似度的语义缓存大幅降低重复问题成本，配合多模型降级路由、令牌桶限流与 Prometheus/Grafana 观测大盘，token 花费与调用质量一目了然。",
+      en:"As internal AI apps multiplied, model calls sprawled and costs got out of control. I led the build of a unified gateway: OpenAI-compatible endpoints for zero-cost migration, embedding-based semantic caching that slashes repeated-question costs, multi-model failover, token-bucket rate limiting, and a Prometheus/Grafana dashboard making token spend and quality fully visible."
+    },
+    highlights:{
+      zh:[
+        "兼容 OpenAI 协议，一行配置切换或降级模型",
+        "语义缓存 + 多级缓存，重复问题成本大幅下降",
+        "多租户令牌桶限流与配额管理，保障核心业务稳定",
+        "全链路观测：调用日志、延迟分布与 Token 成本大盘"
+      ],
+      en:[
+        "OpenAI-compatible endpoints: switch or fail over models with one config line",
+        "Semantic + multi-level caching that cuts repeated-question costs sharply",
+        "Multi-tenant token-bucket rate limiting and quotas for core-business stability",
+        "Full observability: call logs, latency distributions and a token-cost dashboard"
+      ]
+    },
+    stack:["Python","vLLM","Redis","Prometheus","Grafana","Docker","Nginx"]
+  },
+  {
+    id:"cs-copilot", emoji:"💬", color:"#db2777",
+    tag:{zh:"NLP 应用",en:"NLP App"},
+    period:{zh:"2023.03 – 2023.10",en:"Mar 2023 – Oct 2023"},
+    role:{zh:"核心开发",en:"Core developer"},
+    title:{zh:"智能客服工单助手",en:"Customer-Service Copilot"},
+    summary:{
+      zh:"面向客服团队的 AI 副驾驶：进线工单自动分类、摘要与话术推荐，“AI 起草 + 人工确认”的人机协作模式让首次响应时长大幅下降。",
+      en:"An AI copilot for support teams: automatic ticket classification, summarization and reply suggestions. The “AI drafts, human confirms” workflow cut first-response time dramatically."
+    },
+    desc:{
+      zh:"客服团队每天面对大量重复咨询。系统对进线工单自动完成意图分类、情绪识别与内容摘要，结合知识库生成推荐话术；复杂问题一键转人工，并自动附带完整上下文摘要。采用“AI 起草 + 人工确认”的协作模式，在提升效率的同时守住服务质量底线。",
+      en:"Support teams face floods of repetitive tickets daily. The system classifies intent, detects sentiment and summarizes each incoming ticket, then drafts suggested replies from the knowledge base; complex cases jump to human agents with a full context summary attached. The “AI drafts, human confirms” loop boosts efficiency without compromising service quality."
+    },
+    highlights:{
+      zh:[
+        "意图分类 + 情绪识别 + 自动摘要的进线预处理",
+        "基于知识库的推荐话术，AI 起草、人工一键确认",
+        "转人工时自动附上下文摘要，交接零成本",
+        "上线后首次响应时长与平均处理时长显著下降"
+      ],
+      en:[
+        "Incoming-ticket preprocessing: intent classification, sentiment detection and auto summarization",
+        "Knowledge-base reply suggestions: AI drafts, agents confirm in one click",
+        "Auto context summaries on human handoff — zero-cost transitions",
+        "Marked drops in first-response time and average handling time after launch"
+      ]
+    },
+    stack:["Python","LoRA 微调","RAG","FastAPI","Vue 3","MySQL"]
+  }
+];
+
+/* ---------------- render ---------------- */
+let lang = "zh";
+const t = (k)=> (I18N[lang][k] ?? I18N.zh[k] ?? k);
+const pick = (o)=> (o && typeof o==="object") ? (o[lang] ?? o.zh ?? o.en) : o;
+
+function applyStatic(){
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const key = el.getAttribute("data-i18n");
+    if(I18N[lang][key]!==undefined){
+      if(el.getAttribute("data-html")==="1") el.innerHTML = I18N[lang][key];
+      else el.textContent = I18N[lang][key];
+    }
+  });
+  document.getElementById("lang-zh").classList.toggle("active", lang==="zh");
+  document.getElementById("lang-en").classList.toggle("active", lang==="en");
+  document.title = pick({zh:"Andy · AI 应用开发工程师 · 个人主页",en:"Andy · AI Application Engineer · Portfolio"});
+}
+
+function renderGrid(){
+  const grid = document.getElementById("works-grid");
+  grid.innerHTML = WORKS.map(w=>`
+    <article class="card" onclick="openDetail('${w.id}')">
+      <div class="card-top">
+        <div class="thumb" style="background:${w.color}">${w.emoji}</div>
+        <span class="tag">${pick(w.tag)}</span>
+      </div>
+      <h3>${pick(w.title)}</h3>
+      <p>${pick(w.summary)}</p>
+      <span class="more">${t("more")} <span class="arrow">→</span></span>
+    </article>`).join("");
+}
+
+function renderDetail(id){
+  const w = WORKS.find(x=>x.id===id);
+  if(!w) return;
+  const box = document.getElementById("detail-content");
+  box.innerHTML = `
+    <div class="detail-head">
+      <div class="thumb" style="background:${w.color}">${w.emoji}</div>
+      <div>
+        <h2>${pick(w.title)}</h2>
+        <div class="meta">${pick(w.tag)} · ${pick(w.period)} · ${pick(w.role)}</div>
+      </div>
+    </div>
+    <div class="detail-body">
+      <p>${pick(w.summary)}</p>
+      <p>${pick(w.desc)}</p>
+      <h4>${t("detail_highlights")}</h4>
+      <ul class="list">${pick(w.highlights).map(h=>`<li>${h}</li>`).join("")}</ul>
+      <h4>${t("detail_stack")}</h4>
+      <div class="chips">${w.stack.map(s=>`<span class="chip">${s}</span>`).join("")}</div>
+      <div class="detail-actions">
+        <a class="btn btn-primary" href="#" onclick="return false">${t("detail_try")} ↗</a>
+        <a class="btn btn-ghost" href="#" onclick="return false">${t("detail_code")}</a>
+      </div>
+    </div>`;
+}
+
+/* ---------------- routing ---------------- */
+function showHome(){
+  document.getElementById("home").style.display="block";
+  document.getElementById("detail").style.display="none";
+  window.scrollTo({top:0,behavior:"auto"});
+}
+function openDetail(id){
+  location.hash = "#/work/"+id;
+}
+function goHome(){ location.hash = "#/"; }
+
+function route(){
+  const h = location.hash.replace(/^#/, "");
+  const m = h.match(/^\/work\/(.+)$/);
+  if(m){
+    renderDetail(m[1]);
+    document.getElementById("home").style.display="none";
+    document.getElementById("detail").style.display="block";
+    window.scrollTo({top:0,behavior:"auto"});
+  }else{
+    showHome();
+    // handle in-page anchors like #/#about
+    const anchor = h.replace(/^\/?#?/, "");
+    if(anchor && document.getElementById(anchor)){
+      document.getElementById(anchor).scrollIntoView({behavior:"smooth"});
+    }
+  }
+}
+
+function setLang(l){
+  lang = l;
+  try{ localStorage.setItem("site-lang", l); }catch(e){}
+  applyStatic();
+  renderGrid();
+  if(document.getElementById("detail").style.display==="block"){
+    const m = location.hash.match(/\/work\/(.+)$/);
+    if(m) renderDetail(m[1]);
+  }
+}
+
+/* init */
+try{ const saved = localStorage.getItem("site-lang"); if(saved==="en"||saved==="zh") lang=saved; }catch(e){}
+applyStatic();
+renderGrid();
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>
