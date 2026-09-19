@@ -1,0 +1,8 @@
+# WorkBuddy 的内部工作记忆（非站点内容，不上传）
+.workbuddy/
+
+# 编辑器 / 操作系统杂项
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp

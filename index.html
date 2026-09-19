@@ -5,264 +5,630 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Andy · AI 应用开发工程师 · 个人主页</title>
 <meta name="description" content="AI 应用开发工程师个人主页：RAG 知识库、多 Agent 系统、LLM 网关等项目与经历。" />
+<meta name="theme-color" content="#fbfaf7" />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script>document.documentElement.className += " js";</script>
 <style>
+  /* ============================================================
+     Editorial Minimal — design tokens
+     ============================================================ */
   :root{
-    --bg:#fafaf9;
+    --paper:#fbfaf7;
+    --paper-2:#f4f2ec;
     --surface:#ffffff;
-    --ink:#1c1917;
-    --muted:#78716c;
-    --line:#e7e5e4;
-    --accent:#4f46e5;
-    --accent-soft:#eef2ff;
-    --radius:18px;
-    --shadow:0 1px 2px rgba(28,25,23,.04), 0 8px 24px rgba(28,25,23,.06);
-    --shadow-hover:0 2px 4px rgba(28,25,23,.05), 0 16px 40px rgba(79,70,229,.12);
-    --maxw:1040px;
-    font-size:16px;
+    --ink:#14120f;
+    --ink-2:#3f3a33;
+    --muted:#6f685e;
+    --faint:#9a938a;
+    --line:#e4e0d8;
+    --line-strong:#cdc7ba;
+    --accent:#c8442b;
+    --accent-ink:#a8351f;
+    --accent-soft:#fbeee9;
+
+    --font-display:"Noto Serif SC","Source Han Serif SC","Songti SC",Georgia,"Times New Roman",serif;
+    --font-script:"Instrument Serif",Georgia,"Times New Roman",serif;
+    --font-sans:"Plus Jakarta Sans",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",sans-serif;
+    --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+
+    --maxw:1080px;
+    --gut:clamp(20px,4.4vw,40px);
+    --radius:4px;
+    --nav-h:68px;
+    --ease:cubic-bezier(.22,.68,.16,1);
   }
-  *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
+
+  *,*::before,*::after{box-sizing:border-box;}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
   body{
     margin:0;
-    background:var(--bg);
     color:var(--ink);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Roboto,Helvetica,Arial,sans-serif;
-    line-height:1.65;
+    font-family:var(--font-sans);
+    font-size:17px;
+    line-height:1.7;
+    background-color:var(--paper);
+    background-image:
+      radial-gradient(1100px 620px at 8% -12%, #fff7f2 0%, rgba(255,247,242,0) 62%),
+      radial-gradient(820px 460px at 102% 2%, #f1f2fb 0%, rgba(241,242,251,0) 58%);
+    background-repeat:no-repeat;
     -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
     text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  /* paper grain — decorative, sits above everything, never intercepts input */
+  body::after{
+    content:"";
+    position:fixed;inset:0;z-index:9999;pointer-events:none;
+    opacity:.038;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
   }
   a{color:inherit;text-decoration:none;}
-  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px;}
+  img{max-width:100%;display:block;}
+  ::selection{background:var(--accent-soft);color:var(--accent-ink);}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px;}
 
-  /* Top bar */
+  .wrap{max-width:var(--maxw);margin:0 auto;padding-inline:var(--gut);}
+  .mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
+
+  .skip{
+    position:absolute;left:-9999px;top:0;z-index:200;
+    background:var(--ink);color:var(--paper);padding:12px 18px;font-size:.9rem;
+  }
+  .skip:focus{left:12px;top:12px;}
+
+  /* ============================================================
+     Nav
+     ============================================================ */
   header.nav{
-    position:sticky;top:0;z-index:50;
-    backdrop-filter:saturate(180%) blur(12px);
-    background:rgba(250,250,249,.72);
+    position:sticky;top:0;z-index:60;
+    background:rgba(251,250,247,.82);
+    -webkit-backdrop-filter:saturate(160%) blur(14px);
+    backdrop-filter:saturate(160%) blur(14px);
     border-bottom:1px solid var(--line);
   }
-  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px;}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:650;letter-spacing:-.01em;}
-  .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft);}
-  .nav-links{display:flex;align-items:center;gap:20px;font-size:.95rem;color:var(--muted);}
-  .nav-links a:hover{color:var(--ink);}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:var(--nav-h);gap:20px;}
+  .brand{display:flex;align-items:baseline;gap:9px;font-weight:600;letter-spacing:-.01em;}
+  .brand .dot{
+    width:7px;height:7px;border-radius:50%;background:var(--accent);
+    transform:translateY(-2px);flex:none;
+    box-shadow:0 0 0 3px var(--accent-soft);
+  }
+  .brand .bn{font-family:var(--font-display);font-size:1.12rem;font-weight:700;letter-spacing:0;}
+  .brand .bt{font-family:var(--font-mono);font-size:.7rem;color:var(--faint);letter-spacing:.06em;text-transform:uppercase;}
+
+  .nav-links{display:flex;align-items:center;gap:26px;}
+  .nav-links .link-item{
+    font-size:.94rem;color:var(--muted);position:relative;padding:4px 0;
+    transition:color .2s var(--ease);
+  }
+  .nav-links .link-item::after{
+    content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--accent);
+    transform:scaleX(0);transform-origin:left;transition:transform .28s var(--ease);
+  }
+  .nav-links .link-item:hover{color:var(--ink);}
+  .nav-links .link-item:hover::after{transform:scaleX(1);}
+
   .lang-toggle{
-    display:inline-flex;border:1px solid var(--line);border-radius:999px;
-    background:var(--surface);overflow:hidden;font-size:.82rem;font-weight:600;
+    display:inline-flex;border:1px solid var(--line-strong);border-radius:2px;
+    background:transparent;overflow:hidden;
   }
   .lang-toggle button{
     border:0;background:transparent;color:var(--muted);cursor:pointer;
-    padding:6px 12px;font:inherit;line-height:1;
+    font-family:var(--font-mono);font-size:.72rem;letter-spacing:.05em;
+    padding:7px 12px;line-height:1;transition:.2s var(--ease);
   }
-  .lang-toggle button.active{background:var(--accent);color:#fff;}
+  .lang-toggle button:hover{color:var(--ink);background:var(--paper-2);}
+  .lang-toggle button.active{background:var(--ink);color:var(--paper);}
 
-  /* Hero */
-  .hero{padding:88px 0 40px;}
-  .eyebrow{
-    display:inline-flex;align-items:center;gap:8px;
-    background:var(--accent-soft);color:var(--accent);
-    font-size:.82rem;font-weight:600;letter-spacing:.01em;
-    padding:6px 14px;border-radius:999px;margin-bottom:22px;
+  /* burger */
+  .burger{
+    display:none;width:44px;height:44px;margin-right:-10px;
+    border:0;background:transparent;cursor:pointer;padding:0;
+    align-items:center;justify-content:center;
+  }
+  .burger span{
+    display:block;width:22px;height:1.5px;background:var(--ink);position:relative;
+    transition:transform .3s var(--ease),background .2s;
+  }
+  .burger span::before,.burger span::after{
+    content:"";position:absolute;left:0;width:22px;height:1.5px;background:var(--ink);
+    transition:transform .3s var(--ease),opacity .2s;
+  }
+  .burger span::before{top:-7px;}
+  .burger span::after{top:7px;}
+  .burger[aria-expanded="true"] span{background:transparent;}
+  .burger[aria-expanded="true"] span::before{transform:translateY(7px) rotate(45deg);}
+  .burger[aria-expanded="true"] span::after{transform:translateY(-7px) rotate(-45deg);}
+
+  /* drawer */
+  .drawer{
+    position:fixed;inset:var(--nav-h) 0 0;z-index:55;
+    background:var(--paper);
+    border-top:1px solid var(--line);
+    padding:28px var(--gut) 40px;
+    display:flex;flex-direction:column;justify-content:space-between;
+    opacity:0;transform:translateY(-8px);
+    transition:opacity .26s var(--ease),transform .26s var(--ease);
+    overflow-y:auto;
+  }
+  .drawer.open{opacity:1;transform:none;}
+  .drawer[hidden]{display:none;}
+  .drawer-nav{display:flex;flex-direction:column;}
+  .drawer-nav a{
+    display:flex;align-items:baseline;gap:16px;
+    min-height:56px;padding:14px 0;
+    border-bottom:1px solid var(--line);
+    font-family:var(--font-display);font-weight:700;
+    font-size:1.6rem;letter-spacing:-.01em;
+    transition:color .2s var(--ease);
+  }
+  .drawer-nav a .n{
+    font-family:var(--font-mono);font-size:.72rem;font-weight:400;
+    color:var(--faint);letter-spacing:.06em;flex:none;
+  }
+  .drawer-nav a:active,.drawer-nav a:hover{color:var(--accent);}
+  .drawer-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:34px;flex-wrap:wrap;}
+  .drawer-foot .loc{font-family:var(--font-mono);font-size:.74rem;color:var(--faint);letter-spacing:.05em;text-transform:uppercase;}
+
+  /* ============================================================
+     Buttons
+     ============================================================ */
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;
+    min-height:46px;padding:12px 22px;border-radius:2px;
+    font-family:var(--font-sans);font-weight:500;font-size:.96rem;
+    border:1px solid transparent;cursor:pointer;
+    transition:background .2s var(--ease),color .2s var(--ease),border-color .2s var(--ease),transform .2s var(--ease);
+  }
+  .btn-primary{background:var(--ink);color:var(--paper);}
+  .btn-primary:hover{background:var(--accent);transform:translateY(-1px);}
+  .btn-ghost{background:transparent;border-color:var(--line-strong);color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--ink);background:var(--surface);}
+
+  /* ============================================================
+     Hero
+     ============================================================ */
+  .hero{padding:clamp(52px,9vw,104px) 0 clamp(40px,6vw,60px);}
+  .hero-top{
+    display:flex;align-items:center;justify-content:space-between;gap:18px;
+    flex-wrap:wrap;padding-bottom:22px;border-bottom:1px solid var(--line);
+  }
+  .status{
+    display:inline-flex;align-items:center;gap:9px;
+    border:1px solid var(--line-strong);border-radius:2px;
+    padding:7px 13px;font-size:.84rem;font-weight:500;color:var(--ink-2);
+    background:var(--surface);
   }
   .pulse{
-    width:8px;height:8px;border-radius:50%;background:#16a34a;flex:none;
-    box-shadow:0 0 0 3px rgba(22,163,74,.16);
-    animation:pulse 2s ease-in-out infinite;
+    width:6px;height:6px;border-radius:50%;background:#1a8f4c;flex:none;
+    box-shadow:0 0 0 3px rgba(26,143,76,.16);
+    animation:pulse 2.4s ease-in-out infinite;
   }
-  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+  .hero-top .loc{
+    font-family:var(--font-mono);font-size:.74rem;color:var(--faint);
+    letter-spacing:.08em;text-transform:uppercase;
+  }
+
+  .hero-script{
+    font-family:var(--font-script);font-style:italic;
+    font-size:clamp(1.5rem,3.4vw,2.3rem);color:var(--accent);
+    margin:clamp(28px,5vw,42px) 0 4px;line-height:1.1;letter-spacing:.005em;
+  }
   .hero h1{
-    font-size:clamp(2.3rem,5.5vw,3.6rem);line-height:1.08;
-    letter-spacing:-.03em;margin:0 0 18px;font-weight:750;
+    font-family:var(--font-display);font-weight:700;
+    font-size:clamp(2.15rem,6.4vw,4.5rem);
+    line-height:1.1;letter-spacing:-.022em;
+    margin:0 0 clamp(22px,4vw,34px);
+    max-width:17ch;
   }
-  .hero h1 .accent{color:var(--accent);}
-  .hero p.lead{font-size:clamp(1.05rem,2vw,1.2rem);color:var(--muted);max-width:680px;margin:0 0 30px;}
-  .hero-actions{display:flex;gap:14px;flex-wrap:wrap;}
-  .btn{
-    display:inline-flex;align-items:center;gap:8px;
-    padding:12px 22px;border-radius:12px;font-weight:600;font-size:.98rem;
-    border:1px solid transparent;cursor:pointer;transition:.18s ease;
+  .hero h1 .accent{color:var(--accent);position:relative;white-space:nowrap;}
+  .hero h1 .accent::after{
+    content:"";position:absolute;left:0;right:0;bottom:-.06em;height:1px;
+    background:var(--accent);opacity:.45;
+    transform:scaleX(0);transform-origin:left;
   }
-  .btn-primary{background:var(--accent);color:#fff;}
-  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(79,70,229,.28);}
-  .btn-ghost{background:var(--surface);border-color:var(--line);color:var(--ink);}
-  .btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
+  .js .hero h1 .accent::after{animation:rule .9s var(--ease) .5s forwards;}
+  @keyframes rule{to{transform:scaleX(1);}}
 
-  /* Section */
-  section{padding:56px 0;}
-  .sec-head{margin-bottom:30px;}
-  .sec-head h2{font-size:clamp(1.5rem,3vw,2rem);letter-spacing:-.02em;margin:0 0 6px;font-weight:700;}
-  .sec-head p{color:var(--muted);margin:0;}
-  .kicker{color:var(--accent);font-weight:650;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;}
-
-  /* About */
-  .about-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:40px;align-items:start;}
-  .about-grid p{color:#44403c;margin:0 0 16px;}
-  .intent{
-    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
-    padding:24px;box-shadow:var(--shadow);
+  .hero-body{
+    display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);
+    gap:clamp(24px,4vw,54px);align-items:start;
+    border-top:1px solid var(--line);padding-top:clamp(22px,3.4vw,32px);
   }
-  .intent h3{margin:0 0 14px;font-size:1.05rem;letter-spacing:-.01em;}
-  .intent-list{display:grid;gap:12px;margin:0;padding:0;list-style:none;}
-  .intent-list li{display:flex;justify-content:space-between;gap:14px;font-size:.92rem;padding-bottom:12px;border-bottom:1px dashed var(--line);}
-  .intent-list li:last-child{border-bottom:0;padding-bottom:0;}
-  .intent-list .k{color:var(--muted);flex:none;}
-  .intent-list .v{font-weight:600;text-align:right;}
-  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:34px;}
-  .stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);}
-  .stat b{display:block;font-size:1.5rem;letter-spacing:-.02em;}
-  .stat span{color:var(--muted);font-size:.85rem;}
-
-  /* Experience */
-  .timeline{position:relative;margin:0;padding:0 0 0 28px;list-style:none;}
-  .timeline::before{content:"";position:absolute;left:6px;top:8px;bottom:8px;width:2px;background:var(--line);}
-  .timeline li{position:relative;padding:0 0 30px;}
-  .timeline li:last-child{padding-bottom:0;}
-  .timeline li::before{
-    content:"";position:absolute;left:-28px;top:7px;
-    width:12px;height:12px;border-radius:50%;
-    background:var(--surface);border:3px solid var(--accent);
+  .hero p.lead{
+    font-size:clamp(1rem,1.6vw,1.14rem);color:var(--muted);
+    margin:0;max-width:52ch;
   }
-  .tl-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;}
-  .tl-role{font-weight:650;font-size:1.05rem;letter-spacing:-.01em;}
-  .tl-period{color:var(--muted);font-size:.85rem;font-variant-numeric:tabular-nums;}
-  .tl-org{color:var(--accent);font-weight:600;font-size:.92rem;margin-top:2px;}
-  .tl-desc{color:var(--muted);font-size:.94rem;margin-top:6px;max-width:720px;}
+  .facts-title{
+    font-family:var(--font-mono);font-size:.72rem;font-weight:500;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--faint);
+    margin:0 0 10px;
+  }
+  .hero-facts{display:grid;gap:0;margin:0;}
+  .hero-facts div{
+    display:flex;justify-content:space-between;gap:14px;
+    padding:11px 0;border-bottom:1px solid var(--line);font-size:.9rem;
+  }
+  .hero-facts dt{color:var(--faint);font-family:var(--font-mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;align-self:center;}
+  .hero-facts dd{margin:0;text-align:right;font-weight:500;}
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:clamp(26px,4vw,38px);}
 
-  /* Skills */
-  .skills{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;}
+  /* ============================================================
+     Section shell
+     ============================================================ */
+  section{padding:clamp(52px,7.5vw,84px) 0;scroll-margin-top:calc(var(--nav-h) + 16px);}
+  .sec-head{
+    display:grid;grid-template-columns:auto minmax(0,1fr) auto;
+    align-items:baseline;gap:clamp(14px,2.6vw,28px);
+    border-top:1px solid var(--line-strong);
+    padding-top:16px;margin-bottom:clamp(26px,4vw,42px);
+  }
+  .sec-num{
+    font-family:var(--font-mono);font-size:.76rem;color:var(--accent);
+    letter-spacing:.1em;flex:none;transform:translateY(-1px);
+  }
+  .sec-head h2{
+    font-family:var(--font-display);font-weight:700;
+    font-size:clamp(1.6rem,3.4vw,2.5rem);letter-spacing:-.02em;
+    margin:0;line-height:1.2;
+  }
+  .sec-head .sub{color:var(--muted);font-size:.95rem;margin:6px 0 0;}
+  .sec-kicker{
+    font-family:var(--font-mono);font-size:.72rem;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--faint);text-align:right;white-space:nowrap;
+  }
+
+  /* ============================================================
+     About
+     ============================================================ */
+  .about-grid{max-width:70ch;}
+  .about-grid p{color:var(--ink-2);margin:0 0 1.1em;max-width:62ch;}
+  .about-grid p:last-child{margin-bottom:0;}
+
+  .stats-row{
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+    margin-top:clamp(34px,5vw,54px);border-top:1px solid var(--line-strong);
+  }
+  .stat{padding:22px 20px 0 0;border-right:1px solid var(--line);}
+  .stat:last-child{border-right:0;}
+  .stat b{
+    display:block;font-family:var(--font-display);font-weight:700;
+    font-size:clamp(1.7rem,3.6vw,2.5rem);letter-spacing:-.02em;line-height:1.1;
+  }
+  .stat span{display:block;color:var(--faint);font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;margin-top:8px;}
+
+  /* ============================================================
+     Experience
+     ============================================================ */
+  .timeline{list-style:none;margin:0;padding:0;}
+  .timeline li{
+    display:grid;grid-template-columns:132px minmax(0,1fr);gap:clamp(16px,3vw,34px);
+    padding:0 0 clamp(26px,3.6vw,38px);
+    border-bottom:1px solid var(--line);
+    margin-bottom:clamp(26px,3.6vw,38px);
+  }
+  .timeline li:last-child{border-bottom:0;margin-bottom:0;padding-bottom:0;}
+  .tl-period{
+    font-family:var(--font-mono);font-size:.74rem;color:var(--faint);
+    letter-spacing:.04em;line-height:1.9;
+  }
+  .tl-role{
+    display:block;font-family:var(--font-display);font-weight:700;
+    font-size:clamp(1.08rem,1.9vw,1.3rem);letter-spacing:-.01em;line-height:1.35;
+  }
+  .tl-org{
+    display:inline-block;margin-top:7px;font-size:.76rem;font-weight:500;
+    color:var(--accent-ink);background:var(--accent-soft);
+    padding:3px 9px;border-radius:2px;
+  }
+  .tl-desc{color:var(--muted);font-size:.95rem;margin:12px 0 0;max-width:66ch;}
+
+  /* ============================================================
+     Skills
+     ============================================================ */
+  .skills{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border-top:1px solid var(--line);}
   .skill-card{
-    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
-    padding:24px;box-shadow:var(--shadow);transition:.2s ease;
+    padding:clamp(22px,3vw,30px) clamp(20px,3vw,32px) clamp(22px,3vw,30px) 0;
+    border-bottom:1px solid var(--line);
+    border-right:1px solid var(--line);
   }
-  .skill-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-hover);border-color:#ddd6fe;}
-  .skill-head{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
-  .skill-icon{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-size:1.2rem;color:#fff;flex:none;}
-  .skill-card h3{margin:0;font-size:1.08rem;letter-spacing:-.01em;}
-  .skill-card .skill-sub{color:var(--muted);font-size:.9rem;margin:0 0 16px;}
+  .skill-card:nth-child(2n){border-right:0;padding-right:0;padding-left:clamp(20px,3vw,32px);}
+  .skill-head{display:flex;align-items:baseline;gap:12px;margin-bottom:10px;}
+  .skill-head .n{font-family:var(--font-mono);font-size:.72rem;color:var(--faint);letter-spacing:.08em;flex:none;transform:translateY(-2px);}
+  .skill-card h3{
+    margin:0;font-family:var(--font-display);font-weight:700;
+    font-size:clamp(1.1rem,2vw,1.32rem);letter-spacing:-.01em;
+  }
+  .skill-card .skill-sub{color:var(--muted);font-size:.93rem;margin:0 0 18px;}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;}
   .pill{
-    display:inline-block;background:var(--bg);border:1px solid var(--line);color:#44403c;
-    font-size:.84rem;font-weight:550;padding:5px 12px;border-radius:999px;
+    display:inline-block;background:transparent;border:1px solid var(--line);
+    color:var(--ink-2);font-size:.82rem;font-weight:500;
+    padding:5px 11px;border-radius:2px;
+    transition:border-color .2s var(--ease),color .2s var(--ease);
   }
+  .pill:hover{border-color:var(--accent);color:var(--accent-ink);}
 
-  /* Works grid */
-  .works{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;}
+  /* ============================================================
+     Works
+     ============================================================ */
+  .works{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border-top:1px solid var(--line);}
   .card{
-    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
-    padding:26px;box-shadow:var(--shadow);cursor:pointer;transition:.2s ease;
-    display:flex;flex-direction:column;gap:14px;min-height:210px;
+    position:relative;display:flex;flex-direction:column;gap:12px;
+    padding:clamp(24px,3vw,32px) clamp(20px,3vw,34px) clamp(24px,3vw,32px) 0;
+    border-bottom:1px solid var(--line);
+    border-right:1px solid var(--line);
+    background:transparent;cursor:pointer;text-align:left;
+    transition:background .28s var(--ease),padding .28s var(--ease);
   }
-  .card:hover{transform:translateY(-4px);box-shadow:var(--shadow-hover);border-color:#ddd6fe;}
-  .card-top{display:flex;align-items:center;justify-content:space-between;}
-  .thumb{width:52px;height:52px;border-radius:13px;display:grid;place-items:center;font-size:1.5rem;color:#fff;}
-  .tag{font-size:.75rem;font-weight:600;color:var(--muted);background:var(--bg);border:1px solid var(--line);padding:4px 10px;border-radius:999px;}
-  .card h3{margin:2px 0 0;font-size:1.22rem;letter-spacing:-.01em;}
-  .card p{margin:0;color:var(--muted);font-size:.95rem;flex:1;}
-  .card .more{font-size:.9rem;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:6px;}
-  .card .more .arrow{transition:transform .2s;}
-  .card:hover .more .arrow{transform:translateX(4px);}
+  .card:nth-child(2n){border-right:0;padding-right:0;padding-left:clamp(20px,3vw,34px);}
+  .card::before{
+    content:"";position:absolute;left:0;top:-1px;height:2px;width:0;
+    background:var(--w-accent,var(--accent));
+    transition:width .42s var(--ease);
+  }
+  .card:nth-child(2n)::before{left:clamp(20px,3vw,34px);}
+  .card:hover{background:rgba(255,255,255,.72);}
+  .card:hover::before{width:100%;}
+  .card-top{display:flex;align-items:baseline;justify-content:space-between;gap:14px;}
+  .card-num{
+    font-family:var(--font-mono);font-size:.74rem;letter-spacing:.1em;
+    color:var(--faint);transition:color .25s var(--ease);
+  }
+  .card:hover .card-num{color:var(--w-accent,var(--accent));}
+  .card-tag{
+    font-family:var(--font-mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);border:1px solid var(--line);border-radius:2px;padding:3px 9px;
+    white-space:nowrap;
+  }
+  .card h3{
+    margin:2px 0 0;font-family:var(--font-display);font-weight:700;
+    font-size:clamp(1.2rem,2.3vw,1.6rem);letter-spacing:-.015em;line-height:1.3;
+  }
+  .card p{margin:0;color:var(--muted);font-size:.94rem;flex:1;max-width:54ch;}
+  .card-foot{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:6px;}
+  .card-period{font-family:var(--font-mono);font-size:.72rem;color:var(--faint);letter-spacing:.04em;}
+  .card .more{
+    font-size:.88rem;font-weight:500;color:var(--ink);
+    display:inline-flex;align-items:center;gap:7px;transition:color .2s var(--ease);
+  }
+  .card .more .arrow{transition:transform .25s var(--ease);display:inline-block;}
+  .card:hover .more{color:var(--w-accent,var(--accent));}
+  .card:hover .more .arrow{transform:translateX(5px);}
 
-  /* Detail view */
+  /* ============================================================
+     Detail
+     ============================================================ */
   #detail{display:none;}
-  .detail-hero{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:34px;box-shadow:var(--shadow);}
-  .back{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-weight:600;margin-bottom:22px;cursor:pointer;background:none;border:0;font:inherit;padding:0;}
-  .back:hover{color:var(--accent);}
-  .detail-head{display:flex;gap:20px;align-items:center;margin-bottom:22px;}
-  .detail-head .thumb{width:68px;height:68px;font-size:2rem;border-radius:16px;}
-  .detail-head h2{margin:0;font-size:clamp(1.6rem,3.5vw,2.2rem);letter-spacing:-.02em;}
-  .detail-head .meta{color:var(--muted);font-size:.9rem;margin-top:4px;}
-  .detail-body p{color:#44403c;margin:0 0 16px;}
-  .detail-body h4{margin:26px 0 12px;font-size:1.05rem;}
-  .list{margin:0;padding:0;list-style:none;display:grid;gap:10px;}
-  .list li{position:relative;padding-left:26px;color:#44403c;}
-  .list li::before{content:"";position:absolute;left:0;top:10px;width:9px;height:9px;border-radius:50%;background:var(--accent);}
-  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
-  .chip{background:var(--accent-soft);color:var(--accent);font-size:.82rem;font-weight:600;padding:5px 12px;border-radius:8px;}
-  .detail-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px;}
-
-  /* Contact */
-  .contact-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
-  .contact-card{
-    display:flex;align-items:center;gap:14px;
-    background:var(--surface);border:1px solid var(--line);border-radius:14px;
-    padding:18px 20px;box-shadow:var(--shadow);transition:.18s ease;
+  .detail-wrap{padding-top:clamp(24px,4vw,42px);padding-bottom:clamp(46px,6vw,72px);}
+  .back{
+    display:inline-flex;align-items:center;gap:9px;
+    color:var(--muted);font-weight:500;font-size:.9rem;
+    background:none;border:0;font-family:var(--font-sans);
+    padding:0 0 20px;cursor:pointer;
+    transition:color .2s var(--ease);
   }
-  .contact-card:hover{transform:translateY(-2px);border-color:#ddd6fe;box-shadow:var(--shadow-hover);}
-  .contact-card .ci{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.25rem;color:#fff;flex:none;}
-  .contact-card b{display:block;font-size:.95rem;}
-  .contact-card span{color:var(--muted);font-size:.85rem;word-break:break-all;}
+  .back:hover{color:var(--accent);}
+  .detail-head{
+    border-top:1px solid var(--line-strong);padding-top:clamp(20px,3vw,28px);
+    margin-bottom:clamp(24px,3.4vw,34px);
+  }
+  .detail-head .meta{
+    font-family:var(--font-mono);font-size:.74rem;color:var(--faint);
+    letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px;
+  }
+  .detail-head h2{
+    font-family:var(--font-display);font-weight:700;
+    font-size:clamp(1.7rem,4.4vw,2.9rem);letter-spacing:-.022em;
+    line-height:1.16;margin:0;
+  }
+  .detail-body p{color:var(--ink-2);margin:0 0 1.1em;max-width:66ch;}
+  .detail-body h4{
+    font-family:var(--font-mono);font-weight:500;
+    font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--faint);margin:clamp(30px,4vw,44px) 0 16px;
+    padding-top:16px;border-top:1px solid var(--line);
+  }
+  .list{margin:0;padding:0;list-style:none;display:grid;gap:0;}
+  .list li{
+    display:grid;grid-template-columns:34px minmax(0,1fr);gap:14px;
+    padding:13px 0;border-bottom:1px solid var(--line);
+    color:var(--ink-2);font-size:.96rem;
+  }
+  .list li:last-child{border-bottom:0;}
+  .list li::before{
+    counter-increment:hl;content:counter(hl,decimal-leading-zero);
+    font-family:var(--font-mono);font-size:.74rem;color:var(--accent);
+    letter-spacing:.06em;padding-top:4px;
+  }
+  .list{counter-reset:hl;}
+  .chip{
+    background:transparent;border:1px solid var(--line-strong);
+    color:var(--ink-2);font-family:var(--font-mono);font-size:.78rem;
+    padding:5px 11px;border-radius:2px;
+  }
+  .detail-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:clamp(28px,4vw,40px);}
 
-  footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-size:.9rem;}
-  .foot-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
-  .socials{display:flex;gap:16px;}
+  /* ============================================================
+     Contact
+     ============================================================ */
+  .contact-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,2vw,20px);}
+  .contact-card{
+    display:flex;align-items:center;gap:14px;min-height:76px;
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px 20px;
+    transition:border-color .22s var(--ease),transform .22s var(--ease);
+  }
+  .contact-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .contact-card .ci{
+    width:38px;height:38px;border-radius:2px;display:grid;place-items:center;
+    font-size:1.02rem;background:var(--paper-2);flex:none;
+  }
+  .contact-card b{display:block;font-size:.72rem;font-family:var(--font-mono);font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);}
+  .contact-card span{color:var(--ink-2);font-size:.92rem;word-break:break-all;}
+
+  /* ============================================================
+     Footer
+     ============================================================ */
+  footer{border-top:1px solid var(--line-strong);padding:34px 0;color:var(--faint);font-size:.8rem;}
+  .foot-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
+  .foot-inner .mono{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;}
+  .socials{display:flex;gap:20px;}
+  .socials a{transition:color .2s var(--ease);}
   .socials a:hover{color:var(--accent);}
 
-  @media(max-width:760px){
-    .about-grid{grid-template-columns:1fr;gap:26px;}
-    .works{grid-template-columns:1fr;}
-    .skills{grid-template-columns:1fr;}
-    .stats-row{grid-template-columns:1fr 1fr;}
-    .contact-cards{grid-template-columns:1fr;}
-    .nav-links{gap:12px;}
+  /* ============================================================
+     Scroll reveal
+     ============================================================ */
+  .js .reveal{
+    opacity:0;transform:translateY(20px);
+    transition:opacity .75s var(--ease),transform .75s var(--ease);
+    transition-delay:var(--d,0ms);
+  }
+  .js .reveal.in{opacity:1;transform:none;}
+
+  /* ============================================================
+     Responsive
+     ============================================================ */
+  @media(max-width:900px){
+    .hero-body{grid-template-columns:1fr;gap:26px;}
+  }
+  @media(max-width:860px){
     .nav-links .link-item{display:none;}
-    .hero{padding:60px 0 28px;}
+    .nav-links{border:0;}
+    .nav-links .lang-toggle{display:none;}
+    .burger{display:flex;}
+    .timeline li{grid-template-columns:1fr;gap:8px;}
+    .tl-period{line-height:1.6;}
+    .skills{grid-template-columns:1fr;}
+    .skill-card,.skill-card:nth-child(2n){
+      border-right:0;padding-left:0;padding-right:0;
+    }
+    .works{grid-template-columns:1fr;}
+    .card,.card:nth-child(2n){
+      border-right:0;padding-left:0;padding-right:0;
+    }
+    .card:nth-child(2n)::before{left:0;}
+    .contact-cards{grid-template-columns:1fr;}
+    .stats-row{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .stat{padding:20px 18px 0 0;}
+    .stat:nth-child(2n){border-right:0;}
+    .stat:nth-child(n+3){border-top:1px solid var(--line);padding-top:20px;}
+    .sec-head{grid-template-columns:auto minmax(0,1fr);}
+    .sec-kicker{display:none;}
+  }
+  @media(max-width:520px){
+    body{font-size:16px;}
+    .hero h1{max-width:none;}
+    .hero h1 .accent{white-space:normal;}
+    .btn{width:100%;justify-content:center;}
+    .hero-actions{gap:10px;}
+    .stats-row{grid-template-columns:1fr;}
+    .stat{border-right:0;padding-right:0;}
+    .stat:nth-child(n+2){border-top:1px solid var(--line);padding-top:20px;}
+  }
+
+  @media(prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;}
+    *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;}
+    .js .reveal{opacity:1;transform:none;}
   }
 </style>
 </head>
 <body>
+<a class="skip" href="#about">跳到正文</a>
+
 <header class="nav">
   <div class="wrap nav-inner">
-    <a class="brand" href="#/"><span class="dot"></span><span data-i18n="brand">Andy</span></a>
-    <nav class="nav-links">
+    <a class="brand" href="#/"><span class="dot"></span><span class="bn" data-i18n="brand">Andy</span><span class="bt">Portfolio</span></a>
+    <nav class="nav-links" aria-label="主导航">
       <a class="link-item" href="#/#about" data-i18n="nav_about">关于</a>
       <a class="link-item" href="#/#experience" data-i18n="nav_exp">经历</a>
       <a class="link-item" href="#/#skills" data-i18n="nav_skills">技能</a>
       <a class="link-item" href="#/#works" data-i18n="nav_works">项目</a>
       <a class="link-item" href="#/#contact" data-i18n="nav_contact">联系</a>
       <div class="lang-toggle" role="group" aria-label="Language">
-        <button id="lang-zh" onclick="setLang('zh')">中</button>
-        <button id="lang-en" onclick="setLang('en')">EN</button>
+        <button type="button" data-set-lang="zh">中</button>
+        <button type="button" data-set-lang="en">EN</button>
       </div>
+      <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="drawer" aria-label="打开菜单">
+        <span></span>
+      </button>
     </nav>
   </div>
 </header>
 
+<div class="drawer" id="drawer" hidden>
+  <nav class="drawer-nav" aria-label="移动端导航">
+    <a href="#/#about"><span class="n">01</span><span data-i18n="nav_about">关于</span></a>
+    <a href="#/#experience"><span class="n">02</span><span data-i18n="nav_exp">经历</span></a>
+    <a href="#/#skills"><span class="n">03</span><span data-i18n="nav_skills">技能</span></a>
+    <a href="#/#works"><span class="n">04</span><span data-i18n="nav_works">项目</span></a>
+    <a href="#/#contact"><span class="n">05</span><span data-i18n="nav_contact">联系</span></a>
+  </nav>
+  <div class="drawer-foot">
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button type="button" data-set-lang="zh">中</button>
+      <button type="button" data-set-lang="en">EN</button>
+    </div>
+    <span class="loc" data-i18n="hero_loc">上海 · 中国</span>
+  </div>
+</div>
+
 <!-- HOME -->
 <main id="home">
   <div class="wrap">
+
     <section class="hero">
-      <span class="eyebrow"><span class="pulse"></span><span data-i18n="hero_eyebrow">正在看机会 · AI 应用开发工程师</span></span>
-      <h1 data-i18n="hero_title" data-html="1">把大模型能力，做成<span class="accent">可靠上线的产品</span></h1>
-      <p class="lead" data-i18n="hero_lead"></p>
-      <div class="hero-actions">
+      <div class="hero-top reveal">
+        <span class="status"><span class="pulse"></span><span data-i18n="hero_eyebrow">正在看机会 · AI 应用开发工程师</span></span>
+        <span class="loc" data-i18n="hero_loc">上海 · 中国</span>
+      </div>
+
+      <p class="hero-script reveal" style="--d:60ms">AI Application Engineer</p>
+      <h1 class="reveal" style="--d:120ms" data-i18n="hero_title" data-html="1">把大模型能力，做成<span class="accent">可靠上线的产品</span></h1>
+
+      <div class="hero-body reveal" style="--d:200ms">
+        <p class="lead" data-i18n="hero_lead"></p>
+        <div class="hero-side">
+          <p class="facts-title" data-i18n="intent_title">求职意向</p>
+          <dl class="hero-facts">
+            <div><dt data-i18n="intent_role_k">意向岗位</dt><dd data-i18n="intent_role_v">AI 应用开发工程师</dd></div>
+            <div><dt data-i18n="intent_exp_k">工作经验</dt><dd data-i18n="intent_exp_v">5 年（3 年 AI 应用）</dd></div>
+            <div><dt data-i18n="intent_loc_k">工作地点</dt><dd data-i18n="intent_loc_v">上海</dd></div>
+            <div><dt data-i18n="intent_status_k">当前状态</dt><dd data-i18n="intent_status_v">在职，考虑新机会</dd></div>
+          </dl>
+        </div>
+      </div>
+
+      <div class="hero-actions reveal" style="--d:280ms">
         <a class="btn btn-primary" href="#/#works" data-i18n="cta_works">查看项目 →</a>
-        <a class="btn btn-ghost" href="resume.pdf" data-i18n="cta_resume">下载简历</a>
+        <a class="btn btn-ghost" id="resume-dl" href="resume.md" download="Andy-AI应用开发工程师-简历.md" data-i18n="cta_resume">下载简历</a>
         <a class="btn btn-ghost" href="#/#contact" data-i18n="cta_contact">联系我</a>
       </div>
     </section>
 
     <section id="about">
-      <div class="sec-head">
-        <div class="kicker" data-i18n="about_kicker">About</div>
-        <h2 data-i18n="about_title">关于我</h2>
+      <div class="sec-head reveal">
+        <span class="sec-num">01</span>
+        <div>
+          <h2 data-i18n="about_title">关于我</h2>
+        </div>
+        <span class="sec-kicker" data-i18n="about_kicker">ABOUT</span>
       </div>
       <div class="about-grid">
-        <div>
+        <div class="reveal">
           <p data-i18n="about_p1"></p>
           <p data-i18n="about_p2"></p>
           <p data-i18n="about_p3"></p>
         </div>
-        <div class="intent">
-          <h3 data-i18n="intent_title">求职意向</h3>
-          <ul class="intent-list">
-            <li><span class="k" data-i18n="intent_role_k">意向岗位</span><span class="v" data-i18n="intent_role_v">AI 应用开发工程师</span></li>
-            <li><span class="k" data-i18n="intent_exp_k">工作经验</span><span class="v" data-i18n="intent_exp_v">5 年（3 年 AI 应用）</span></li>
-            <li><span class="k" data-i18n="intent_loc_k">工作地点</span><span class="v" data-i18n="intent_loc_v">北京 / 上海 / 远程</span></li>
-            <li><span class="k" data-i18n="intent_status_k">当前状态</span><span class="v" data-i18n="intent_status_v">在职，考虑新机会</span></li>
-          </ul>
-        </div>
       </div>
-      <div class="stats-row">
+      <div class="stats-row reveal" style="--d:160ms">
         <div class="stat"><b data-i18n="stat1_n">5年</b><span data-i18n="stat1_l">研发经验</span></div>
         <div class="stat"><b data-i18n="stat2_n">3年</b><span data-i18n="stat2_l">AI 应用开发</span></div>
         <div class="stat"><b data-i18n="stat3_n">10+</b><span data-i18n="stat3_l">上线项目</span></div>
@@ -271,80 +637,72 @@
     </section>
 
     <section id="experience">
-      <div class="sec-head">
-        <div class="kicker" data-i18n="exp_kicker">Experience</div>
-        <h2 data-i18n="exp_title">经历</h2>
+      <div class="sec-head reveal">
+        <span class="sec-num">02</span>
+        <div><h2 data-i18n="exp_title">经历</h2></div>
+        <span class="sec-kicker" data-i18n="exp_kicker">EXPERIENCE</span>
       </div>
       <ul class="timeline">
-        <li>
-          <div class="tl-head">
+        <li class="reveal">
+          <span class="tl-period" data-i18n="exp1_period">2023.02 – 至今</span>
+          <div>
             <span class="tl-role" data-i18n="exp1_role">AI 应用开发工程师</span>
-            <span class="tl-period" data-i18n="exp1_period">2023.02 – 至今</span>
+            <span class="tl-org" data-i18n="exp1_org">某互联网公司</span>
+            <p class="tl-desc" data-i18n="exp1_desc"></p>
           </div>
-          <div class="tl-org" data-i18n="exp1_org">某互联网公司</div>
-          <p class="tl-desc" data-i18n="exp1_desc"></p>
         </li>
-        <li>
-          <div class="tl-head">
+        <li class="reveal" style="--d:80ms">
+          <span class="tl-period" data-i18n="exp2_period">2021.07 – 2023.01</span>
+          <div>
             <span class="tl-role" data-i18n="exp2_role">后端开发工程师</span>
-            <span class="tl-period" data-i18n="exp2_period">2021.07 – 2023.01</span>
+            <span class="tl-org" data-i18n="exp2_org">某软件公司</span>
+            <p class="tl-desc" data-i18n="exp2_desc"></p>
           </div>
-          <div class="tl-org" data-i18n="exp2_org">某软件公司</div>
-          <p class="tl-desc" data-i18n="exp2_desc"></p>
         </li>
-        <li>
-          <div class="tl-head">
+        <li class="reveal" style="--d:160ms">
+          <span class="tl-period" data-i18n="exp3_period">2017.09 – 2021.06</span>
+          <div>
             <span class="tl-role" data-i18n="exp3_role">计算机科学与技术 · 本科</span>
-            <span class="tl-period" data-i18n="exp3_period">2017.09 – 2021.06</span>
+            <span class="tl-org" data-i18n="exp3_org">某大学</span>
+            <p class="tl-desc" data-i18n="exp3_desc"></p>
           </div>
-          <div class="tl-org" data-i18n="exp3_org">某大学</div>
-          <p class="tl-desc" data-i18n="exp3_desc"></p>
         </li>
       </ul>
     </section>
 
     <section id="skills">
-      <div class="sec-head">
-        <div class="kicker" data-i18n="skills_kicker">Skills</div>
-        <h2 data-i18n="skills_title">技术栈</h2>
-        <p data-i18n="skills_sub">围绕 LLM 应用开发的全栈技能。</p>
+      <div class="sec-head reveal">
+        <span class="sec-num">03</span>
+        <div>
+          <h2 data-i18n="skills_title">技术栈</h2>
+          <p class="sub" data-i18n="skills_sub">围绕 LLM 应用开发的全栈技能。</p>
+        </div>
+        <span class="sec-kicker" data-i18n="skills_kicker">SKILLS</span>
       </div>
       <div class="skills">
-        <div class="skill-card">
-          <div class="skill-head">
-            <div class="skill-icon" style="background:#4f46e5">🧠</div>
-            <h3 data-i18n="skill1_title">LLM 应用开发</h3>
-          </div>
+        <div class="skill-card reveal">
+          <div class="skill-head"><span class="n">A</span><h3 data-i18n="skill1_title">LLM 应用开发</h3></div>
           <p class="skill-sub" data-i18n="skill1_sub">RAG、Agent、评测与微调，覆盖 LLM 应用全链路。</p>
           <div class="chips">
             <span class="pill">Prompt Engineering</span><span class="pill">RAG（分块 · 混合检索 · 重排）</span><span class="pill">Agent & Function Calling</span><span class="pill">MCP</span><span class="pill">结构化输出</span><span class="pill">评测与 Bad Case 闭环</span><span class="pill">微调（LoRA · SFT）</span>
           </div>
         </div>
-        <div class="skill-card">
-          <div class="skill-head">
-            <div class="skill-icon" style="background:#0d9488">⚙️</div>
-            <h3 data-i18n="skill2_title">模型与服务</h3>
-          </div>
+        <div class="skill-card reveal" style="--d:80ms">
+          <div class="skill-head"><span class="n">B</span><h3 data-i18n="skill2_title">模型与服务</h3></div>
           <p class="skill-sub" data-i18n="skill2_sub">多模型接入、推理部署与成本优化。</p>
           <div class="chips">
             <span class="pill">OpenAI / DeepSeek / Qwen API</span><span class="pill">vLLM 部署</span><span class="pill">量化（GPTQ · AWQ）</span><span class="pill">Embedding & Rerank</span><span class="pill">Ollama</span>
           </div>
         </div>
-        <div class="skill-card">
-          <div class="skill-head">
-            <div class="skill-icon" style="background:#ea580c">🛠️</div>
-            <h3 data-i18n="skill3_title">后端与数据</h3>
-          </div>
+        <div class="skill-card reveal" style="--d:160ms">
+          <div class="skill-head"><span class="n">C</span><h3 data-i18n="skill3_title">后端与数据</h3></div>
           <p class="skill-sub" data-i18n="skill3_sub">支撑 AI 应用的高并发后端与检索存储。</p>
           <div class="chips">
             <span class="pill">Python · FastAPI</span><span class="pill">Node.js</span><span class="pill">MySQL · PostgreSQL · pgvector</span><span class="pill">Redis</span><span class="pill">Milvus · FAISS</span><span class="pill">Elasticsearch</span>
           </div>
         </div>
-        <div class="skill-card">
-          <div class="skill-head">
-            <div class="skill-icon" style="background:#db2777">🎨</div>
-            <h3 data-i18n="skill4_title">前端与工程化</h3>
-          </div>
+        <div class="skill-card reveal" style="--d:240ms">
+          <div class="skill-head"><span class="n">D</span><h3 data-i18n="skill4_title">前端与工程化</h3></div>
           <p class="skill-sub" data-i18n="skill4_sub">快速构建好用的 AI 产品界面与交付流程。</p>
           <div class="chips">
             <span class="pill">React · Next.js</span><span class="pill">Vue 3</span><span class="pill">TypeScript · Tailwind</span><span class="pill">Docker · Nginx</span><span class="pill">CI/CD · Git</span><span class="pill">Linux</span>
@@ -354,53 +712,58 @@
     </section>
 
     <section id="works">
-      <div class="sec-head">
-        <div class="kicker" data-i18n="works_kicker">Projects</div>
-        <h2 data-i18n="works_title">项目展示</h2>
-        <p data-i18n="works_sub">点击任意项目，查看背景、方案与成果。</p>
+      <div class="sec-head reveal">
+        <span class="sec-num">04</span>
+        <div>
+          <h2 data-i18n="works_title">项目展示</h2>
+          <p class="sub" data-i18n="works_sub">点击任意项目，查看背景、方案与成果。</p>
+        </div>
+        <span class="sec-kicker" data-i18n="works_kicker">PROJECTS</span>
       </div>
       <div class="works" id="works-grid"></div>
     </section>
 
     <section id="contact">
-      <div class="sec-head">
-        <div class="kicker" data-i18n="contact_kicker">Contact</div>
-        <h2 data-i18n="contact_title">期待与你共事</h2>
-        <p data-i18n="contact_sub"></p>
+      <div class="sec-head reveal">
+        <span class="sec-num">05</span>
+        <div>
+          <h2 data-i18n="contact_title">期待与你共事</h2>
+          <p class="sub" data-i18n="contact_sub"></p>
+        </div>
+        <span class="sec-kicker" data-i18n="contact_kicker">CONTACT</span>
       </div>
-      <div class="contact-cards">
+      <div class="contact-cards reveal">
         <a class="contact-card" href="mailto:andy.dev@example.com">
-          <div class="ci" style="background:#4f46e5">✉️</div>
-          <div><b data-i18n="contact_email">邮箱</b><span>andy.dev@example.com</span></div>
+          <span class="ci" aria-hidden="true">✉</span>
+          <span><b data-i18n="contact_email">邮箱</b><span>andy.dev@example.com</span></span>
         </a>
-        <a class="contact-card" href="#" onclick="return false">
-          <div class="ci" style="background:#18181b">🐙</div>
-          <div><b>GitHub</b><span>github.com/andy-dev</span></div>
+        <a class="contact-card" href="https://github.com/andyxu1234" target="_blank" rel="noopener">
+          <span class="ci" aria-hidden="true">◍</span>
+          <span><b>GitHub</b><span>github.com/andyxu1234</span></span>
         </a>
         <div class="contact-card">
-          <div class="ci" style="background:#16a34a">💬</div>
-          <div><b data-i18n="contact_wechat">微信</b><span>andy-ai-dev</span></div>
+          <span class="ci" aria-hidden="true">✆</span>
+          <span><b data-i18n="contact_wechat">微信</b><span>andy-ai-dev</span></span>
         </div>
       </div>
     </section>
+
   </div>
 </main>
 
 <!-- DETAIL -->
 <main id="detail">
-  <div class="wrap" style="padding-top:40px;padding-bottom:56px;">
-    <div class="detail-hero">
-      <button class="back" onclick="goHome()" data-i18n="back">← 返回项目列表</button>
-      <div id="detail-content"></div>
-    </div>
+  <div class="wrap detail-wrap">
+    <button class="back" onclick="goHome()" data-i18n="back">← 返回项目列表</button>
+    <div id="detail-content"></div>
   </div>
 </main>
 
 <footer>
   <div class="wrap foot-inner">
-    <span data-i18n="footer_copy">© 2026 Andy · AI 应用开发工程师</span>
+    <span class="mono" data-i18n="footer_copy">© 2026 Andy · AI 应用开发工程师</span>
     <div class="socials">
-      <a href="#" onclick="return false" data-i18n="social_gh">GitHub</a>
+      <a href="https://github.com/andyxu1234" target="_blank" rel="noopener" data-i18n="social_gh">GitHub</a>
       <a href="mailto:andy.dev@example.com" data-i18n="social_mail">邮箱</a>
     </div>
   </div>
@@ -413,6 +776,7 @@ const I18N = {
     brand:"Andy",
     nav_about:"关于", nav_exp:"经历", nav_skills:"技能", nav_works:"项目", nav_contact:"联系",
     hero_eyebrow:"正在看机会 · AI 应用开发工程师",
+    hero_loc:"上海 · 中国",
     hero_title:'把大模型能力，做成<span class="accent">可靠上线的产品</span>',
     hero_lead:"我是 Andy，一名 AI 应用开发工程师。三年里从 0 到 1 交付过企业级 RAG 知识库、多 Agent 数据分析和 LLM 网关——擅长把大模型能力工程化为稳定、可评测、可上线的真实产品。",
     cta_works:"查看项目 →", cta_resume:"下载简历", cta_contact:"联系我",
@@ -423,7 +787,7 @@ const I18N = {
     intent_title:"求职意向",
     intent_role_k:"意向岗位", intent_role_v:"AI 应用开发工程师",
     intent_exp_k:"工作经验", intent_exp_v:"5 年（3 年 AI 应用）",
-    intent_loc_k:"工作地点", intent_loc_v:"北京 / 上海 / 远程",
+    intent_loc_k:"工作地点", intent_loc_v:"上海 · 可接受调配",
     intent_status_k:"当前状态", intent_status_v:"在职，考虑新机会",
     stat1_n:"5年", stat1_l:"研发经验", stat2_n:"3年", stat2_l:"AI 应用开发",
     stat3_n:"10+", stat3_l:"上线项目", stat4_n:"∞", stat4_l:"好奇心",
@@ -446,12 +810,14 @@ const I18N = {
     back:"← 返回项目列表",
     detail_highlights:"方案亮点", detail_stack:"技术栈", detail_try:"在线体验", detail_code:"查看源码",
     more:"查看详情", footer_copy:"© 2026 Andy · AI 应用开发工程师",
-    social_gh:"GitHub", social_mail:"邮箱"
+    social_gh:"GitHub", social_mail:"邮箱",
+    menu_open:"打开菜单", menu_close:"关闭菜单"
   },
   en: {
     brand:"Andy",
     nav_about:"About", nav_exp:"Experience", nav_skills:"Skills", nav_works:"Projects", nav_contact:"Contact",
     hero_eyebrow:"Open to work · AI Application Engineer",
+    hero_loc:"Shanghai, China",
     hero_title:'Turning LLM power into<span class="accent"> reliable, shipped products</span>',
     hero_lead:"I'm Andy, an AI application engineer. Over the past 3 years I've delivered an enterprise RAG knowledge base, a multi-agent data analyst and an LLM gateway from zero to one — engineering LLM capabilities into stable, evaluable, production-grade products.",
     cta_works:"View projects →", cta_resume:"Download résumé", cta_contact:"Get in touch",
@@ -462,7 +828,7 @@ const I18N = {
     intent_title:"What I'm looking for",
     intent_role_k:"Target role", intent_role_v:"AI Application Engineer",
     intent_exp_k:"Experience", intent_exp_v:"5 yrs (3 yrs in AI apps)",
-    intent_loc_k:"Location", intent_loc_v:"Beijing / Shanghai / Remote",
+    intent_loc_k:"Location", intent_loc_v:"Shanghai · open to relocation",
     intent_status_k:"Status", intent_status_v:"Employed, open to offers",
     stat1_n:"5 yrs", stat1_l:"software engineering", stat2_n:"3 yrs", stat2_l:"AI application dev",
     stat3_n:"10+", stat3_l:"projects shipped", stat4_n:"∞", stat4_l:"curiosity",
@@ -485,12 +851,47 @@ const I18N = {
     back:"← Back to projects",
     detail_highlights:"Highlights", detail_stack:"Tech stack", detail_try:"Try it live", detail_code:"Source code",
     more:"View details", footer_copy:"© 2026 Andy · AI Application Engineer",
-    social_gh:"GitHub", social_mail:"Email"
+    social_gh:"GitHub", social_mail:"Email",
+    menu_open:"Open menu", menu_close:"Close menu"
   }
 };
 
 /* ---------------- works data ---------------- */
 const WORKS = [
+  {
+    id:"wc-prediction", emoji:"⚽", color:"#d9561f",
+    tryUrl:"projects/world-cup-prediction.html",
+    codeUrl:"https://github.com/AndyXu-Citi/world-cup-prediction",
+    tag:{zh:"全栈 · 多模型预测",en:"Full-stack · Multi-LLM"},
+    period:{zh:"2026.04 – 2026.07",en:"Apr 2026 – Jul 2026"},
+    role:{zh:"独立开发（前端 / 后端 / AI 编排 / 部署）",en:"Solo developer (frontend / backend / AI orchestration / deploy)"},
+    title:{zh:"AI 足球预测平台（世界杯 · 五大联赛）",en:"AI Football Prediction Platform"},
+    summary:{
+      zh:"让 10 个主流大模型同台预测比赛胜负与精确比分：LangGraph 编排并行调用 + 共识聚合 + 信心指数，配套人机投票、AI / 人类双维度排行榜，一套代码交付微信小程序 / Web / APK 多端。",
+      en:"Ten mainstream LLMs predicting match outcomes and exact scores side by side: LangGraph-orchestrated parallel calls with consensus aggregation and a confidence index, plus human-vs-AI voting and dual leaderboards — delivered to WeChat Mini Program, Web and APK from one codebase."
+    },
+    desc:{
+      zh:"从 0 到 1 独立完成全栈交付，项目已开源（MIT，79 次提交）。后端是 FastAPI + SQLAlchemy 2.0 异步服务（18 张业务表 / 50+ 端点 / 17 个 Alembic 迁移版本），通过 OfoxAI 统一网关接入 10 个国内外主流大模型，用 LangGraph StateGraph 编排 load_match → parallel_predict → validate → aggregate → summary 链路，把并行预测、失败重试与多模型异构输出的自适应解析收敛成一条可测的流水线；模型阵容由 ai_models 表驱动，增删启停无需改代码。数据侧接入 Highlightly 足球数据 API，APScheduler 跑 6 个 cron job（比赛同步 / 预测生成 / 积分榜 / 缓存刷新 / 赔率快照 / Telegram 推送），赛前赔率按 bookmaker + 市场 + 日期做追加式快照，为预测准确性评估提供对照基线。前端用 Taro 一套代码跨编译微信小程序与 H5，并推进去微信化，落地独立 Web 与 APK（WebView 壳）及手机号 / 邮箱登录。",
+      en:"Delivered the entire stack solo and open-sourced it (MIT, 79 commits). The backend is an async FastAPI + SQLAlchemy 2.0 service (18 tables, 50+ endpoints, 17 Alembic revisions) that reaches ten mainstream LLMs through the OfoxAI gateway and orchestrates a LangGraph StateGraph pipeline — load_match → parallel_predict → validate → aggregate → summary — folding parallel calls, retries and adaptive parsing of heterogeneous model output into a single testable flow. The model lineup is database-driven (ai_models table), so models can be added, toggled or removed without touching code. On the data side, Highlightly supplies fixtures, standings and odds, while APScheduler runs six cron jobs (fixtures sync, prediction generation, standings, cache warm-up, odds snapshots, Telegram push); pre-match odds are kept as append-only snapshots keyed by bookmaker + market + date, giving accuracy evaluation a baseline. The frontend is one Taro codebase cross-compiled to WeChat Mini Program and H5, with a de-WeChat-ified standalone Web build and an APK wrapper, plus phone/email login."
+    },
+    highlights:{
+      zh:[
+        "基于 LangGraph 编排多 Agent 预测链路（load_match → parallel_predict → validate → aggregate → summary）：并行调用 10 个模型，含失败重试、异构输出自适应解析与共识聚合（信心指数）",
+        "模型阵容数据库驱动（ai_models 表），模型增删改 / 启停无需改动代码，支撑阵容动态扩展",
+        "AI / 人类双维度排行榜：独立统计胜负命中率与精确比分命中率，支持多联赛筛选与战绩追溯；并用「打脸合集」自动汇总高信心翻车案例",
+        "异步 SQLAlchemy 2.0 + asyncmy + TTLCache 本地缓存 + APScheduler 缓存预热；赛前赔率追加式快照（bookmaker / 市场 / 日期唯一约束）为准确性评估提供对照",
+        "多端工程化：Taro 一套代码跨编译微信小程序 / H5，推进去微信化落地独立 Web 与 APK（WebView 壳）；Docker Compose + Nginx 部署"
+      ],
+      en:[
+        "LangGraph-orchestrated multi-agent pipeline (load_match → parallel_predict → validate → aggregate → summary): 10 models called in parallel with retries, adaptive parsing of heterogeneous output and consensus aggregation with a confidence index",
+        "Database-driven model lineup (ai_models table) — models can be added, edited, toggled or removed without code changes",
+        "Dual AI / human leaderboards tracking win-hit rate and exact-score hit rate separately, with multi-league filtering and model history; a “self-own reel” auto-collects high-confidence misses",
+        "Async SQLAlchemy 2.0 + asyncmy + TTLCache warm-up via APScheduler; append-only pre-match odds snapshots (bookmaker / market / date) as an accuracy baseline",
+        "Multi-platform engineering: one Taro codebase compiled to WeChat Mini Program and H5, plus a de-WeChat-ified Web build and APK wrapper; deployed with Docker Compose + Nginx"
+      ]
+    },
+    stack:["Taro 4.1","React 18","TypeScript","Zustand","FastAPI","SQLAlchemy 2.0","MySQL 8.0","LangGraph","OfoxAI","APScheduler","Docker Compose","Nginx"]
+  },
   {
     id:"rag-kb", emoji:"📚", color:"#4f46e5",
     tag:{zh:"RAG · 检索增强",en:"RAG"},
@@ -613,7 +1014,7 @@ const WORKS = [
   }
 ];
 
-/* ---------------- render ---------------- */
+/* ---------------- helpers ---------------- */
 let lang = "zh";
 const t = (k)=> (I18N[lang][k] ?? I18N.zh[k] ?? k);
 const pick = (o)=> (o && typeof o==="object") ? (o[lang] ?? o.zh ?? o.en) : o;
@@ -627,23 +1028,68 @@ function applyStatic(){
       else el.textContent = I18N[lang][key];
     }
   });
-  document.getElementById("lang-zh").classList.toggle("active", lang==="zh");
-  document.getElementById("lang-en").classList.toggle("active", lang==="en");
+  document.querySelectorAll("[data-set-lang]").forEach(btn=>{
+    btn.classList.toggle("active", btn.getAttribute("data-set-lang")===lang);
+  });
+  const burger = document.getElementById("burger");
+  if(burger){
+    const open = burger.getAttribute("aria-expanded")==="true";
+    burger.setAttribute("aria-label", open ? t("menu_close") : t("menu_open"));
+  }
+  const dl = document.getElementById("resume-dl");
+  if(dl){
+    dl.setAttribute("href", lang==="en" ? "resume-en.md" : "resume.md");
+    dl.setAttribute("download", lang==="en" ? "Andy-AI-Application-Engineer-Resume.md" : "Andy-AI应用开发工程师-简历.md");
+  }
   document.title = pick({zh:"Andy · AI 应用开发工程师 · 个人主页",en:"Andy · AI Application Engineer · Portfolio"});
 }
 
+/* ---------------- reveal ---------------- */
+let revealIO = null;
+function watchReveal(root){
+  const scope = root || document;
+  const els = scope.querySelectorAll(".reveal:not(.in)");
+  if(!els.length) return;
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(!("IntersectionObserver" in window) || reduce){
+    els.forEach(e=>e.classList.add("in"));
+    return;
+  }
+  if(!revealIO){
+    revealIO = new IntersectionObserver((entries)=>{
+      entries.forEach(en=>{
+        if(en.isIntersecting){
+          en.target.classList.add("in");
+          revealIO.unobserve(en.target);
+        }
+      });
+    },{rootMargin:"0px 0px -6% 0px",threshold:0.06});
+  }
+  els.forEach(e=>revealIO.observe(e));
+}
+
+/* ---------------- render ---------------- */
 function renderGrid(){
   const grid = document.getElementById("works-grid");
-  grid.innerHTML = WORKS.map(w=>`
-    <article class="card" onclick="openDetail('${w.id}')">
+  grid.innerHTML = WORKS.map((w,i)=>`
+    <article class="card reveal" style="--d:${i*70}ms;--w-accent:${w.color}" onclick="openDetail('${w.id}')" tabindex="0" role="button" aria-label="${pick(w.title)}">
       <div class="card-top">
-        <div class="thumb" style="background:${w.color}">${w.emoji}</div>
-        <span class="tag">${pick(w.tag)}</span>
+        <span class="card-num">${String(i+1).padStart(2,"0")}</span>
+        <span class="card-tag">${pick(w.tag)}</span>
       </div>
       <h3>${pick(w.title)}</h3>
       <p>${pick(w.summary)}</p>
-      <span class="more">${t("more")} <span class="arrow">→</span></span>
+      <div class="card-foot">
+        <span class="card-period">${pick(w.period)}</span>
+        <span class="more">${t("more")} <span class="arrow">→</span></span>
+      </div>
     </article>`).join("");
+  grid.querySelectorAll(".card").forEach(c=>{
+    c.addEventListener("keydown",(e)=>{
+      if(e.key==="Enter"||e.key===" "){ e.preventDefault(); c.click(); }
+    });
+  });
+  watchReveal(grid);
 }
 
 function renderDetail(id){
@@ -652,24 +1098,22 @@ function renderDetail(id){
   const box = document.getElementById("detail-content");
   box.innerHTML = `
     <div class="detail-head">
-      <div class="thumb" style="background:${w.color}">${w.emoji}</div>
-      <div>
-        <h2>${pick(w.title)}</h2>
-        <div class="meta">${pick(w.tag)} · ${pick(w.period)} · ${pick(w.role)}</div>
-      </div>
+      <div class="meta">${pick(w.tag)} · ${pick(w.period)} · ${pick(w.role)}</div>
+      <h2>${pick(w.title)}</h2>
     </div>
     <div class="detail-body">
       <p>${pick(w.summary)}</p>
       <p>${pick(w.desc)}</p>
       <h4>${t("detail_highlights")}</h4>
-      <ul class="list">${pick(w.highlights).map(h=>`<li>${h}</li>`).join("")}</ul>
+      <ul class="list">${pick(w.highlights).map(h=>`<li><span>${h}</span></li>`).join("")}</ul>
       <h4>${t("detail_stack")}</h4>
       <div class="chips">${w.stack.map(s=>`<span class="chip">${s}</span>`).join("")}</div>
-      <div class="detail-actions">
-        <a class="btn btn-primary" href="#" onclick="return false">${t("detail_try")} ↗</a>
-        <a class="btn btn-ghost" href="#" onclick="return false">${t("detail_code")}</a>
-      </div>
+      ${(w.tryUrl || w.codeUrl) ? `<div class="detail-actions">
+        ${w.tryUrl ? `<a class="btn btn-primary" href="${w.tryUrl}" target="_blank" rel="noopener">${t("detail_try")} ↗</a>` : ""}
+        ${w.codeUrl ? `<a class="btn btn-ghost" href="${w.codeUrl}" target="_blank" rel="noopener">${t("detail_code")}</a>` : ""}
+      </div>` : ""}
     </div>`;
+  watchReveal(box);
 }
 
 /* ---------------- routing ---------------- */
@@ -693,7 +1137,6 @@ function route(){
     window.scrollTo({top:0,behavior:"auto"});
   }else{
     showHome();
-    // handle in-page anchors like #/#about
     const anchor = h.replace(/^\/?#?/, "");
     if(anchor && document.getElementById(anchor)){
       document.getElementById(anchor).scrollIntoView({behavior:"smooth"});
@@ -712,12 +1155,66 @@ function setLang(l){
   }
 }
 
-/* init */
-try{ const saved = localStorage.getItem("site-lang"); if(saved==="en"||saved==="zh") lang=saved; }catch(e){}
-applyStatic();
-renderGrid();
-window.addEventListener("hashchange", route);
-route();
+/* ---------------- mobile drawer ---------------- */
+(function(){
+  const burger = document.getElementById("burger");
+  const drawer = document.getElementById("drawer");
+  if(!burger || !drawer) return;
+  let scrollLocked = false;
+  let opened = false;
+  const isOpen = ()=> opened;
+
+  function openDrawer(){
+    if(opened) return;
+    opened = true;
+    drawer.hidden = false;
+    requestAnimationFrame(()=>{ if(opened) drawer.classList.add("open"); });
+    burger.setAttribute("aria-expanded","true");
+    burger.setAttribute("aria-label", t("menu_close"));
+    document.documentElement.style.overflow = "hidden";
+    scrollLocked = true;
+    const first = drawer.querySelector("a, button");
+    if(first) first.focus();
+  }
+  function closeDrawer(restoreFocus){
+    if(!opened) return;
+    opened = false;
+    drawer.classList.remove("open");
+    burger.setAttribute("aria-expanded","false");
+    burger.setAttribute("aria-label", t("menu_open"));
+    if(scrollLocked){ document.documentElement.style.overflow = ""; scrollLocked = false; }
+    window.setTimeout(()=>{ if(!opened) drawer.hidden = true; }, 280);
+    if(restoreFocus !== false) burger.focus();
+  }
+
+  burger.addEventListener("click", ()=> isOpen() ? closeDrawer() : openDrawer());
+  drawer.addEventListener("click", (e)=>{ if(e.target.closest("a")) closeDrawer(false); });
+  document.addEventListener("keydown", (e)=>{ if(e.key === "Escape" && isOpen()) closeDrawer(); });
+  window.addEventListener("hashchange", ()=>{ if(isOpen()) closeDrawer(false); });
+
+  /* close the drawer when the layout switches back to desktop.
+     Uses a resize listener rather than matchMedia so no single missing
+     API can break the initial render below. */
+  let wasDesktop = window.innerWidth > 860;
+  window.addEventListener("resize", ()=>{
+    const isDesktop = window.innerWidth > 860;
+    if(isDesktop && !wasDesktop && isOpen()) closeDrawer(false);
+    wasDesktop = isDesktop;
+  });
+})();
+
+/* ---------------- init ---------------- */
+(function init(){
+  try{ const saved = localStorage.getItem("site-lang"); if(saved==="en"||saved==="zh") lang=saved; }catch(e){}
+  document.querySelectorAll("[data-set-lang]").forEach(btn=>{
+    btn.addEventListener("click", ()=> setLang(btn.getAttribute("data-set-lang")));
+  });
+  try{ applyStatic(); }catch(e){ if(window.console) console.error(e); }
+  try{ renderGrid(); }catch(e){ if(window.console) console.error(e); }
+  watchReveal(document);
+  window.addEventListener("hashchange", route);
+  try{ route(); }catch(e){ if(window.console) console.error(e); }
+})();
 </script>
 </body>
 </html>
