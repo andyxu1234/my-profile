@@ -69,7 +69,7 @@ Architected and delivered end to end, taking every P0–P5 milestone to completi
 
 ### 2. AI Football Prediction Platform
 `Apr 2026 – Jul 2026` ｜ Solo developer (frontend / backend / AI orchestration / deploy) ｜ Full-stack · Multi-LLM
-[Source](https://github.com/AndyXu-Citi/world-cup-prediction)
+[Source](https://github.com/andyxu1234/world-cup-prediction)
 
 Ten mainstream LLMs predicting match outcomes and exact scores side by side: LangGraph-orchestrated parallel calls with consensus aggregation and a confidence index, plus human-vs-AI voting and dual leaderboards — delivered to WeChat Mini Program, Web and APK from one codebase.
 

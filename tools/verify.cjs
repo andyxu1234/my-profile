@@ -5,6 +5,11 @@ const { JSDOM, VirtualConsole } = require("jsdom");
 const ROOT = "C:/andy/codebase/my-profile";
 const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
 
+// 真实账号与仓库地址集中在这里——账号改名时只改这一处
+const GH = "https://github.com/andyxu1234";
+const REPO_WC = GH + "/world-cup-prediction";
+const REPO_SB = GH + "/soul_buddy";
+
 const errors = [];
 const vc = new VirtualConsole();
 vc.on("jsdomError", (e) => { if (!/Not implemented/.test(e.message)) errors.push("jsdomError: " + e.message); });
@@ -52,7 +57,7 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
   check("B5 在线体验 -> 站内 demo",
     acts[0] && acts[0].getAttribute("href") === "projects/world-cup-prediction.html", acts[0] && acts[0].getAttribute("href"));
   check("B6 查看源码 -> GitHub 仓库",
-    acts[1] && acts[1].getAttribute("href") === "https://github.com/AndyXu-Citi/world-cup-prediction", acts[1] && acts[1].getAttribute("href"));
+    acts[1] && acts[1].getAttribute("href") === REPO_WC, acts[1] && acts[1].getAttribute("href"));
   check("B7 外链带 rel=noopener", acts[1] && acts[1].getAttribute("rel") === "noopener");
 
   // 占位项目（无 url）不应渲染出死链按钮
@@ -81,7 +86,6 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
   await wait(150);
 
   /* ============ D. GitHub 真实链接 ============ */
-  const GH = "https://github.com/andyxu1234";
   const gh = doc.querySelector('.contact-cards a[href*="github.com"]');
   check("D1 GitHub 卡片指向真实账号", gh && gh.getAttribute("href") === GH, gh && gh.getAttribute("href"));
   check("D2 GitHub 文案已更新", gh && gh.textContent.includes("github.com/andyxu1234"));
@@ -141,7 +145,8 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
   const rzh = fs.readFileSync(path.join(ROOT, "resume.md"), "utf8");
   check("G2 简历含四大块", ["## 关于我", "## 经历", "## 技能", "## 项目经历"].every((h) => rzh.includes(h)));
   check("G3 简历不含相对路径链接", !/\]\(projects\//.test(rzh), (rzh.match(/\]\(projects\//g) || []).length);
-  check("G4 简历含真实 GitHub 仓库", rzh.includes("https://github.com/AndyXu-Citi/world-cup-prediction"));
+  check("G4 简历含真实 GitHub 仓库", rzh.includes(REPO_WC), rzh.includes(REPO_WC) ? REPO_WC : "未找到");
+  check("G6 简历不含旧用户名 AndyXu-Citi", !rzh.includes("AndyXu-Citi"), (rzh.match(/AndyXu-Citi/g) || []).length + " 处");
   check("G5 简历项目顺序：SoulBuddy 在前，足球预测在后",
     rzh.indexOf("### 1. SoulBuddy") !== -1 && rzh.indexOf("### 2. AI 足球预测平台") !== -1,
     "SoulBuddy@" + rzh.indexOf("### 1. SoulBuddy") + " / 足球@" + rzh.indexOf("### 2. AI 足球预测平台"));
@@ -212,12 +217,34 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
 
   check("H10 demo 页导航含项目概览锚点", demo2.includes('href="#overview"') && demo2.includes('id="overview"'));
 
-  check("H11 soul-buddy 源码链接指向 andyxu1234 仓库",
-    /^https:\/\/github\.com\/andyxu1234\/soul_buddy$/.test((wSb && wSb.codeUrl) || ""), (wSb && wSb.codeUrl) || "(无)");
+  check("H11 soul-buddy 源码链接指向新账号仓库",
+    (wSb && wSb.codeUrl) === REPO_SB, (wSb && wSb.codeUrl) || "(无)");
 
   check("H12 soul-buddy 详情字段完整（6 条亮点 / 12 项技术栈）",
     !!wSb && (zh(wSb.highlights) || []).length === 6 && (wSb.stack || []).length === 12,
     wSb ? `${(zh(wSb.highlights) || []).length} 条亮点 / ${(wSb.stack || []).length} 项技术栈` : "缺失");
+
+  /* ============ I. 旧用户名清理（防回归） ============ */
+  const scanTargets = [
+    "index.html",
+    "projects/world-cup-prediction.html",
+    "resume.md",
+    "resume-en.md",
+    "tools/build-resume.cjs",
+    "tools/sync-project-overview.cjs",
+  ];
+  const leftover = scanTargets.filter((f) => {
+    const p = path.join(ROOT, f);
+    return fs.existsSync(p) && fs.readFileSync(p, "utf8").includes("AndyXu-Citi");
+  });
+  check("I1 全站无旧用户名 AndyXu-Citi 残留",
+    leftover.length === 0,
+    leftover.length ? leftover.join(", ") : `已扫描 ${scanTargets.length} 个文件`);
+
+  const repoOwners = [...demo2.matchAll(/https:\/\/github\.com\/([^"'/\s]+)\/world-cup-prediction/g)].map((m) => m[1]);
+  check("I2 demo 页所有仓库链接 owner 均为新账号",
+    repoOwners.length > 0 && repoOwners.every((o) => o === "andyxu1234"),
+    `${repoOwners.length} 处链接，owner = ${[...new Set(repoOwners)].join(" / ")}`);
 
   const pass = results.filter((r) => r.pass).length;
   console.log("\n=== 验证 ===");

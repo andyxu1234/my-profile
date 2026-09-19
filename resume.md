@@ -69,7 +69,7 @@
 
 ### 2. AI 足球预测平台（世界杯 · 五大联赛）
 `2026.04 – 2026.07` ｜ 独立开发（前端 / 后端 / AI 编排 / 部署） ｜ 全栈 · 多模型预测
-[源码](https://github.com/AndyXu-Citi/world-cup-prediction)
+[源码](https://github.com/andyxu1234/world-cup-prediction)
 
 让 10 个主流大模型同台预测比赛胜负与精确比分：LangGraph 编排并行调用 + 共识聚合 + 信心指数，配套人机投票、AI / 人类双维度排行榜，一套代码交付微信小程序 / Web / APK 多端。
 
