@@ -27,15 +27,18 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
 
   /* ============ A. 主页：项目模块 ============ */
   const cards = doc.querySelectorAll(".card");
-  check("A1 项目卡片数 = 5", cards.length === 5, cards.length);
+  check("A1 项目卡片数 = 6", cards.length === 6, cards.length);
   const nums = [...doc.querySelectorAll(".card-num")].map((e) => e.textContent.trim());
-  check("A2 卡片编号 01-05", nums.join(",") === "01,02,03,04,05", nums.join(","));
+  check("A2 卡片编号 01-06", nums.join(",") === "01,02,03,04,05,06", nums.join(","));
   const first = cards[0];
-  check("A3 首个卡片是 AI 足球预测平台",
-    first.querySelector("h3").textContent.includes("AI 足球预测平台"),
+  check("A3 首卡是 SoulBuddy（真实项目，排第一）",
+    first.querySelector("h3").textContent.includes("SoulBuddy"),
     first.querySelector("h3").textContent);
-  check("A4 首卡标签正确", first.querySelector(".card-tag").textContent.includes("全栈"), first.querySelector(".card-tag").textContent);
-  check("A5 首卡时间 2026.04 – 2026.07", first.querySelector(".card-period").textContent.includes("2026.04"), first.querySelector(".card-period").textContent);
+  check("A4 首卡标签含「桌面」", first.querySelector(".card-tag").textContent.includes("桌面"), first.querySelector(".card-tag").textContent);
+  check("A5 首卡时间 2026.09", first.querySelector(".card-period").textContent.includes("2026.09"), first.querySelector(".card-period").textContent);
+  check("A6 第二张卡是 AI 足球预测平台",
+    cards[1].querySelector("h3").textContent.includes("AI 足球预测平台"),
+    cards[1].querySelector("h3").textContent);
 
   /* ============ B. 详情页：真实链接按钮 ============ */
   await setHash("#/work/wc-prediction");
@@ -67,10 +70,13 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
   await wait(150);
   check("C3 切 EN 后指向 resume-en.md", dl.getAttribute("href") === "resume-en.md", dl.getAttribute("href"));
   check("C4 EN 下载名为英文", (dl.getAttribute("download") || "").includes("Resume"), dl.getAttribute("download"));
-  check("C5 切 EN 后卡片仍为 5", doc.querySelectorAll(".card").length === 5, doc.querySelectorAll(".card").length);
-  check("C6 EN 首卡标题为英文",
-    doc.querySelector(".card h3").textContent.includes("AI Football Prediction"),
+  check("C5 切 EN 后卡片仍为 6", doc.querySelectorAll(".card").length === 6, doc.querySelectorAll(".card").length);
+  check("C6 EN 首卡标题为英文（SoulBuddy）",
+    doc.querySelector(".card h3").textContent.includes("SoulBuddy"),
     doc.querySelector(".card h3").textContent);
+  check("C7 EN 第二卡为 AI Football Prediction",
+    doc.querySelectorAll(".card h3")[1].textContent.includes("AI Football Prediction"),
+    doc.querySelectorAll(".card h3")[1].textContent);
   click(doc.querySelector('[data-set-lang="zh"]'));
   await wait(150);
 
@@ -122,33 +128,52 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
   check("F6 projects/ 体积 < 3MB", projectsSize < 3 * 1024 * 1024, (projectsSize / 1024 / 1024).toFixed(2) + " MB");
 
   /* ============ G. 简历文件 ============ */
-  for (const [f, must] of [["resume.md", "AI 足球预测平台"], ["resume-en.md", "AI Football Prediction"]]) {
+  for (const [f, musts] of [
+    ["resume.md", ["SoulBuddy", "AI 足球预测平台"]],
+    ["resume-en.md", ["SoulBuddy", "AI Football Prediction"]],
+  ]) {
     const p = path.join(ROOT, f);
     const ok = fs.existsSync(p);
     const t = ok ? fs.readFileSync(p, "utf8") : "";
-    check(`G1 ${f} 存在且含新项目`, ok && t.includes(must), ok ? t.length + " chars" : "缺失");
+    const hit = musts.filter((m) => t.includes(m));
+    check(`G1 ${f} 含全部真实项目`, ok && hit.length === musts.length, ok ? `${hit.length}/${musts.length} 项` : "缺失");
   }
   const rzh = fs.readFileSync(path.join(ROOT, "resume.md"), "utf8");
   check("G2 简历含四大块", ["## 关于我", "## 经历", "## 技能", "## 项目经历"].every((h) => rzh.includes(h)));
   check("G3 简历不含相对路径链接", !/\]\(projects\//.test(rzh), (rzh.match(/\]\(projects\//g) || []).length);
   check("G4 简历含真实 GitHub 仓库", rzh.includes("https://github.com/AndyXu-Citi/world-cup-prediction"));
+  check("G5 简历项目顺序：SoulBuddy 在前，足球预测在后",
+    rzh.indexOf("### 1. SoulBuddy") !== -1 && rzh.indexOf("### 2. AI 足球预测平台") !== -1,
+    "SoulBuddy@" + rzh.indexOf("### 1. SoulBuddy") + " / 足球@" + rzh.indexOf("### 2. AI 足球预测平台"));
 
   /* ============ H. 卡片直达演示页 + 概览内容同步 ============ */
   const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   const zh = (v) => (v && typeof v === "object" ? v.zh : v);
   const WORKS = window.eval("WORKS");
-  const w0 = WORKS[0];
-  const demoAbs2 = path.join(ROOT, String(w0.detailUrl || ""));
+  // 一律按 id 取项目，不按索引——否则新增项目会让这些断言整体错位
+  const w0 = WORKS.find((w) => w.id === "wc-prediction");
+  const wSb = WORKS.find((w) => w.id === "soul-buddy");
+  const demoAbs2 = path.join(ROOT, String((w0 && w0.detailUrl) || ""));
 
-  check("H1 首项目配置 detailUrl 且演示页存在",
-    w0.detailUrl === "projects/world-cup-prediction.html" && fs.existsSync(demoAbs2), w0.detailUrl || "(未配置)");
+  check("H0 soul-buddy 排在第一位且指向线上文档站",
+    WORKS[0].id === "soul-buddy" && /^https:\/\/andyxu1234\.github\.io\/soul_buddy\/$/.test((wSb && wSb.detailUrl) || ""),
+    WORKS[0].id + " -> " + ((wSb && wSb.detailUrl) || "(无)"));
 
-  window.location.hash = "";
-  await wait(60);
-  try { window.openDetail(w0.id); } catch (e) { /* jsdom 不实现整页导航，忽略 */ }
-  await wait(60);
-  const hAfter = window.location.hash;
-  check("H2 有 detailUrl 的卡片走整页跳转，不进 hash 详情视图", hAfter === "" || hAfter === "#/", "hash=" + hAfter);
+  check("H1 wc-prediction 配置站内演示页 detailUrl 且文件存在",
+    !!w0 && w0.detailUrl === "projects/world-cup-prediction.html" && fs.existsSync(demoAbs2), (w0 && w0.detailUrl) || "(未配置)");
+
+  const whole = WORKS.filter((x) => x.detailUrl);
+  const bad = [];
+  for (const w of whole) {
+    window.location.hash = "";
+    await wait(40);
+    try { window.openDetail(w.id); } catch (e) { /* jsdom 不实现整页导航，忽略 */ }
+    await wait(40);
+    const h = window.location.hash;
+    if (!(h === "" || h === "#/")) bad.push(w.id + "=hash:" + h);
+  }
+  check("H2 带 detailUrl 的项目全部走整页跳转（含站外链接），不进 hash 详情视图",
+    bad.length === 0, bad.length ? bad.join(",") : whole.map((x) => x.id).join(" + ") + " 共 " + whole.length + " 个");
 
   const plain = WORKS.find((w) => !w.detailUrl);
   if (plain) {
@@ -186,6 +211,13 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
     /class="nav-back" href="\.\.\/index\.html"/.test(demo2) && iBack !== -1 && iLinks !== -1 && iBack < iLinks);
 
   check("H10 demo 页导航含项目概览锚点", demo2.includes('href="#overview"') && demo2.includes('id="overview"'));
+
+  check("H11 soul-buddy 源码链接指向 andyxu1234 仓库",
+    /^https:\/\/github\.com\/andyxu1234\/soul_buddy$/.test((wSb && wSb.codeUrl) || ""), (wSb && wSb.codeUrl) || "(无)");
+
+  check("H12 soul-buddy 详情字段完整（6 条亮点 / 12 项技术栈）",
+    !!wSb && (zh(wSb.highlights) || []).length === 6 && (wSb.stack || []).length === 12,
+    wSb ? `${(zh(wSb.highlights) || []).length} 条亮点 / ${(wSb.stack || []).length} 项技术栈` : "缺失");
 
   const pass = results.filter((r) => r.pass).length;
   console.log("\n=== 验证 ===");

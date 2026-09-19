@@ -48,7 +48,26 @@
 
 ## 项目经历
 
-### 1. AI 足球预测平台（世界杯 · 五大联赛）
+### 1. SoulBuddy · 桌面 AI Coding Agent
+`2026.09 – 至今` ｜ 独立开发（Electron 桌面端 / Python 内核 / 架构设计与评审） ｜ 桌面 Agent · Agent 运行时
+[源码](https://github.com/andyxu1234/soul_buddy) ｜ [在线体验](https://andyxu1234.github.io/soul_buddy/)
+
+一个「真能干活」的桌面 coding agent：Electron 桌面壳 + FastAPI 本地 sidecar + 真 LLM tool-calling loop，把权限门、审计链、上下文压缩与三层记忆做成一套可运行的完整 harness——不是演示，是能真的读写代码、执行命令的桌面助手。
+
+从架构设计到交付独立完成，单月推进 P0–P5 全部里程碑：后端 13,175 行 Python、桌面端 7,724 行 TS/TSX，26 个测试文件 316 条用例。内核替换掉教学版「用正则匹配意图」的假 agent，改为真实模型的 tool-calling 循环，并通过归一化层（ToolSpec / ToolCall / ModelTurn）把 DeepSeek / Anthropic / OpenAI 收敛到同一套接口，provider 可切换。安全上把权限提升为顶层独立包，避免 MCP、skill 等新增执行路径绕过权限门；并针对「用户点一次允许就能 cat ~/.ssh/id_rsa」这一真实缺口，补上 bash 命令字符串内的路径扫描。桌面端 sidecar 采用本地 TCP + 随机端口 + 一次性 token + httpOnly cookie，token 只在 main 进程内流转、不落 stdout，preload 走 contextIsolated 只暴露安全封装。另交付 MkDocs 文档站（22 份模块文档 + 10 份架构文档），含设计评审识别出的 5 个架构缺陷与 9 份 ADR。
+
+**核心工作与亮点**
+
+- 真 LLM tool-calling loop 取代教学版的正则意图匹配；Provider 可切换（DeepSeek / Anthropic / OpenAI），经 ToolSpec / ToolCall / ModelTurn 归一化层统一到同一套工具协议
+- 权限治理提升为顶层独立包（防 MCP / skill 等新执行路径绕过），并扫描 bash 命令字符串内的路径、对 hard_deny 做标准化后分段正则匹配，堵住 rm  -rf、RM -RF、echo x && rm -rf / 一类绕过手法
+- 桌面端安全边界：sidecar 用本地 TCP + 随机端口 + 一次性 token + httpOnly cookie，token 只在 main 进程内流转（经 env 传递、不落 stdout）；preload 走 contextIsolated 仅暴露安全封装，不泄露 Node API
+- 上下文层按 provider 窗口 ×0.75 触发压缩，截断 → 去重 → 剪枝 → 摘要四级降级链（摘要失败自动降级不抛）；PromptSegment 按预算拼装，丢弃了哪一段可解释
+- 三层记忆（user 优先于 workspace 优先于 cloud）+ SQLite 派生索引：JSONL 是唯一真相，索引漂移时降级为 degraded 并支持从 JSONL 全量重建
+- 交付 PyInstaller onefile 打包的 26.6MB sidecar exe，并用无 GUI 冒烟脚本直拉打包产物，端到端验证握手、同源托管与鉴权链路
+
+**技术栈**：Electron · React 18 · TypeScript · electron-vite · FastAPI · Python · SQLAlchemy 2.0 · SQLite · SSE · MCP · PyInstaller · MkDocs
+
+### 2. AI 足球预测平台（世界杯 · 五大联赛）
 `2026.04 – 2026.07` ｜ 独立开发（前端 / 后端 / AI 编排 / 部署） ｜ 全栈 · 多模型预测
 [源码](https://github.com/AndyXu-Citi/world-cup-prediction)
 
@@ -66,7 +85,7 @@
 
 **技术栈**：Taro 4.1 · React 18 · TypeScript · Zustand · FastAPI · SQLAlchemy 2.0 · MySQL 8.0 · LangGraph · OfoxAI · APScheduler · Docker Compose · Nginx
 
-### 2. 企业知识库智能问答系统
+### 3. 企业知识库智能问答系统
 `2025.02 – 至今` ｜ 架构设计与核心开发 ｜ RAG · 检索增强
 
 面向企业内部资料的智能问答系统：多格式文档解析、混合检索加重排、答案引用溯源，服务数千名员工，是公司内部使用最频繁的 AI 工具之一。
@@ -82,7 +101,7 @@
 
 **技术栈**：Python · FastAPI · LangChain · Milvus · Elasticsearch · Redis · React · vLLM
 
-### 3. 多 Agent 数据分析助手
+### 4. 多 Agent 数据分析助手
 `2024.05 – 2025.01` ｜ 主导设计与开发 ｜ Agent · 智能体
 
 用自然语言问数据：Agent 自动拆解问题、生成并自检 SQL、执行分析，最后输出图表与结论式报告，让业务同学无需写 SQL 也能自助分析。
@@ -98,7 +117,7 @@
 
 **技术栈**：Python · LangGraph · Function Calling · MySQL · ECharts · Next.js · DeepSeek
 
-### 4. LLM 网关与推理加速平台
+### 5. LLM 网关与推理加速平台
 `2023.11 – 2024.04` ｜ 从 0 到 1 主导建设 ｜ 模型服务 · MaaS
 
 统一接入十余个大模型的内部网关：兼容 OpenAI 协议、多租户限流、语义缓存、故障降级与全链路成本观测，让上层应用像调用一个函数一样使用大模型。
@@ -114,7 +133,7 @@
 
 **技术栈**：Python · vLLM · Redis · Prometheus · Grafana · Docker · Nginx
 
-### 5. 智能客服工单助手
+### 6. 智能客服工单助手
 `2023.03 – 2023.10` ｜ 核心开发 ｜ NLP 应用
 
 面向客服团队的 AI 副驾驶：进线工单自动分类、摘要与话术推荐，“AI 起草 + 人工确认”的人机协作模式让首次响应时长大幅下降。

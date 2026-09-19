@@ -48,7 +48,26 @@ Focused on backend and systems; multiple university scholarships.
 
 ## Selected projects
 
-### 1. AI Football Prediction Platform
+### 1. SoulBuddy · Desktop AI Coding Agent
+`Sep 2026 – Present` ｜ Solo developer (Electron desktop, Python kernel, architecture design & review) ｜ Desktop Agent · Agent Runtime
+[Source](https://github.com/andyxu1234/soul_buddy) ｜ [Live demo](https://andyxu1234.github.io/soul_buddy/)
+
+A desktop coding agent that actually works: Electron shell + FastAPI local sidecar + a real LLM tool-calling loop, wiring permission gating, an audit chain, context compaction and three-tier memory into one runnable harness — not a demo, but a desktop assistant that really reads and writes code and runs commands.
+
+Architected and delivered end to end, taking every P0–P5 milestone to completion within a single month: 13,175 lines of Python on the backend, 7,724 lines of TS/TSX on the desktop side, 26 test files and 316 cases. The kernel replaces the teaching version's regex-intent fake agent with a real model tool-calling loop, and a normalisation layer (ToolSpec / ToolCall / ModelTurn) collapses DeepSeek, Anthropic and OpenAI onto one interface so providers can be switched at runtime. On security, permissions were promoted to a top-level package so that new execution paths such as MCP and skills cannot bypass the gate, and a real gap — one user approval was enough to `cat ~/.ssh/id_rsa` — was closed by scanning paths inside bash command strings. The desktop sidecar runs on local TCP with a random port, a one-time token and an httpOnly cookie; the token never leaves the main process and is passed by env rather than stdout, while the preload bridge is contextIsolated and exposes only safe wrappers. A MkDocs site of 22 module docs and 10 architecture docs documents the system, including the 5 architectural defects and 9 ADRs surfaced in design review.
+
+**Highlights**
+
+- A real LLM tool-calling loop replaces the teaching version's regex intent matching; providers (DeepSeek / Anthropic / OpenAI) are switchable and normalised onto one tool protocol via ToolSpec / ToolCall / ModelTurn
+- Permissions promoted to a top-level package so new execution paths (MCP, skills) cannot bypass the gate; paths inside bash command strings are scanned and hard_deny patterns are normalised then regex-matched per segment, closing bypasses such as rm  -rf, RM -RF or echo x && rm -rf /
+- Desktop security boundary: the sidecar uses local TCP with a random port, a one-time token and an httpOnly cookie; the token stays inside the main process (passed by env, never via stdout), and the contextIsolated preload exposes only safe wrappers without leaking Node APIs
+- The context layer compacts at 0.75× the provider window with a four-stage degradation chain (truncate → dedupe → prune → summarise) that falls back instead of throwing; prompt segments are assembled under budget with an explainable list of what was dropped
+- Three-tier memory (user over workspace over cloud) plus a SQLite derived index: JSONL stays the single source of truth, and index drift degrades gracefully with a full rebuild from JSONL
+- Ships a 26.6MB PyInstaller onefile sidecar executable, verified end to end by a GUI-less smoke script that drives the packaged binary through handshake, same-origin hosting and auth
+
+**Tech stack**：Electron · React 18 · TypeScript · electron-vite · FastAPI · Python · SQLAlchemy 2.0 · SQLite · SSE · MCP · PyInstaller · MkDocs
+
+### 2. AI Football Prediction Platform
 `Apr 2026 – Jul 2026` ｜ Solo developer (frontend / backend / AI orchestration / deploy) ｜ Full-stack · Multi-LLM
 [Source](https://github.com/AndyXu-Citi/world-cup-prediction)
 
@@ -66,7 +85,7 @@ Delivered the entire stack solo and open-sourced it (MIT, 79 commits). The backe
 
 **Tech stack**：Taro 4.1 · React 18 · TypeScript · Zustand · FastAPI · SQLAlchemy 2.0 · MySQL 8.0 · LangGraph · OfoxAI · APScheduler · Docker Compose · Nginx
 
-### 2. Enterprise Knowledge-Base QA
+### 3. Enterprise Knowledge-Base QA
 `Feb 2025 – Present` ｜ Architect & core developer ｜ RAG
 
 An internal Q&A system over company knowledge: multi-format document parsing, hybrid retrieval with reranking and citation-backed answers — serving thousands of employees as one of the most-used internal AI tools.
@@ -82,7 +101,7 @@ I designed the architecture end to end and built the core. It ingests hundreds o
 
 **Tech stack**：Python · FastAPI · LangChain · Milvus · Elasticsearch · Redis · React · vLLM
 
-### 3. Multi-Agent Data Analyst
+### 4. Multi-Agent Data Analyst
 `May 2024 – Jan 2025` ｜ Led design & development ｜ Agents
 
 Ask data in plain language: agents decompose the question, generate and self-check SQL, run the analysis, then return charts and a conclusion-style report — self-serve analytics without writing SQL.
@@ -98,7 +117,7 @@ A pocket data analyst for business teams. Built on function calling and multi-ag
 
 **Tech stack**：Python · LangGraph · Function Calling · MySQL · ECharts · Next.js · DeepSeek
 
-### 4. LLM Gateway & Inference Platform
+### 5. LLM Gateway & Inference Platform
 `Nov 2023 – Apr 2024` ｜ Built from zero to one ｜ Model Serving
 
 An internal gateway unifying a dozen models: OpenAI-compatible API, multi-tenant rate limiting, semantic caching, failover routing and full-chain cost observability — so apps consume LLMs like a single function call.
@@ -114,7 +133,7 @@ As internal AI apps multiplied, model calls sprawled and costs got out of contro
 
 **Tech stack**：Python · vLLM · Redis · Prometheus · Grafana · Docker · Nginx
 
-### 5. Customer-Service Copilot
+### 6. Customer-Service Copilot
 `Mar 2023 – Oct 2023` ｜ Core developer ｜ NLP App
 
 An AI copilot for support teams: automatic ticket classification, summarization and reply suggestions. The “AI drafts, human confirms” workflow cut first-response time dramatically.

@@ -859,6 +859,43 @@ const I18N = {
 /* ---------------- works data ---------------- */
 const WORKS = [
   {
+    id:"soul-buddy", emoji:"🖥️", color:"#0369a1",
+    detailUrl:"https://andyxu1234.github.io/soul_buddy/",
+    tryUrl:"https://andyxu1234.github.io/soul_buddy/",
+    codeUrl:"https://github.com/andyxu1234/soul_buddy",
+    tag:{zh:"桌面 Agent · Agent 运行时",en:"Desktop Agent · Agent Runtime"},
+    period:{zh:"2026.09 – 至今",en:"Sep 2026 – Present"},
+    role:{zh:"独立开发（Electron 桌面端 / Python 内核 / 架构设计与评审）",en:"Solo developer (Electron desktop, Python kernel, architecture design & review)"},
+    title:{zh:"SoulBuddy · 桌面 AI Coding Agent",en:"SoulBuddy · Desktop AI Coding Agent"},
+    summary:{
+      zh:"一个「真能干活」的桌面 coding agent：Electron 桌面壳 + FastAPI 本地 sidecar + 真 LLM tool-calling loop，把权限门、审计链、上下文压缩与三层记忆做成一套可运行的完整 harness——不是演示，是能真的读写代码、执行命令的桌面助手。",
+      en:"A desktop coding agent that actually works: Electron shell + FastAPI local sidecar + a real LLM tool-calling loop, wiring permission gating, an audit chain, context compaction and three-tier memory into one runnable harness — not a demo, but a desktop assistant that really reads and writes code and runs commands."
+    },
+    desc:{
+      zh:"从架构设计到交付独立完成，单月推进 P0–P5 全部里程碑：后端 13,175 行 Python、桌面端 7,724 行 TS/TSX，26 个测试文件 316 条用例。内核替换掉教学版「用正则匹配意图」的假 agent，改为真实模型的 tool-calling 循环，并通过归一化层（ToolSpec / ToolCall / ModelTurn）把 DeepSeek / Anthropic / OpenAI 收敛到同一套接口，provider 可切换。安全上把权限提升为顶层独立包，避免 MCP、skill 等新增执行路径绕过权限门；并针对「用户点一次允许就能 cat ~/.ssh/id_rsa」这一真实缺口，补上 bash 命令字符串内的路径扫描。桌面端 sidecar 采用本地 TCP + 随机端口 + 一次性 token + httpOnly cookie，token 只在 main 进程内流转、不落 stdout，preload 走 contextIsolated 只暴露安全封装。另交付 MkDocs 文档站（22 份模块文档 + 10 份架构文档），含设计评审识别出的 5 个架构缺陷与 9 份 ADR。",
+      en:"Architected and delivered end to end, taking every P0–P5 milestone to completion within a single month: 13,175 lines of Python on the backend, 7,724 lines of TS/TSX on the desktop side, 26 test files and 316 cases. The kernel replaces the teaching version's regex-intent fake agent with a real model tool-calling loop, and a normalisation layer (ToolSpec / ToolCall / ModelTurn) collapses DeepSeek, Anthropic and OpenAI onto one interface so providers can be switched at runtime. On security, permissions were promoted to a top-level package so that new execution paths such as MCP and skills cannot bypass the gate, and a real gap — one user approval was enough to `cat ~/.ssh/id_rsa` — was closed by scanning paths inside bash command strings. The desktop sidecar runs on local TCP with a random port, a one-time token and an httpOnly cookie; the token never leaves the main process and is passed by env rather than stdout, while the preload bridge is contextIsolated and exposes only safe wrappers. A MkDocs site of 22 module docs and 10 architecture docs documents the system, including the 5 architectural defects and 9 ADRs surfaced in design review."
+    },
+    highlights:{
+      zh:[
+        "真 LLM tool-calling loop 取代教学版的正则意图匹配；Provider 可切换（DeepSeek / Anthropic / OpenAI），经 ToolSpec / ToolCall / ModelTurn 归一化层统一到同一套工具协议",
+        "权限治理提升为顶层独立包（防 MCP / skill 等新执行路径绕过），并扫描 bash 命令字符串内的路径、对 hard_deny 做标准化后分段正则匹配，堵住 rm  -rf、RM -RF、echo x && rm -rf / 一类绕过手法",
+        "桌面端安全边界：sidecar 用本地 TCP + 随机端口 + 一次性 token + httpOnly cookie，token 只在 main 进程内流转（经 env 传递、不落 stdout）；preload 走 contextIsolated 仅暴露安全封装，不泄露 Node API",
+        "上下文层按 provider 窗口 ×0.75 触发压缩，截断 → 去重 → 剪枝 → 摘要四级降级链（摘要失败自动降级不抛）；PromptSegment 按预算拼装，丢弃了哪一段可解释",
+        "三层记忆（user 优先于 workspace 优先于 cloud）+ SQLite 派生索引：JSONL 是唯一真相，索引漂移时降级为 degraded 并支持从 JSONL 全量重建",
+        "交付 PyInstaller onefile 打包的 26.6MB sidecar exe，并用无 GUI 冒烟脚本直拉打包产物，端到端验证握手、同源托管与鉴权链路"
+      ],
+      en:[
+        "A real LLM tool-calling loop replaces the teaching version's regex intent matching; providers (DeepSeek / Anthropic / OpenAI) are switchable and normalised onto one tool protocol via ToolSpec / ToolCall / ModelTurn",
+        "Permissions promoted to a top-level package so new execution paths (MCP, skills) cannot bypass the gate; paths inside bash command strings are scanned and hard_deny patterns are normalised then regex-matched per segment, closing bypasses such as rm  -rf, RM -RF or echo x && rm -rf /",
+        "Desktop security boundary: the sidecar uses local TCP with a random port, a one-time token and an httpOnly cookie; the token stays inside the main process (passed by env, never via stdout), and the contextIsolated preload exposes only safe wrappers without leaking Node APIs",
+        "The context layer compacts at 0.75× the provider window with a four-stage degradation chain (truncate → dedupe → prune → summarise) that falls back instead of throwing; prompt segments are assembled under budget with an explainable list of what was dropped",
+        "Three-tier memory (user over workspace over cloud) plus a SQLite derived index: JSONL stays the single source of truth, and index drift degrades gracefully with a full rebuild from JSONL",
+        "Ships a 26.6MB PyInstaller onefile sidecar executable, verified end to end by a GUI-less smoke script that drives the packaged binary through handshake, same-origin hosting and auth"
+      ]
+    },
+    stack:["Electron","React 18","TypeScript","electron-vite","FastAPI","Python","SQLAlchemy 2.0","SQLite","SSE","MCP","PyInstaller","MkDocs"]
+  },
+  {
     id:"wc-prediction", emoji:"⚽", color:"#d9561f",
     detailUrl:"projects/world-cup-prediction.html",
     tryUrl:"projects/world-cup-prediction.html",
