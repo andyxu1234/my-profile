@@ -133,6 +133,60 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
   check("G3 简历不含相对路径链接", !/\]\(projects\//.test(rzh), (rzh.match(/\]\(projects\//g) || []).length);
   check("G4 简历含真实 GitHub 仓库", rzh.includes("https://github.com/AndyXu-Citi/world-cup-prediction"));
 
+  /* ============ H. 卡片直达演示页 + 概览内容同步 ============ */
+  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const zh = (v) => (v && typeof v === "object" ? v.zh : v);
+  const WORKS = window.eval("WORKS");
+  const w0 = WORKS[0];
+  const demoAbs2 = path.join(ROOT, String(w0.detailUrl || ""));
+
+  check("H1 首项目配置 detailUrl 且演示页存在",
+    w0.detailUrl === "projects/world-cup-prediction.html" && fs.existsSync(demoAbs2), w0.detailUrl || "(未配置)");
+
+  window.location.hash = "";
+  await wait(60);
+  try { window.openDetail(w0.id); } catch (e) { /* jsdom 不实现整页导航，忽略 */ }
+  await wait(60);
+  const hAfter = window.location.hash;
+  check("H2 有 detailUrl 的卡片走整页跳转，不进 hash 详情视图", hAfter === "" || hAfter === "#/", "hash=" + hAfter);
+
+  const plain = WORKS.find((w) => !w.detailUrl);
+  if (plain) {
+    window.openDetail(plain.id);
+    await wait(60);
+    check("H3 无 detailUrl 的项目仍进 hash 详情视图",
+      window.location.hash === "#/work/" + plain.id, `${plain.id} -> hash=${window.location.hash}`);
+  }
+  await setHash("#/");
+
+  const demo2 = fs.readFileSync(demoAbs2, "utf8");
+  check("H4 demo 页概览标记完好、未被重复注入",
+    (demo2.match(/OVERVIEW:START/g) || []).length === 1 &&
+    (demo2.match(/OVERVIEW:END/g) || []).length === 1 &&
+    (demo2.match(/class="overview-card/g) || []).length === 1,
+    `START=${(demo2.match(/OVERVIEW:START/g) || []).length} card=${(demo2.match(/class="overview-card/g) || []).length}`);
+
+  const ovBody = demo2.slice(demo2.indexOf("<!-- OVERVIEW:START -->"), demo2.indexOf("<!-- OVERVIEW:END -->"));
+  check("H5 概览正文与主页数据一致（无内容漂移）",
+    ovBody.includes(esc(zh(w0.summary))) && ovBody.includes(esc(zh(w0.desc))));
+
+  const hlList = zh(w0.highlights) || [];
+  const hlHit = hlList.filter((h) => ovBody.includes(esc(h))).length;
+  check("H6 亮点条目全部同步", hlHit === hlList.length, `${hlHit}/${hlList.length}`);
+
+  const stk = (w0.stack || []).filter((s) => ovBody.includes(esc(s))).length;
+  check("H7 技术栈条目全部同步", stk === (w0.stack || []).length, `${stk}/${(w0.stack || []).length}`);
+
+  check("H8 概览含源码按钮且不自引用本页",
+    /ov-primary/.test(ovBody) && !ovBody.includes(String(w0.tryUrl)));
+
+  const iBack = demo2.indexOf('class="nav-back"');
+  const iLinks = demo2.indexOf('class="nav-links"');
+  check("H9 demo 页返回入口存在，且在移动端不会被隐藏的 .nav-links 之外",
+    /class="nav-back" href="\.\.\/index\.html"/.test(demo2) && iBack !== -1 && iLinks !== -1 && iBack < iLinks);
+
+  check("H10 demo 页导航含项目概览锚点", demo2.includes('href="#overview"') && demo2.includes('id="overview"'));
+
   const pass = results.filter((r) => r.pass).length;
   console.log("\n=== 验证 ===");
   results.forEach((r) => console.log((r.pass ? "  PASS  " : "  FAIL  ") + r.n + (r.e ? "   [" + r.e + "]" : "")));

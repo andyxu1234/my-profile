@@ -882,6 +882,186 @@
             background: rgba(255, 215, 0, 0.3);
             transform: rotate(90deg);
         }
+
+        /* ---------- 返回作品集入口（始终可见，不随 .nav-links 在移动端隐藏） ---------- */
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            min-width: 0;
+        }
+
+        .nav-back {
+            display: inline-block;
+            flex: none;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 0.4rem 0.85rem;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 999px;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .nav-back:hover {
+            color: var(--accent-gold);
+            border-color: var(--accent-gold);
+            background: rgba(255, 215, 0, 0.08);
+        }
+
+        /* ---------- 项目概览（正文由 tools/sync-project-overview.cjs 注入，勿手改标记间内容） ---------- */
+        .overview-meta {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.6rem;
+            margin-bottom: 2rem;
+        }
+
+        .overview-meta span {
+            font-size: 0.78rem;
+            letter-spacing: 0.06em;
+            color: var(--text-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 999px;
+            padding: 0.35rem 0.9rem;
+        }
+
+        .overview-meta span.is-accent {
+            color: var(--accent-gold);
+            border-color: rgba(255, 215, 0, 0.4);
+        }
+
+        .overview-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: clamp(1.5rem, 3vw, 2.75rem);
+        }
+
+        .overview-card .ov-lead {
+            color: var(--text-primary);
+            font-size: 1.05rem;
+            line-height: 1.75;
+            margin-bottom: 1.5rem;
+        }
+
+        .overview-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1.1em;
+        }
+
+        .overview-card p:last-child {
+            margin-bottom: 0;
+        }
+
+        .overview-sub {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent-blue);
+            margin: 2.75rem 0 1.25rem;
+        }
+
+        .overview-list {
+            list-style: none;
+            display: grid;
+            gap: 0.95rem;
+        }
+
+        .overview-list li {
+            display: flex;
+            gap: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .overview-list li::before {
+            content: '';
+            flex: none;
+            width: 6px;
+            height: 6px;
+            margin-top: 0.62em;
+            border-radius: 50%;
+            background: var(--accent-gold);
+        }
+
+        .overview-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .overview-chips span {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            background: rgba(0, 212, 255, 0.08);
+            border: 1px solid rgba(0, 212, 255, 0.22);
+            border-radius: 6px;
+            padding: 0.35rem 0.7rem;
+        }
+
+        .overview-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 2.5rem;
+        }
+
+        .overview-actions a {
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 0.7rem 1.4rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .ov-primary {
+            background: var(--gradient-gold);
+            color: #0a0e27;
+        }
+
+        .ov-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 215, 0, 0.25);
+        }
+
+        .ov-ghost {
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .ov-ghost:hover {
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+
+        /* 768~1100px 之间导航项会挤，收紧间距 */
+        @media (max-width: 1100px) and (min-width: 769px) {
+            .nav-links {
+                gap: 1.1rem;
+            }
+
+            .nav-links a {
+                font-size: 0.82rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 1.35rem;
+            }
+
+            .nav-back {
+                font-size: 0.78rem;
+                padding: 0.35rem 0.7rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -891,8 +1071,12 @@
     <!-- Navigation -->
     <nav id="navbar">
         <div class="nav-content">
-            <div class="logo">⚽ AI WORLD CUP</div>
+            <div class="nav-left">
+                <a class="nav-back" href="../index.html">← 作品集</a>
+                <div class="logo">⚽ AI WORLD CUP</div>
+            </div>
             <ul class="nav-links">
+                <li><a href="#overview">项目概览</a></li>
                 <li><a href="#features">功能亮点</a></li>
                 <li><a href="#screenshots">界面展示</a></li>
                 <li><a href="#ai-models">AI阵容</a></li>
@@ -935,6 +1119,53 @@
                 <path d="M7 10l5 5 5-5H7z"/>
             </svg>
         </div>
+    </section>
+
+    <!-- Overview Section（正文由 tools/sync-project-overview.cjs 注入，勿手改标记之间） -->
+    <section id="overview">
+        <div class="section-header animate-on-scroll">
+            <div class="section-tag">Overview</div>
+            <h2 class="section-title">项目概览</h2>
+            <p class="section-desc">背景、方案与关键工程决策</p>
+        </div>
+        <!-- OVERVIEW:START -->
+        <div class="overview-meta">
+            <span class="is-accent">全栈 · 多模型预测</span>
+            <span>2026.04 – 2026.07</span>
+            <span>独立开发（前端 / 后端 / AI 编排 / 部署）</span>
+        </div>
+
+        <div class="overview-card animate-on-scroll">
+            <p class="ov-lead">让 10 个主流大模型同台预测比赛胜负与精确比分：LangGraph 编排并行调用 + 共识聚合 + 信心指数，配套人机投票、AI / 人类双维度排行榜，一套代码交付微信小程序 / Web / APK 多端。</p>
+            <p>从 0 到 1 独立完成全栈交付，项目已开源（MIT，79 次提交）。后端是 FastAPI + SQLAlchemy 2.0 异步服务（18 张业务表 / 50+ 端点 / 17 个 Alembic 迁移版本），通过 OfoxAI 统一网关接入 10 个国内外主流大模型，用 LangGraph StateGraph 编排 load_match → parallel_predict → validate → aggregate → summary 链路，把并行预测、失败重试与多模型异构输出的自适应解析收敛成一条可测的流水线；模型阵容由 ai_models 表驱动，增删启停无需改代码。数据侧接入 Highlightly 足球数据 API，APScheduler 跑 6 个 cron job（比赛同步 / 预测生成 / 积分榜 / 缓存刷新 / 赔率快照 / Telegram 推送），赛前赔率按 bookmaker + 市场 + 日期做追加式快照，为预测准确性评估提供对照基线。前端用 Taro 一套代码跨编译微信小程序与 H5，并推进去微信化，落地独立 Web 与 APK（WebView 壳）及手机号 / 邮箱登录。</p>
+            <h3 class="overview-sub">核心工作与亮点</h3>
+            <ul class="overview-list">
+                <li>基于 LangGraph 编排多 Agent 预测链路（load_match → parallel_predict → validate → aggregate → summary）：并行调用 10 个模型，含失败重试、异构输出自适应解析与共识聚合（信心指数）</li>
+                <li>模型阵容数据库驱动（ai_models 表），模型增删改 / 启停无需改动代码，支撑阵容动态扩展</li>
+                <li>AI / 人类双维度排行榜：独立统计胜负命中率与精确比分命中率，支持多联赛筛选与战绩追溯；并用「打脸合集」自动汇总高信心翻车案例</li>
+                <li>异步 SQLAlchemy 2.0 + asyncmy + TTLCache 本地缓存 + APScheduler 缓存预热；赛前赔率追加式快照（bookmaker / 市场 / 日期唯一约束）为准确性评估提供对照</li>
+                <li>多端工程化：Taro 一套代码跨编译微信小程序 / H5，推进去微信化落地独立 Web 与 APK（WebView 壳）；Docker Compose + Nginx 部署</li>
+            </ul>
+            <h3 class="overview-sub">技术栈</h3>
+            <div class="overview-chips">
+                <span>Taro 4.1</span>
+                <span>React 18</span>
+                <span>TypeScript</span>
+                <span>Zustand</span>
+                <span>FastAPI</span>
+                <span>SQLAlchemy 2.0</span>
+                <span>MySQL 8.0</span>
+                <span>LangGraph</span>
+                <span>OfoxAI</span>
+                <span>APScheduler</span>
+                <span>Docker Compose</span>
+                <span>Nginx</span>
+            </div>
+            <div class="overview-actions">
+                <a class="ov-primary" href="https://github.com/AndyXu-Citi/world-cup-prediction" target="_blank" rel="noopener">查看源码 ↗</a>
+            </div>
+        </div>
+        <!-- OVERVIEW:END -->
     </section>
 
     <!-- Features Section -->

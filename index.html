@@ -860,6 +860,7 @@ const I18N = {
 const WORKS = [
   {
     id:"wc-prediction", emoji:"⚽", color:"#d9561f",
+    detailUrl:"projects/world-cup-prediction.html",
     tryUrl:"projects/world-cup-prediction.html",
     codeUrl:"https://github.com/AndyXu-Citi/world-cup-prediction",
     tag:{zh:"全栈 · 多模型预测",en:"Full-stack · Multi-LLM"},
@@ -1123,6 +1124,8 @@ function showHome(){
   window.scrollTo({top:0,behavior:"auto"});
 }
 function openDetail(id){
+  const w = WORKS.find(x=>x.id===id);
+  if(w && w.detailUrl){ location.href = w.detailUrl; return; }
   location.hash = "#/work/"+id;
 }
 function goHome(){ location.hash = "#/"; }
