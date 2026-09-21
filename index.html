@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Andy · AI 应用开发工程师 · 个人主页</title>
-<meta name="description" content="AI 应用开发工程师个人主页：RAG 知识库、多 Agent 系统、LLM 网关等项目与经历。" />
+<title>徐振宇 · AI 应用开发工程师 · 个人主页</title>
+<meta name="description" content="徐振宇（Zhenyu Xu）的个人主页：10 年金融级系统研发经验，现专注 LLM 应用的工程化落地——RAG 检索增强、Agent 与工具调用、多模型编排与上线交付。" />
 <meta name="theme-color" content="#fbfaf7" />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -219,43 +219,58 @@
     font-size:clamp(1.5rem,3.4vw,2.3rem);color:var(--accent);
     margin:clamp(28px,5vw,42px) 0 4px;line-height:1.1;letter-spacing:.005em;
   }
+  /* 姓名作为视觉锚点：超大衬线 + 一道会生长的朱红发丝线 */
   .hero h1{
     font-family:var(--font-display);font-weight:700;
-    font-size:clamp(2.15rem,6.4vw,4.5rem);
-    line-height:1.1;letter-spacing:-.022em;
-    margin:0 0 clamp(22px,4vw,34px);
-    max-width:17ch;
+    font-size:clamp(2.6rem,7.6vw,5rem);
+    line-height:1.08;letter-spacing:-.022em;
+    margin:0;position:relative;width:fit-content;
+    padding-bottom:clamp(12px,2vw,18px);
   }
-  .hero h1 .accent{color:var(--accent);position:relative;white-space:nowrap;}
-  .hero h1 .accent::after{
-    content:"";position:absolute;left:0;right:0;bottom:-.06em;height:1px;
+  .hero h1::after{
+    content:"";position:absolute;left:0;right:0;bottom:0;height:1px;
     background:var(--accent);opacity:.45;
     transform:scaleX(0);transform-origin:left;
   }
-  .js .hero h1 .accent::after{animation:rule .9s var(--ease) .5s forwards;}
+  .js .hero h1::after{animation:rule .9s var(--ease) .5s forwards;}
   @keyframes rule{to{transform:scaleX(1);}}
+  .hero-name-sub{
+    font-family:var(--font-mono);font-size:.76rem;font-weight:400;
+    letter-spacing:.24em;text-transform:uppercase;color:var(--faint);
+    margin:clamp(12px,2vw,16px) 0 0;
+  }
 
-  .hero-body{
-    display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);
-    gap:clamp(24px,4vw,54px);align-items:start;
-    border-top:1px solid var(--line);padding-top:clamp(22px,3.4vw,32px);
-  }
   .hero p.lead{
-    font-size:clamp(1rem,1.6vw,1.14rem);color:var(--muted);
-    margin:0;max-width:52ch;
+    font-size:clamp(1rem,1.6vw,1.12rem);color:var(--muted);
+    margin:clamp(22px,3.4vw,30px) 0 0;max-width:60ch;
   }
-  .facts-title{
+
+  /* 基本信息：标签左 · 值右，两列铺开，一眼扫完 */
+  .profile-block{
+    margin-top:clamp(28px,4.4vw,42px);
+    border-top:1px solid var(--line);padding-top:clamp(20px,3vw,26px);
+  }
+  .profile-title{
     font-family:var(--font-mono);font-size:.72rem;font-weight:500;
     letter-spacing:.12em;text-transform:uppercase;color:var(--faint);
-    margin:0 0 10px;
+    margin:0 0 4px;
   }
-  .hero-facts{display:grid;gap:0;margin:0;}
-  .hero-facts div{
-    display:flex;justify-content:space-between;gap:14px;
-    padding:11px 0;border-bottom:1px solid var(--line);font-size:.9rem;
+  .profile{
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+    column-gap:clamp(28px,5vw,64px);margin:0;
   }
-  .hero-facts dt{color:var(--faint);font-family:var(--font-mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;align-self:center;}
-  .hero-facts dd{margin:0;text-align:right;font-weight:500;}
+  .profile div{
+    display:flex;justify-content:space-between;gap:16px;align-items:baseline;
+    padding:12px 0;border-bottom:1px solid var(--line);font-size:.92rem;
+    min-width:0;
+  }
+  .profile dt{
+    color:var(--faint);font-family:var(--font-mono);font-size:.74rem;
+    letter-spacing:.06em;flex:none;align-self:center;
+  }
+  .profile dd{margin:0;text-align:right;font-weight:500;overflow-wrap:anywhere;}
+  .profile dd a{color:inherit;text-decoration:none;border-bottom:1px solid var(--line-strong);}
+  .profile dd a:hover{color:var(--accent);border-bottom-color:var(--accent);}
   .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:clamp(26px,4vw,38px);}
 
   /* ============================================================
@@ -496,7 +511,7 @@
      Responsive
      ============================================================ */
   @media(max-width:900px){
-    .hero-body{grid-template-columns:1fr;gap:26px;}
+    .profile{grid-template-columns:1fr;}
   }
   @media(max-width:860px){
     .nav-links .link-item{display:none;}
@@ -524,8 +539,6 @@
   }
   @media(max-width:520px){
     body{font-size:16px;}
-    .hero h1{max-width:none;}
-    .hero h1 .accent{white-space:normal;}
     .btn{width:100%;justify-content:center;}
     .hero-actions{gap:10px;}
     .stats-row{grid-template-columns:1fr;}
@@ -591,24 +604,28 @@
       </div>
 
       <p class="hero-script reveal" style="--d:60ms">AI Application Engineer</p>
-      <h1 class="reveal" style="--d:120ms" data-i18n="hero_title" data-html="1">把大模型能力，做成<span class="accent">可靠上线的产品</span></h1>
+      <h1 class="reveal" style="--d:120ms" data-i18n="hero_name">徐振宇</h1>
+      <p class="hero-name-sub reveal" style="--d:150ms" data-i18n="hero_name_sub">Zhenyu Xu</p>
 
-      <div class="hero-body reveal" style="--d:200ms">
-        <p class="lead" data-i18n="hero_lead"></p>
-        <div class="hero-side">
-          <p class="facts-title" data-i18n="intent_title">求职意向</p>
-          <dl class="hero-facts">
-            <div><dt data-i18n="intent_role_k">意向岗位</dt><dd data-i18n="intent_role_v">AI 应用开发工程师</dd></div>
-            <div><dt data-i18n="intent_exp_k">工作经验</dt><dd data-i18n="intent_exp_v">5 年（3 年 AI 应用）</dd></div>
-            <div><dt data-i18n="intent_loc_k">工作地点</dt><dd data-i18n="intent_loc_v">上海</dd></div>
-            <div><dt data-i18n="intent_status_k">当前状态</dt><dd data-i18n="intent_status_v">在职，考虑新机会</dd></div>
-          </dl>
-        </div>
+      <p class="lead reveal" style="--d:200ms" data-i18n="hero_lead"></p>
+
+      <div class="profile-block reveal" style="--d:240ms">
+        <p class="profile-title" data-i18n="pf_title">基本信息</p>
+        <dl class="profile">
+          <div><dt data-i18n="pf_gender_k">性别</dt><dd data-i18n="pf_gender_v">男</dd></div>
+          <div><dt data-i18n="pf_age_k">年龄</dt><dd data-i18n="pf_age_v">31 岁（1994.10）</dd></div>
+          <div><dt data-i18n="pf_edu_k">学历</dt><dd data-i18n="pf_edu_v">本科 · 山东大学</dd></div>
+          <div><dt data-i18n="pf_major_k">专业</dt><dd data-i18n="pf_major_v">电子信息科学与技术</dd></div>
+          <div><dt data-i18n="pf_exp_k">工作年限</dt><dd data-i18n="pf_exp_v">10 年</dd></div>
+          <div><dt data-i18n="pf_city_k">现居</dt><dd data-i18n="pf_city_v">上海</dd></div>
+          <div><dt data-i18n="pf_phone_k">电话</dt><dd><a href="tel:13951008016" data-i18n="pf_phone_v">13951008016</a></dd></div>
+          <div><dt data-i18n="pf_email_k">邮箱</dt><dd><a href="mailto:13951008016@163.com" data-i18n="pf_email_v">13951008016@163.com</a></dd></div>
+        </dl>
       </div>
 
-      <div class="hero-actions reveal" style="--d:280ms">
+      <div class="hero-actions reveal" style="--d:300ms">
         <a class="btn btn-primary" href="#/#works" data-i18n="cta_works">查看项目 →</a>
-        <a class="btn btn-ghost" id="resume-dl" href="resume.md" download="Andy-AI应用开发工程师-简历.md" data-i18n="cta_resume">下载简历</a>
+        <a class="btn btn-ghost" id="resume-dl" href="resume.md" download="徐振宇-AI应用开发工程师-简历.md" data-i18n="cta_resume">下载简历</a>
         <a class="btn btn-ghost" href="#/#contact" data-i18n="cta_contact">联系我</a>
       </div>
     </section>
@@ -625,13 +642,12 @@
         <div class="reveal">
           <p data-i18n="about_p1"></p>
           <p data-i18n="about_p2"></p>
-          <p data-i18n="about_p3"></p>
         </div>
       </div>
       <div class="stats-row reveal" style="--d:160ms">
-        <div class="stat"><b data-i18n="stat1_n">5年</b><span data-i18n="stat1_l">研发经验</span></div>
-        <div class="stat"><b data-i18n="stat2_n">3年</b><span data-i18n="stat2_l">AI 应用开发</span></div>
-        <div class="stat"><b data-i18n="stat3_n">10+</b><span data-i18n="stat3_l">上线项目</span></div>
+        <div class="stat"><b data-i18n="stat1_n">9人</b><span data-i18n="stat1_l">团队管理规模</span></div>
+        <div class="stat"><b data-i18n="stat2_n">4家</b><span data-i18n="stat2_l">服务过的企业</span></div>
+        <div class="stat"><b data-i18n="stat3_n">2个</b><span data-i18n="stat3_l">已上线 AI 应用</span></div>
         <div class="stat"><b data-i18n="stat4_n">∞</b><span data-i18n="stat4_l">好奇心</span></div>
       </div>
     </section>
@@ -733,18 +749,18 @@
         <span class="sec-kicker" data-i18n="contact_kicker">CONTACT</span>
       </div>
       <div class="contact-cards reveal">
-        <a class="contact-card" href="mailto:andy.dev@example.com">
+        <a class="contact-card" href="mailto:13951008016@163.com">
           <span class="ci" aria-hidden="true">✉</span>
-          <span><b data-i18n="contact_email">邮箱</b><span>andy.dev@example.com</span></span>
+          <span><b data-i18n="contact_email">邮箱</b><span>13951008016@163.com</span></span>
         </a>
         <a class="contact-card" href="https://github.com/andyxu1234" target="_blank" rel="noopener">
           <span class="ci" aria-hidden="true">◍</span>
           <span><b>GitHub</b><span>github.com/andyxu1234</span></span>
         </a>
-        <div class="contact-card">
+        <a class="contact-card" href="tel:13951008016">
           <span class="ci" aria-hidden="true">✆</span>
-          <span><b data-i18n="contact_wechat">微信</b><span>andy-ai-dev</span></span>
-        </div>
+          <span><b data-i18n="contact_phone">电话</b><span>13951008016</span></span>
+        </a>
       </div>
     </section>
 
@@ -764,7 +780,7 @@
     <span class="mono" data-i18n="footer_copy">© 2026 Andy · AI 应用开发工程师</span>
     <div class="socials">
       <a href="https://github.com/andyxu1234" target="_blank" rel="noopener" data-i18n="social_gh">GitHub</a>
-      <a href="mailto:andy.dev@example.com" data-i18n="social_mail">邮箱</a>
+      <a href="mailto:13951008016@163.com" data-i18n="social_mail">邮箱</a>
     </div>
   </div>
 </footer>
@@ -777,20 +793,24 @@ const I18N = {
     nav_about:"关于", nav_exp:"经历", nav_skills:"技能", nav_works:"项目", nav_contact:"联系",
     hero_eyebrow:"正在看机会 · AI 应用开发工程师",
     hero_loc:"上海 · 中国",
-    hero_title:'把大模型能力，做成<span class="accent">可靠上线的产品</span>',
-    hero_lead:"我是 Andy，一名 AI 应用开发工程师。三年里从 0 到 1 交付过企业级 RAG 知识库、多 Agent 数据分析和 LLM 网关——擅长把大模型能力工程化为稳定、可评测、可上线的真实产品。",
+    hero_name:"徐振宇",
+    hero_name_sub:"Zhenyu Xu",
+    hero_lead:"10 年金融级系统研发经验，现在专注把大模型能力做成真能上线的产品。",
     cta_works:"查看项目 →", cta_resume:"下载简历", cta_contact:"联系我",
+    pf_title:"基本信息",
+    pf_gender_k:"性别", pf_gender_v:"男",
+    pf_age_k:"年龄", pf_age_v:"31 岁（1994.10）",
+    pf_edu_k:"学历", pf_edu_v:"本科 · 山东大学",
+    pf_major_k:"专业", pf_major_v:"电子信息科学与技术",
+    pf_exp_k:"工作年限", pf_exp_v:"10 年",
+    pf_city_k:"现居", pf_city_v:"上海",
+    pf_phone_k:"电话", pf_phone_v:"13951008016",
+    pf_email_k:"邮箱", pf_email_v:"13951008016@163.com",
     about_kicker:"ABOUT", about_title:"关于我",
-    about_p1:"我聚焦 LLM 应用的工程化落地：RAG 检索增强、Agent 与工具调用、Prompt 设计与评测体系，以及模型服务的性能与成本优化。我相信一个好的 AI 应用 = 70% 的工程 + 30% 的模型——检索质量、评测闭环和稳定性，往往比换一个更大的模型更能决定最终效果。",
-    about_p2:"同时也是一名能独立交付的全栈工程师：Python/FastAPI 后端、React 前端、Docker 部署与监控，我可以独立完成从需求拆解、方案设计、开发到上线运维的全链路闭环。",
-    about_p3:"目前正在寻找新的 AI 应用开发工程师机会。如果你也在做有意思的大模型应用，欢迎和我聊聊。",
-    intent_title:"求职意向",
-    intent_role_k:"意向岗位", intent_role_v:"AI 应用开发工程师",
-    intent_exp_k:"工作经验", intent_exp_v:"5 年（3 年 AI 应用）",
-    intent_loc_k:"工作地点", intent_loc_v:"上海 · 可接受调配",
-    intent_status_k:"当前状态", intent_status_v:"在职，考虑新机会",
-    stat1_n:"5年", stat1_l:"研发经验", stat2_n:"3年", stat2_l:"AI 应用开发",
-    stat3_n:"10+", stat3_l:"上线项目", stat4_n:"∞", stat4_l:"好奇心",
+    about_p1:"10 年软件研发经验，先后在花旗集团、苏宁等企业负责批发信贷、支付决策等核心系统的研发与交付，作为小组长带过 9 人团队，熟悉金融级系统对稳定性、数据一致性与合规的要求。",
+    about_p2:"目前正把主力语言从 Java 转向 Python，专注 LLM 应用的工程化落地：RAG 检索增强、Agent 与工具调用、多模型编排、打包与上线交付，已独立完成两个从 0 到 1 的 AI 应用。正在寻找 AI 应用开发工程师岗位。",
+    stat1_n:"9人", stat1_l:"团队管理规模", stat2_n:"4家", stat2_l:"服务过的企业",
+    stat3_n:"2个", stat3_l:"已上线 AI 应用", stat4_n:"∞", stat4_l:"好奇心",
     exp_kicker:"EXPERIENCE", exp_title:"经历",
     exp1_role:"AI 应用开发工程师", exp1_period:"2023.02 – 至今", exp1_org:"某互联网公司",
     exp1_desc:"主导企业级 RAG 知识库、多 Agent 数据分析与 LLM 网关等核心系统的架构设计与落地，服务数千名内部用户。",
@@ -806,7 +826,7 @@ const I18N = {
     works_kicker:"PROJECTS", works_title:"项目展示", works_sub:"点击任意项目，查看背景、方案与成果。",
     contact_kicker:"CONTACT", contact_title:"期待与你共事",
     contact_sub:"正在寻找 AI 应用开发工程师岗位。如果你在招人，或者想聊聊大模型应用，欢迎随时联系我。",
-    contact_email:"邮箱", contact_wechat:"微信",
+    contact_email:"邮箱", contact_phone:"电话",
     back:"← 返回项目列表",
     detail_highlights:"方案亮点", detail_stack:"技术栈", detail_try:"在线体验", detail_code:"查看源码",
     more:"查看详情", footer_copy:"© 2026 Andy · AI 应用开发工程师",
@@ -818,20 +838,24 @@ const I18N = {
     nav_about:"About", nav_exp:"Experience", nav_skills:"Skills", nav_works:"Projects", nav_contact:"Contact",
     hero_eyebrow:"Open to work · AI Application Engineer",
     hero_loc:"Shanghai, China",
-    hero_title:'Turning LLM power into<span class="accent"> reliable, shipped products</span>',
-    hero_lead:"I'm Andy, an AI application engineer. Over the past 3 years I've delivered an enterprise RAG knowledge base, a multi-agent data analyst and an LLM gateway from zero to one — engineering LLM capabilities into stable, evaluable, production-grade products.",
+    hero_name:"Zhenyu Xu",
+    hero_name_sub:"徐振宇",
+    hero_lead:"10 years building financial-grade systems — now focused on turning LLM capability into products that actually ship.",
     cta_works:"View projects →", cta_resume:"Download résumé", cta_contact:"Get in touch",
+    pf_title:"Basic info",
+    pf_gender_k:"Gender", pf_gender_v:"Male",
+    pf_age_k:"Age", pf_age_v:"31 (Oct 1994)",
+    pf_edu_k:"Education", pf_edu_v:"B.Sc. · Shandong University",
+    pf_major_k:"Major", pf_major_v:"Electronic Information Science & Technology",
+    pf_exp_k:"Experience", pf_exp_v:"10 years",
+    pf_city_k:"Based in", pf_city_v:"Shanghai",
+    pf_phone_k:"Phone", pf_phone_v:"13951008016",
+    pf_email_k:"Email", pf_email_v:"13951008016@163.com",
     about_kicker:"ABOUT", about_title:"About me",
-    about_p1:"I focus on engineering LLM applications for the real world: RAG, agents & tool use, prompt design and evaluation, plus performance and cost optimization of model serving. I believe a good AI app is 70% engineering and 30% model — retrieval quality, evaluation loops and reliability usually matter more than swapping in a bigger model.",
-    about_p2:"I'm also a full-stack engineer who ships independently: Python/FastAPI backends, React frontends, Docker deployment and monitoring — I can own the whole loop from requirements and design to development, launch and ops.",
-    about_p3:"I'm currently looking for a new AI application engineer role. If you're building something interesting with LLMs, I'd love to chat.",
-    intent_title:"What I'm looking for",
-    intent_role_k:"Target role", intent_role_v:"AI Application Engineer",
-    intent_exp_k:"Experience", intent_exp_v:"5 yrs (3 yrs in AI apps)",
-    intent_loc_k:"Location", intent_loc_v:"Shanghai · open to relocation",
-    intent_status_k:"Status", intent_status_v:"Employed, open to offers",
-    stat1_n:"5 yrs", stat1_l:"software engineering", stat2_n:"3 yrs", stat2_l:"AI application dev",
-    stat3_n:"10+", stat3_l:"projects shipped", stat4_n:"∞", stat4_l:"curiosity",
+    about_p1:"10 years in software engineering, delivering core systems for wholesale lending and payment decisioning at Citi, Suning and others — leading a team of 9 and working to the stability, data-consistency and compliance bar of financial-grade systems.",
+    about_p2:"I'm now shifting my primary language from Java to Python, focused on engineering LLM applications into production: RAG retrieval, agents and tool use, multi-model orchestration, packaging and delivery. I've independently shipped two AI applications from zero to one.",
+    stat1_n:"9", stat1_l:"team size led", stat2_n:"4", stat2_l:"companies served",
+    stat3_n:"2", stat3_l:"AI apps shipped", stat4_n:"∞", stat4_l:"curiosity",
     exp_kicker:"EXPERIENCE", exp_title:"Experience",
     exp1_role:"AI Application Engineer", exp1_period:"Feb 2023 – Present", exp1_org:"Internet company",
     exp1_desc:"Led architecture and delivery of the enterprise RAG knowledge base, multi-agent analytics and the LLM gateway, serving thousands of internal users.",
@@ -847,7 +871,7 @@ const I18N = {
     works_kicker:"PROJECTS", works_title:"Selected projects", works_sub:"Click any project to see the context, approach and results.",
     contact_kicker:"CONTACT", contact_title:"Let's work together",
     contact_sub:"I'm looking for an AI application engineer role. If you're hiring — or just want to talk LLM apps — my inbox is open.",
-    contact_email:"Email", contact_wechat:"WeChat",
+    contact_email:"Email", contact_phone:"Phone",
     back:"← Back to projects",
     detail_highlights:"Highlights", detail_stack:"Tech stack", detail_try:"Try it live", detail_code:"Source code",
     more:"View details", footer_copy:"© 2026 Andy · AI Application Engineer",
@@ -1077,9 +1101,9 @@ function applyStatic(){
   const dl = document.getElementById("resume-dl");
   if(dl){
     dl.setAttribute("href", lang==="en" ? "resume-en.md" : "resume.md");
-    dl.setAttribute("download", lang==="en" ? "Andy-AI-Application-Engineer-Resume.md" : "Andy-AI应用开发工程师-简历.md");
+    dl.setAttribute("download", lang==="en" ? "Zhenyu-Xu-AI-Application-Engineer-Resume.md" : "徐振宇-AI应用开发工程师-简历.md");
   }
-  document.title = pick({zh:"Andy · AI 应用开发工程师 · 个人主页",en:"Andy · AI Application Engineer · Portfolio"});
+  document.title = pick({zh:"徐振宇 · AI 应用开发工程师 · 个人主页",en:"Zhenyu Xu · AI Application Engineer · Portfolio"});
 }
 
 /* ---------------- reveal ---------------- */

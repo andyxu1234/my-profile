@@ -246,6 +246,61 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
     repoOwners.length > 0 && repoOwners.every((o) => o === "andyxu1234"),
     `${repoOwners.length} 处链接，owner = ${[...new Set(repoOwners)].join(" / ")}`);
 
+  /* ============ J. 首屏基本信息（对齐真实简历口径） ============ */
+  const tx = (el) => (el ? el.textContent.replace(/\s+/g, " ").trim() : "");
+  await setHash("#/");
+  await wait(80);
+
+  check("J1 首屏主标题为姓名（zh）", tx(doc.querySelector(".hero h1")) === "徐振宇", tx(doc.querySelector(".hero h1")));
+  check("J2 姓名下附拉丁名", tx(doc.querySelector(".hero-name-sub")) === "Zhenyu Xu", tx(doc.querySelector(".hero-name-sub")));
+
+  const pfPairs = [...doc.querySelectorAll(".profile div")].map((d) => [tx(d.querySelector("dt")), tx(d.querySelector("dd"))]);
+  const expectPairs = [
+    ["性别", "男"], ["年龄", "31 岁（1994.10）"], ["学历", "本科 · 山东大学"], ["专业", "电子信息科学与技术"],
+    ["工作年限", "10 年"], ["现居", "上海"], ["电话", "13951008016"], ["邮箱", "13951008016@163.com"],
+  ];
+  check("J3 基本信息 8 项顺序与取值全对",
+    JSON.stringify(pfPairs) === JSON.stringify(expectPairs),
+    pfPairs.map((p) => p.join("=")).join(" / "));
+
+  const telA = doc.querySelector('.profile a[href^="tel:"]');
+  const mailA = doc.querySelector('.profile a[href^="mailto:"]');
+  check("J4 电话/邮箱可直接拨打或发信",
+    !!telA && telA.getAttribute("href") === "tel:13951008016" && !!mailA && mailA.getAttribute("href") === "mailto:13951008016@163.com",
+    (telA ? telA.getAttribute("href") : "-") + " | " + (mailA ? mailA.getAttribute("href") : "-"));
+
+  check("J5 关于区正文收敛为 2 段", doc.querySelectorAll(".about-grid p").length === 2,
+    doc.querySelectorAll(".about-grid p").length + " 段");
+  const aboutTxt = tx(doc.querySelector(".about-grid"));
+  check("J6 关于区写明 Java→Python 转型与真实履历",
+    aboutTxt.includes("花旗") && aboutTxt.includes("Java") && aboutTxt.includes("Python"),
+    aboutTxt.slice(0, 40) + "…");
+
+  const statTxt = [...doc.querySelectorAll(".stat")].map((s) => tx(s.querySelector("b")) + " " + tx(s.querySelector("span"))).join(" | ");
+  check("J7 数据条无编造的 AI 年限/项目数", !/3年|5年|10\+/.test(statTxt), statTxt);
+
+  const headTitle = (html.match(/<title>([^<]*)<\/title>/) || [, ""])[1];
+  check("J8 页面标题含真实姓名", headTitle.includes("徐振宇"), headTitle);
+
+  click(doc.querySelector('.nav-links [data-set-lang="en"]'));
+  await wait(150);
+  check("J9 EN 首屏姓名切为拉丁名", tx(doc.querySelector(".hero h1")) === "Zhenyu Xu", tx(doc.querySelector(".hero h1")));
+  check("J10 EN 基本信息标签已本地化",
+    tx(doc.querySelector(".profile dt")) === "Gender" && tx(doc.querySelectorAll(".profile div")[2].querySelector("dt")) === "Education",
+    tx(doc.querySelector(".profile dt")));
+  click(doc.querySelector('[data-set-lang="zh"]'));
+  await wait(150);
+
+  const placeholders = ["andy.dev@example.com", "andy-ai-dev"];
+  const phFiles = ["index.html", "resume.md", "resume-en.md", "tools/build-resume.cjs"];
+  const phLeft = phFiles.filter((f) => {
+    const p = path.join(ROOT, f);
+    return fs.existsSync(p) && placeholders.some((k) => fs.readFileSync(p, "utf8").includes(k));
+  });
+  check("J11 全站与简历无占位邮箱/微信残留",
+    phLeft.length === 0,
+    phLeft.length ? phLeft.join(", ") : `已扫描 ${phFiles.length} 个文件`);
+
   const pass = results.filter((r) => r.pass).length;
   console.log("\n=== 验证 ===");
   results.forEach((r) => console.log((r.pass ? "  PASS  " : "  FAIL  ") + r.n + (r.e ? "   [" + r.e + "]" : "")));
