@@ -125,31 +125,18 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
 
   check("E3 主页无未捕获 JS 错误", errors.length === 0, errors.join(" | "));
 
-  /* ============ F. 搬迁后的 demo 页资源完整性 ============ */
-  const demoPath = path.join(ROOT, "projects", "world-cup-prediction.html");
-  check("F1 demo 页已就位", fs.existsSync(demoPath));
-  const demo = fs.readFileSync(demoPath, "utf8");
-  check("F2 无残留旧路径", !demo.includes("../client/") && !demo.includes("docs/screenshot/"));
-  check("F3 lightbox 坏路径已修（img 与 onclick 前缀一致）",
-    !/openLightbox\('docs\//.test(demo) && /openLightbox\('screenshot\//.test(demo));
-
-  const refs = [...new Set([...demo.matchAll(/(?:src|href)="((?:aimodels|screenshot)\/[^"]+)"/g)].map((m) => m[1]))];
-  const missing = refs.filter((r) => !fs.existsSync(path.join(ROOT, "projects", r)));
-  check("F4 demo 引用的资源全部存在（无断图）", missing.length === 0, `${refs.length} 个引用, 缺失 ${missing.length}${missing.length ? ": " + missing.join(", ") : ""}`);
-
-  const lbRefs = [...new Set([...demo.matchAll(/openLightbox\('([^']+)'\)/g)].map((m) => m[1]))];
-  const lbMissing = lbRefs.filter((r) => !fs.existsSync(path.join(ROOT, "projects", r)));
-  check("F5 lightbox 目标图全部存在", lbMissing.length === 0, `${lbRefs.length} 个目标, 缺失 ${lbMissing.length}`);
-
-  const projectsSize = (function walk(p) {
-    let t = 0;
-    for (const f of fs.readdirSync(p, { withFileTypes: true })) {
-      const fp = path.join(p, f.name);
-      t += f.isDirectory() ? walk(fp) : fs.statSync(fp).size;
-    }
-    return t;
-  })(path.join(ROOT, "projects"));
-  check("F6 projects/ 体积 < 3MB", projectsSize < 3 * 1024 * 1024, (projectsSize / 1024 / 1024).toFixed(2) + " MB");
+  /* ============ F. 站内 demo 目录已退役 ============
+     2026-09-21 晚：4 个项目的详情全部指向各自线上 Pages 站，
+     projects/（旧足球 demo 页 + 截图/图标资源）已删除，本组改为「退役 + 无残留引用」护栏。 */
+  check("F1 projects/ 目录已删除（站内 demo 页与截图资源不再随站点发布）",
+    !fs.existsSync(path.join(ROOT, "projects")));
+  const projRefs = ["index.html", "resume.md", "resume-en.md", "tools/build-resume.cjs"]
+    .filter((f) => {
+      const p = path.join(ROOT, f);
+      return fs.existsSync(p) && /projects\//.test(fs.readFileSync(p, "utf8"));
+    });
+  check("F2 全站无 projects/ 引用残留（含简历生成器取值路径）",
+    projRefs.length === 0, projRefs.length ? projRefs.join(", ") : "4 个文件已扫描");
 
   /* ============ G. 简历文件 ============ */
   for (const [f, musts] of [
@@ -174,16 +161,14 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
   check("G7 简历「项目经历」恰好 4 条（占位项目已随 WORKS 一并移除）",
     rzHeads.length === 4, rzHeads.length + " 条");
 
-  /* ============ H. 卡片直达演示页 + 概览内容同步 ============ */
-  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  /* ============ H. 卡片直达线上演示页 ============
+     注：原 H4–H10（站内 demo 页概览注入 / 资源 / 返回入口）随 projects/ 一并于 2026-09-21 晚退役，
+     编号 H11 起沿用，保留空号以免历史记录错位。 */
   const zh = (v) => (v && typeof v === "object" ? v.zh : v);
   const WORKS = window.eval("WORKS");
   // 一律按 id 取项目，不按索引——否则新增项目会让这些断言整体错位
   const w0 = WORKS.find((w) => w.id === "wc-prediction");
   const wSb = WORKS.find((w) => w.id === "soul-buddy");
-  // 2026-09-21 晚：wc-prediction 详情页改为线上 Pages 站，站内 demo 页不再被任何入口引用。
-  // 该文件仍留在仓库里，故 H4–H10 继续按固定路径读取它，纯作回归护栏（不参与卡片跳转）。
-  const demoAbs2 = path.join(ROOT, "projects", "world-cup-prediction.html");
 
   check("H0 soul-buddy 排在第一位且指向线上文档站",
     WORKS[0].id === "soul-buddy" && /^https:\/\/andyxu1234\.github\.io\/soul_buddy\/$/.test((wSb && wSb.detailUrl) || ""),
@@ -210,34 +195,6 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
     WORKS.length === 4 && noUrl.length === 0,
     WORKS.map((w) => w.id).join(",") + " / 缺链接: " + (noUrl.map((w) => w.id).join(",") || "无"));
   await setHash("#/");
-
-  const demo2 = fs.readFileSync(demoAbs2, "utf8");
-  check("H4 demo 页概览标记完好、未被重复注入",
-    (demo2.match(/OVERVIEW:START/g) || []).length === 1 &&
-    (demo2.match(/OVERVIEW:END/g) || []).length === 1 &&
-    (demo2.match(/class="overview-card/g) || []).length === 1,
-    `START=${(demo2.match(/OVERVIEW:START/g) || []).length} card=${(demo2.match(/class="overview-card/g) || []).length}`);
-
-  const ovBody = demo2.slice(demo2.indexOf("<!-- OVERVIEW:START -->"), demo2.indexOf("<!-- OVERVIEW:END -->"));
-  check("H5 概览正文与主页数据一致（无内容漂移）",
-    ovBody.includes(esc(zh(w0.summary))) && ovBody.includes(esc(zh(w0.desc))));
-
-  const hlList = zh(w0.highlights) || [];
-  const hlHit = hlList.filter((h) => ovBody.includes(esc(h))).length;
-  check("H6 亮点条目全部同步", hlHit === hlList.length, `${hlHit}/${hlList.length}`);
-
-  const stk = (w0.stack || []).filter((s) => ovBody.includes(esc(s))).length;
-  check("H7 技术栈条目全部同步", stk === (w0.stack || []).length, `${stk}/${(w0.stack || []).length}`);
-
-  check("H8 概览含源码按钮且不自引用本页",
-    /ov-primary/.test(ovBody) && !ovBody.includes(String(w0.tryUrl)));
-
-  const iBack = demo2.indexOf('class="nav-back"');
-  const iLinks = demo2.indexOf('class="nav-links"');
-  check("H9 demo 页返回入口存在，且在移动端不会被隐藏的 .nav-links 之外",
-    /class="nav-back" href="\.\.\/index\.html"/.test(demo2) && iBack !== -1 && iLinks !== -1 && iBack < iLinks);
-
-  check("H10 demo 页导航含项目概览锚点", demo2.includes('href="#overview"') && demo2.includes('id="overview"'));
 
   check("H11 soul-buddy 源码链接指向新账号仓库",
     (wSb && wSb.codeUrl) === REPO_SB, (wSb && wSb.codeUrl) || "(无)");
@@ -275,7 +232,6 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
   /* ============ I. 旧用户名清理（防回归） ============ */
   const scanTargets = [
     "index.html",
-    "projects/world-cup-prediction.html",
     "resume.md",
     "resume-en.md",
     "tools/build-resume.cjs",
@@ -289,10 +245,11 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
     leftover.length === 0,
     leftover.length ? leftover.join(", ") : `已扫描 ${scanTargets.length} 个文件`);
 
-  const repoOwners = [...demo2.matchAll(/https:\/\/github\.com\/([^"'/\s]+)\/world-cup-prediction/g)].map((m) => m[1]);
-  check("I2 demo 页所有仓库链接 owner 均为新账号",
-    repoOwners.length > 0 && repoOwners.every((o) => o === "andyxu1234"),
-    `${repoOwners.length} 处链接，owner = ${[...new Set(repoOwners)].join(" / ")}`);
+  // 页面里所有 github.com 链接的 owner 必须是当前账号（旧名混进链接会被这条兜住）
+  const idxOwners = [...new Set([...html.matchAll(/https:\/\/github\.com\/([^"'/\s>]+)/g)].map((m) => m[1].split("/")[0]))];
+  check("I2 页面内所有 GitHub 链接 owner 均为当前账号",
+    idxOwners.length > 0 && idxOwners.every((o) => o === "andyxu1234"),
+    `${idxOwners.length} 个 owner: ${idxOwners.join(" / ")}`);
 
   /* ============ J. 首屏基本信息（对齐真实简历口径） ============ */
   const tx = (el) => (el ? el.textContent.replace(/\s+/g, " ").trim() : "");
@@ -367,6 +324,18 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
     "intro: h1 → name-sub → status ／ 右侧 portrait");
   check("J14 ZH 姓名副行为拉丁名", tx(doc.querySelector(".hero-name-sub")) === "Zhenyu Xu",
     tx(doc.querySelector(".hero-name-sub")));
+
+  // 2026-09-21 晚：项目区收敛为 4 个真实项目后，数据条 / 关于区口径随之对齐。
+  // 标签刻意用「已上线项目」而非「AI 应用」——4 个里马拉松、rush-hour 不是 AI 应用，改成 4 个 AI 应用即为失实。
+  const statEls = [...doc.querySelectorAll(".stat")];
+  check("J15 数据条第 3 条为「4个 · 已上线项目」",
+    statEls.length === 4 &&
+      tx(statEls[2].querySelector("b")) === "4个" && tx(statEls[2].querySelector("span")) === "已上线项目",
+    statTxt);
+  const I18N = window.eval("I18N");
+  check("J16 关于区已写「四个…项目」且中英口径一致",
+    aboutTxt.includes("四个") && I18N.en.stat3_n === "4" && /four projects/.test(I18N.en.about_p2 || ""),
+    `zh 含「四个」=${aboutTxt.includes("四个")} / en.stat3_n=${I18N.en.stat3_n}`);
 
   /* ============ K. 技术栈：表格 + 首屏一句话技术栈 ============ */
   const stackRows = [...doc.querySelectorAll(".stack-table tr")].map((tr) => [

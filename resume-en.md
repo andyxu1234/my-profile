@@ -20,9 +20,9 @@
 
 10 years in software engineering, delivering core systems for wholesale lending and payment decisioning at Citi, Suning and others — leading a team of 9 and working to the stability, data-consistency and compliance bar of financial-grade systems.
 
-I'm now shifting my primary language from Java to Python, focused on engineering LLM applications into production: RAG retrieval, agents and tool use, multi-model orchestration, packaging and delivery. I've independently shipped two AI applications from zero to one.
+I'm now shifting my primary language from Java to Python, focused on engineering LLM applications into production: RAG retrieval, agents and tool use, multi-model orchestration, packaging and delivery. I've independently shipped four projects from zero to one.
 
-**At a glance**：9 team size led · 4 companies served · 2 AI apps shipped
+**At a glance**：9 team size led · 4 companies served · 4 projects shipped
 
 ## Experience
 
