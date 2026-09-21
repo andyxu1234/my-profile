@@ -32,9 +32,9 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
 
   /* ============ A. 主页：项目模块 ============ */
   const cards = doc.querySelectorAll(".card");
-  check("A1 项目卡片数 = 6", cards.length === 6, cards.length);
+  check("A1 项目卡片数 = 4（2026-09-21 晚收敛为 4 个真实项目）", cards.length === 4, cards.length);
   const nums = [...doc.querySelectorAll(".card-num")].map((e) => e.textContent.trim());
-  check("A2 卡片编号 01-06", nums.join(",") === "01,02,03,04,05,06", nums.join(","));
+  check("A2 卡片编号 01-04", nums.join(",") === "01,02,03,04", nums.join(","));
   const first = cards[0];
   check("A3 首卡是 SoulBuddy（真实项目，排第一）",
     first.querySelector("h3").textContent.includes("SoulBuddy"),
@@ -44,6 +44,17 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
   check("A6 第二张卡是 AI 足球预测平台",
     cards[1].querySelector("h3").textContent.includes("AI 足球预测平台"),
     cards[1].querySelector("h3").textContent);
+  check("A7 第三张卡是马拉松赛事追踪小程序",
+    cards[2].querySelector("h3").textContent.includes("马拉松赛事追踪小程序"),
+    cards[2].querySelector("h3").textContent);
+  check("A8 第四张卡是 rush-hour 汽车华容道",
+    cards[3].querySelector("h3").textContent.includes("rush-hour"),
+    cards[3].querySelector("h3").textContent);
+  // 2026-09-21 晚删除的 4 个占位项目，防回归
+  const leftovers = ["企业知识库", "多 Agent 数据分析助手", "LLM 网关与推理加速平台", "智能客服工单助手"]
+    .filter((k) => doc.body.textContent.includes(k));
+  check("A9 页面已无占位项目残留（4 个已删）", leftovers.length === 0,
+    leftovers.length ? leftovers.join(" / ") : "0 处");
 
   /* ============ B. 详情页：真实链接按钮 ============ */
   await setHash("#/work/wc-prediction");
@@ -54,17 +65,23 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
   check("B3 技术栈 chips = 12", doc.querySelectorAll("#detail-content .chip").length === 12, doc.querySelectorAll("#detail-content .chip").length);
   const acts = doc.querySelectorAll("#detail-content .detail-actions a");
   check("B4 有两个真实按钮（非死链）", acts.length === 2, acts.length);
-  check("B5 在线体验 -> 站内 demo",
-    acts[0] && acts[0].getAttribute("href") === "projects/world-cup-prediction.html", acts[0] && acts[0].getAttribute("href"));
+  check("B5 在线体验 -> 线上 Pages 站",
+    acts[0] && acts[0].getAttribute("href") === "https://andyxu1234.github.io/world-cup-prediction/", acts[0] && acts[0].getAttribute("href"));
   check("B6 查看源码 -> GitHub 仓库",
     acts[1] && acts[1].getAttribute("href") === REPO_WC, acts[1] && acts[1].getAttribute("href"));
   check("B7 外链带 rel=noopener", acts[1] && acts[1].getAttribute("rel") === "noopener");
 
-  // 占位项目（无 url）不应渲染出死链按钮
-  await setHash("#/work/rag-kb");
-  check("B8 无链接的项目不渲染按钮",
-    doc.querySelectorAll("#detail-content .detail-actions a").length === 0,
-    doc.querySelectorAll("#detail-content .detail-actions a").length);
+  // 2026-09-21 晚：4 个项目全部配了线上详情页与源码仓库，不再有「无链接项目」
+  const badActs = [];
+  for (const w of window.eval("WORKS")) {
+    await setHash("#/work/" + w.id);
+    const as = [...doc.querySelectorAll("#detail-content .detail-actions a")];
+    if (as.length !== 2 || as.some((a) => !/^https?:\/\//.test(a.getAttribute("href") || "")))
+      badActs.push(w.id + "=" + as.length);
+  }
+  check("B8 四个项目详情均渲染两个真实外链按钮（无死链 / 无站内相对路径）",
+    badActs.length === 0, badActs.length ? badActs.join(",") : "4 个项目 × 2 个按钮");
+  await setHash("#/");
 
   /* ============ C. 简历下载按钮 ============ */
   await setHash("#/");
@@ -75,7 +92,10 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
   await wait(150);
   check("C3 切 EN 后指向 resume-en.md", dl.getAttribute("href") === "resume-en.md", dl.getAttribute("href"));
   check("C4 EN 下载名为英文", (dl.getAttribute("download") || "").includes("Resume"), dl.getAttribute("download"));
-  check("C5 切 EN 后卡片仍为 6", doc.querySelectorAll(".card").length === 6, doc.querySelectorAll(".card").length);
+  check("C5 切 EN 后卡片仍为 4", doc.querySelectorAll(".card").length === 4, doc.querySelectorAll(".card").length);
+  check("C8 EN 第三卡为 Marathon Race Tracker",
+    doc.querySelectorAll(".card h3")[2].textContent.includes("Marathon Race Tracker"),
+    doc.querySelectorAll(".card h3")[2].textContent);
   check("C6 EN 首卡标题为英文（SoulBuddy）",
     doc.querySelector(".card h3").textContent.includes("SoulBuddy"),
     doc.querySelector(".card h3").textContent);
@@ -133,8 +153,8 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
 
   /* ============ G. 简历文件 ============ */
   for (const [f, musts] of [
-    ["resume.md", ["SoulBuddy", "AI 足球预测平台"]],
-    ["resume-en.md", ["SoulBuddy", "AI Football Prediction"]],
+    ["resume.md", ["SoulBuddy", "AI 足球预测平台", "马拉松赛事追踪小程序", "rush-hour"]],
+    ["resume-en.md", ["SoulBuddy", "AI Football Prediction", "Marathon Race Tracker", "rush-hour"]],
   ]) {
     const p = path.join(ROOT, f);
     const ok = fs.existsSync(p);
@@ -150,6 +170,9 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
   check("G5 简历项目顺序：SoulBuddy 在前，足球预测在后",
     rzh.indexOf("### 1. SoulBuddy") !== -1 && rzh.indexOf("### 2. AI 足球预测平台") !== -1,
     "SoulBuddy@" + rzh.indexOf("### 1. SoulBuddy") + " / 足球@" + rzh.indexOf("### 2. AI 足球预测平台"));
+  const rzHeads = rzh.match(/^### \d+\. /gm) || [];
+  check("G7 简历「项目经历」恰好 4 条（占位项目已随 WORKS 一并移除）",
+    rzHeads.length === 4, rzHeads.length + " 条");
 
   /* ============ H. 卡片直达演示页 + 概览内容同步 ============ */
   const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -158,14 +181,16 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
   // 一律按 id 取项目，不按索引——否则新增项目会让这些断言整体错位
   const w0 = WORKS.find((w) => w.id === "wc-prediction");
   const wSb = WORKS.find((w) => w.id === "soul-buddy");
-  const demoAbs2 = path.join(ROOT, String((w0 && w0.detailUrl) || ""));
+  // 2026-09-21 晚：wc-prediction 详情页改为线上 Pages 站，站内 demo 页不再被任何入口引用。
+  // 该文件仍留在仓库里，故 H4–H10 继续按固定路径读取它，纯作回归护栏（不参与卡片跳转）。
+  const demoAbs2 = path.join(ROOT, "projects", "world-cup-prediction.html");
 
   check("H0 soul-buddy 排在第一位且指向线上文档站",
     WORKS[0].id === "soul-buddy" && /^https:\/\/andyxu1234\.github\.io\/soul_buddy\/$/.test((wSb && wSb.detailUrl) || ""),
     WORKS[0].id + " -> " + ((wSb && wSb.detailUrl) || "(无)"));
 
-  check("H1 wc-prediction 配置站内演示页 detailUrl 且文件存在",
-    !!w0 && w0.detailUrl === "projects/world-cup-prediction.html" && fs.existsSync(demoAbs2), (w0 && w0.detailUrl) || "(未配置)");
+  check("H1 wc-prediction detailUrl 指向线上 Pages 站（站内 demo 页已弃用）",
+    !!w0 && w0.detailUrl === "https://andyxu1234.github.io/world-cup-prediction/", (w0 && w0.detailUrl) || "(未配置)");
 
   const whole = WORKS.filter((x) => x.detailUrl);
   const bad = [];
@@ -180,13 +205,10 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
   check("H2 带 detailUrl 的项目全部走整页跳转（含站外链接），不进 hash 详情视图",
     bad.length === 0, bad.length ? bad.join(",") : whole.map((x) => x.id).join(" + ") + " 共 " + whole.length + " 个");
 
-  const plain = WORKS.find((w) => !w.detailUrl);
-  if (plain) {
-    window.openDetail(plain.id);
-    await wait(60);
-    check("H3 无 detailUrl 的项目仍进 hash 详情视图",
-      window.location.hash === "#/work/" + plain.id, `${plain.id} -> hash=${window.location.hash}`);
-  }
+  const noUrl = WORKS.filter((w) => !w.detailUrl || !w.codeUrl);
+  check("H3 四个项目全部配齐 detailUrl + codeUrl（无半成品占位）",
+    WORKS.length === 4 && noUrl.length === 0,
+    WORKS.map((w) => w.id).join(",") + " / 缺链接: " + (noUrl.map((w) => w.id).join(",") || "无"));
   await setHash("#/");
 
   const demo2 = fs.readFileSync(demoAbs2, "utf8");
@@ -223,6 +245,32 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
   check("H12 soul-buddy 详情字段完整（6 条亮点 / 12 项技术栈）",
     !!wSb && (zh(wSb.highlights) || []).length === 6 && (wSb.stack || []).length === 12,
     wSb ? `${(zh(wSb.highlights) || []).length} 条亮点 / ${(wSb.stack || []).length} 项技术栈` : "缺失");
+
+  // 第三个项目：马拉松 —— 查看详情/在线体验都直跳 GitHub Pages 站，不走站内 hash 详情
+  const wMa = WORKS.find((w) => w.id === "marathon");
+  check("H13 marathon 排在第三位且 detailUrl 指向 GitHub Pages 站",
+    WORKS[2].id === "marathon" && wMa.detailUrl === "https://andyxu1234.github.io/marathon/",
+    WORKS[2].id + " -> " + ((wMa && wMa.detailUrl) || "(无)"));
+  check("H14 marathon 源码链接指向新仓库、字段完整（6 条亮点 / 13 项技术栈）",
+    !!wMa && wMa.codeUrl === GH + "/marathon" &&
+      (zh(wMa.highlights) || []).length === 6 && (wMa.stack || []).length === 13,
+    wMa ? `${wMa.codeUrl} / ${(zh(wMa.highlights) || []).length} 条亮点 / ${(wMa.stack || []).length} 项技术栈` : "缺失");
+
+  // 第四个项目：rush-hour 汽车华容道 —— 同样直跳 GitHub Pages 站，不进站内 hash 详情
+  const wRh = WORKS.find((w) => w.id === "rush-hour");
+  check("H15 rush-hour 排在第四位且 detailUrl 指向 GitHub Pages 站",
+    WORKS.length === 4 && WORKS[3].id === "rush-hour" &&
+      wRh.detailUrl === "https://andyxu1234.github.io/rush-hour/",
+    WORKS[3].id + " -> " + ((wRh && wRh.detailUrl) || "(无)"));
+  check("H16 rush-hour 源码链接指向新仓库、字段完整（6 条亮点 / 11 项技术栈）",
+    !!wRh && wRh.codeUrl === GH + "/rush-hour" &&
+      (zh(wRh.highlights) || []).length === 6 && (wRh.stack || []).length === 11,
+    wRh ? `${wRh.codeUrl} / ${(zh(wRh.highlights) || []).length} 条亮点 / ${(wRh.stack || []).length} 项技术栈` : "缺失");
+  check("H17 四个项目全部是 andyxu1234 账号下的线上演示页 + 真实仓库",
+    WORKS.length === 4 && WORKS.every((w) =>
+      /^https:\/\/andyxu1234\.github\.io\/.+/.test(w.detailUrl) &&
+      /^https:\/\/github\.com\/andyxu1234\/.+/.test(w.codeUrl)),
+    WORKS.map((w) => w.id).join(","));
 
   /* ============ I. 旧用户名清理（防回归） ============ */
   const scanTargets = [
@@ -341,19 +389,21 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
   check("K2 技术栈 9 组分组与取值全对",
     JSON.stringify(stackRows) === JSON.stringify(expectStack),
     stackRows.length + " 组");
-  const stackEl = doc.querySelector("#about .stack-line");
+  const stackEl = doc.querySelector("#skills .stack-line");
   const stackTxt = tx(stackEl);
-  check("K3 关于区一句话技术栈已渲染且含关键栈",
+  check("K3 技能区一句话技术栈已渲染且含关键栈",
     !!stackEl && ["Python", "FastAPI", "LangGraph", "Redis", "Docker"].every((k) => stackTxt.includes(k)),
     stackTxt.slice(0, 56) + "…");
-  const aboutGridEl = doc.querySelector("#about .about-grid");
-  const statsRowEl = doc.querySelector("#about .stats-row");
-  check("K4 一句话技术栈位于关于区正文之后、数据条之前（2026-09-21 从首屏移入）",
-    !!stackEl && !!aboutGridEl && !!statsRowEl &&
-      !!(aboutGridEl.compareDocumentPosition(stackEl) & window.Node.DOCUMENT_POSITION_FOLLOWING) &&
-      !!(stackEl.compareDocumentPosition(statsRowEl) & window.Node.DOCUMENT_POSITION_FOLLOWING) &&
-      !doc.querySelector(".hero .hero-stack"),
-    "about-grid → stack-line → stats-row");
+  const skillsHeadEl = doc.querySelector("#skills .sec-head");
+  const skillsSubEl = doc.querySelector("#skills .sec-head .sub");
+  const skillsWrapEl = doc.querySelector("#skills .stack-wrap");
+  const stackTableEl = doc.querySelector("#skills .stack-table");
+  check("K4 一句话技术栈贴在技能区副标题正下方（标题组内、技术栈表格之前），关于区已无残留",
+    !!stackEl && !!skillsHeadEl && !!skillsSubEl && !!skillsWrapEl && !!stackTableEl &&
+      !!stackEl.closest(".sec-head") && stackEl.previousElementSibling === skillsSubEl &&
+      !!(stackEl.compareDocumentPosition(skillsWrapEl) & window.Node.DOCUMENT_POSITION_FOLLOWING) &&
+      !doc.querySelector("#about .stack-line") && !doc.querySelector(".hero .hero-stack"),
+    "skills_sub → stack-line → stack-wrap(table)；about 区干净");
 
   // 生成器靠 .stack-table 取技能，结构一变会静默丢内容，故用简历产物反查
   const rzText = fs.readFileSync(path.join(ROOT, "resume.md"), "utf8");
@@ -366,10 +416,21 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
 
   click(doc.querySelector('.nav-links [data-set-lang="en"]'));
   await wait(150);
-  check("K6 EN 技术栈表格与关于区技术栈行均已本地化",
+  check("K6 EN 技术栈表格与技能区技术栈行均已本地化",
     tx(doc.querySelector(".stack-table th")) === "Language & Runtime" &&
-      tx(doc.querySelector("#about .stack-line")).startsWith("Python · FastAPI"),
+      tx(doc.querySelector("#skills .stack-line")).startsWith("Python · FastAPI"),
     tx(doc.querySelector(".stack-table th")));
+
+  // CSS 源码级断言：jsdom 对 clamp() 与媒体查询级联支持不完整，这类规则用正则查更可靠
+  const cssSrc = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const stackRule = (cssSrc.match(/\.stack-line\{[^}]*\}/) || [""])[0];
+  check("K7 一句话技术栈桌面端强制单行（white-space:nowrap、已去掉 max-width:70ch）",
+    /white-space:\s*nowrap/.test(stackRule) && !/max-width/.test(stackRule),
+    stackRule.replace(/\s+/g, " ").slice(0, 76));
+  check("K8 窄屏（<=960px）放开换行，避免 nowrap 撑破标题区",
+    /@media\(max-width:960px\)\{[\s\S]*?\.stack-line\{white-space:normal;\}/.test(cssSrc) &&
+      !/@media\(max-width:860px\)\{[\s\S]*?\.stack-line\{white-space:normal;\}/.test(cssSrc),
+    "media 960 → .stack-line{white-space:normal}（860 块内必须没有）");
   click(doc.querySelector('[data-set-lang="zh"]'));
   await wait(150);
 
@@ -401,6 +462,44 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
   check("L6 ZH 照片 alt 回到中文", /徐振宇/.test(altZh || ""), altZh);
   check("L7 ZH 姓名副行回到拉丁名", tx(doc.querySelector(".hero-name-sub")) === "Zhenyu Xu",
     tx(doc.querySelector(".hero-name-sub")));
+
+  /* ============ M. 经历（2026-09-21 换成简历里的真实履历） ============ */
+  const tlItems = [...doc.querySelectorAll(".timeline li")].map((li) => ({
+    period: tx(li.querySelector(".tl-period")),
+    role: tx(li.querySelector(".tl-role")),
+    org: tx(li.querySelector(".tl-org")),
+    desc: tx(li.querySelector(".tl-desc")),
+  }));
+  const expectExp = [
+    ["2025.09 – 至今", "Java 开发工程师", "Wipro"],
+    ["2020.05 – 2025.08", "Java 开发工程师 / Tech Leader", "花旗集团"],
+    ["2017.09 – 2019.05", "Java 开发工程师", "苏宁软件技术"],
+    ["2016.07 – 2017.08", "Java 开发工程师", "中软国际"],
+    ["2012.09 – 2016.06", "电子信息科学与技术 · 本科", "山东大学"],
+  ];
+  check("M1 时间线 5 段（4 段工作 + 1 段教育，倒序），时间/职位/公司全对",
+    JSON.stringify(tlItems.map((e) => [e.period, e.role, e.org])) === JSON.stringify(expectExp),
+    tlItems.map((e) => e.org).join(" → "));
+  check("M2 经历区已无占位信息（某互联网公司 / 某软件公司 / 某大学）",
+    !/某互联网公司|某软件公司|某大学/.test(doc.body.textContent),
+    (doc.body.textContent.match(/某互联网公司|某软件公司|某大学/g) || []).length + " 处");
+  check("M3 前两段含真实业务要点（SCB 市场数据 / 批发信贷 + 巴塞尔合规）",
+    /SCB/.test(tlItems[0].desc) && /批发信贷|Wholesale/.test(tlItems[1].desc) && /巴塞尔/.test(tlItems[1].desc),
+    tlItems[1].desc.slice(0, 36) + "…");
+  check("M4 教育段无编造描述（原「多次获校级奖学金」为杜撰，简历仅一行学历）",
+    tlItems.length === 5 && tlItems[4].desc === "",
+    "教育 desc = " + JSON.stringify(tlItems[4] ? tlItems[4].desc : "(缺失)"));
+  // 紧凑化：段间空白 = padding-bottom + margin-bottom，旧值各 26–38px，叠加达 76px
+  const tlRule = (cssSrc.match(/\.timeline li\{[^}]*\}/) || [""])[0];
+  check("M5 经历段间距已收紧（padding/margin 各降到 14–18px）",
+    /1\.9vw/.test(tlRule) && !/3\.6vw/.test(tlRule),
+    tlRule.replace(/\s+/g, " ").slice(0, 98));
+  check("M6 经历区底部留白已单独收紧（#experience 覆盖全局 section padding）",
+    /#experience\{padding-bottom/.test(cssSrc), "#experience{padding-bottom:clamp(30px,4.4vw,52px)}");
+  check("M7 简历「经历」章节与页面同源（真实公司已同步、无占位残留）",
+    ["Wipro", "花旗集团", "苏宁软件技术", "中软国际", "山东大学"].every((k) => rzText.includes(k)) &&
+      !/某互联网公司|某软件公司|某大学/.test(rzText),
+    "resume.md 经历已同源");
 
   const pass = results.filter((r) => r.pass).length;
   console.log("\n=== 验证 ===");

@@ -304,17 +304,6 @@
   .about-grid p{color:var(--ink-2);margin:0 0 1.1em;max-width:62ch;}
   .about-grid p:last-child{margin-bottom:0;}
 
-  /* 一句话技术栈：等宽小字，朱红方点起头。2026-09-21 从首屏移到关于区末尾（正文之后、数据条之前） */
-  .stack-line{
-    margin:clamp(22px,3.4vw,30px) 0 0;
-    font-family:var(--font-mono);font-size:.8rem;line-height:1.9;
-    letter-spacing:.005em;color:var(--muted);max-width:70ch;
-  }
-  .stack-line::before{
-    content:"";display:inline-block;width:6px;height:6px;background:var(--accent);
-    margin-right:10px;vertical-align:.08em;
-  }
-
   .stats-row{
     display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
     margin-top:clamp(34px,5vw,54px);border-top:1px solid var(--line-strong);
@@ -332,10 +321,11 @@
      ============================================================ */
   .timeline{list-style:none;margin:0;padding:0;}
   .timeline li{
-    display:grid;grid-template-columns:132px minmax(0,1fr);gap:clamp(16px,3vw,34px);
-    padding:0 0 clamp(26px,3.6vw,38px);
+    display:grid;grid-template-columns:142px minmax(0,1fr);gap:clamp(16px,3vw,34px);
+    /* 2026-09-21 紧凑化：原来 padding 与 margin 各 26–38px，叠加后段间空白达 76px */
+    padding:0 0 clamp(14px,1.9vw,18px);
     border-bottom:1px solid var(--line);
-    margin-bottom:clamp(26px,3.6vw,38px);
+    margin-bottom:clamp(14px,1.9vw,18px);
   }
   .timeline li:last-child{border-bottom:0;margin-bottom:0;padding-bottom:0;}
   .tl-period{
@@ -352,10 +342,27 @@
     padding:3px 9px;border-radius:2px;
   }
   .tl-desc{color:var(--muted);font-size:.95rem;margin:12px 0 0;max-width:66ch;}
+  /* 经历区底部留白收紧（全局 section 是 clamp(52px,7.5vw,84px)，用户反馈过大） */
+  #experience{padding-bottom:clamp(30px,4.4vw,52px);}
 
   /* ============================================================
      Skills
      ============================================================ */
+  /* 一句话技术栈：等宽小字，朱红方点起头。
+     2026-09-21 三迁：首屏 → 关于区 → 技能区，最终贴在 `skills_sub` 副标题正下方，作为标题组的第三行。
+     内容是一整串技术点，桌面端强制单行（nowrap，已去掉早先的 max-width:70ch 限制）；
+     窄屏在 @media(max-width:960px) 里放开换行。 */
+  .stack-line{
+    margin:9px 0 0;
+    font-family:var(--font-mono);font-size:.8rem;line-height:1.9;
+    letter-spacing:.005em;color:var(--muted);
+    white-space:nowrap;
+  }
+  .stack-line::before{
+    content:"";display:inline-block;width:6px;height:6px;background:var(--accent);
+    margin-right:10px;vertical-align:.08em;
+  }
+
   .stack-wrap{border-top:1px solid var(--line);}
   .stack-table{width:100%;border-collapse:collapse;font-size:.93rem;}
   .stack-table th,.stack-table td{
@@ -512,6 +519,11 @@
   /* ============================================================
      Responsive
      ============================================================ */
+  @media(max-width:960px){
+    /* 一句话技术栈是一长串技术点（约 714px @ .8rem）：宽度不足时放开换行，
+       避免 nowrap 把标题区右侧撑破。>960px 时中间列宽 ≥761px，强制单行安全。 */
+    .stack-line{white-space:normal;}
+  }
   @media(max-width:900px){
     .profile{grid-template-columns:1fr;}
   }
@@ -657,9 +669,7 @@
         </div>
       </div>
 
-      <p class="stack-line reveal" style="--d:120ms" data-i18n="about_stack"></p>
-
-      <div class="stats-row reveal" style="--d:160ms">
+      <div class="stats-row reveal" style="--d:120ms">
         <div class="stat"><b data-i18n="stat1_n">9人</b><span data-i18n="stat1_l">团队管理规模</span></div>
         <div class="stat"><b data-i18n="stat2_n">4家</b><span data-i18n="stat2_l">服务过的企业</span></div>
         <div class="stat"><b data-i18n="stat3_n">2个</b><span data-i18n="stat3_l">已上线 AI 应用</span></div>
@@ -675,27 +685,42 @@
       </div>
       <ul class="timeline">
         <li class="reveal">
-          <span class="tl-period" data-i18n="exp1_period">2023.02 – 至今</span>
+          <span class="tl-period" data-i18n="exp1_period">2025.09 – 至今</span>
           <div>
-            <span class="tl-role" data-i18n="exp1_role">AI 应用开发工程师</span>
-            <span class="tl-org" data-i18n="exp1_org">某互联网公司</span>
+            <span class="tl-role" data-i18n="exp1_role">Java 开发工程师</span>
+            <span class="tl-org" data-i18n="exp1_org">Wipro</span>
             <p class="tl-desc" data-i18n="exp1_desc"></p>
           </div>
         </li>
         <li class="reveal" style="--d:80ms">
-          <span class="tl-period" data-i18n="exp2_period">2021.07 – 2023.01</span>
+          <span class="tl-period" data-i18n="exp2_period">2020.05 – 2025.08</span>
           <div>
-            <span class="tl-role" data-i18n="exp2_role">后端开发工程师</span>
-            <span class="tl-org" data-i18n="exp2_org">某软件公司</span>
+            <span class="tl-role" data-i18n="exp2_role">Java 开发工程师 / Tech Leader</span>
+            <span class="tl-org" data-i18n="exp2_org">花旗集团</span>
             <p class="tl-desc" data-i18n="exp2_desc"></p>
           </div>
         </li>
         <li class="reveal" style="--d:160ms">
-          <span class="tl-period" data-i18n="exp3_period">2017.09 – 2021.06</span>
+          <span class="tl-period" data-i18n="exp3_period">2017.09 – 2019.05</span>
           <div>
-            <span class="tl-role" data-i18n="exp3_role">计算机科学与技术 · 本科</span>
-            <span class="tl-org" data-i18n="exp3_org">某大学</span>
+            <span class="tl-role" data-i18n="exp3_role">Java 开发工程师</span>
+            <span class="tl-org" data-i18n="exp3_org">苏宁软件技术</span>
             <p class="tl-desc" data-i18n="exp3_desc"></p>
+          </div>
+        </li>
+        <li class="reveal" style="--d:240ms">
+          <span class="tl-period" data-i18n="exp4_period">2016.07 – 2017.08</span>
+          <div>
+            <span class="tl-role" data-i18n="exp4_role">Java 开发工程师</span>
+            <span class="tl-org" data-i18n="exp4_org">中软国际</span>
+            <p class="tl-desc" data-i18n="exp4_desc"></p>
+          </div>
+        </li>
+        <li class="reveal" style="--d:320ms">
+          <span class="tl-period" data-i18n="exp5_period">2012.09 – 2016.06</span>
+          <div>
+            <span class="tl-role" data-i18n="exp5_role">电子信息科学与技术 · 本科</span>
+            <span class="tl-org" data-i18n="exp5_org">山东大学</span>
           </div>
         </li>
       </ul>
@@ -707,6 +732,7 @@
         <div>
           <h2 data-i18n="skills_title">技术栈</h2>
           <p class="sub" data-i18n="skills_sub">从语言、编排到部署的完整技术栈。</p>
+          <p class="stack-line" data-i18n="skills_stack"></p>
         </div>
         <span class="sec-kicker" data-i18n="skills_kicker">SKILLS</span>
       </div>
@@ -837,16 +863,19 @@ const I18N = {
     about_kicker:"ABOUT", about_title:"关于我",
     about_p1:"10 年软件研发经验，先后在花旗集团、苏宁等企业负责批发信贷、支付决策等核心系统的研发与交付，作为小组长带过 9 人团队，熟悉金融级系统对稳定性、数据一致性与合规的要求。",
     about_p2:"目前正把主力语言从 Java 转向 Python，专注 LLM 应用的工程化落地：RAG 检索增强、Agent 与工具调用、多模型编排、打包与上线交付，已独立完成两个从 0 到 1 的 AI 应用。正在寻找 AI 应用开发工程师岗位。",
-    about_stack:"Python · FastAPI · LangGraph · RAG（Milvus + ES 混合检索）· Redis · PostgreSQL · Docker · OTel",
     stat1_n:"9人", stat1_l:"团队管理规模", stat2_n:"4家", stat2_l:"服务过的企业",
     stat3_n:"2个", stat3_l:"已上线 AI 应用", stat4_n:"∞", stat4_l:"好奇心",
     exp_kicker:"EXPERIENCE", exp_title:"经历",
-    exp1_role:"AI 应用开发工程师", exp1_period:"2023.02 – 至今", exp1_org:"某互联网公司",
-    exp1_desc:"主导企业级 RAG 知识库、多 Agent 数据分析与 LLM 网关等核心系统的架构设计与落地，服务数千名内部用户。",
-    exp2_role:"后端开发工程师", exp2_period:"2021.07 – 2023.01", exp2_org:"某软件公司",
-    exp2_desc:"负责业务中台与数据服务的后端研发，积累了扎实的分布式系统与服务化经验。",
-    exp3_role:"计算机科学与技术 · 本科", exp3_period:"2017.09 – 2021.06", exp3_org:"某大学",
-    exp3_desc:"主修后端与系统方向，多次获校级奖学金。",
+    exp1_role:"Java 开发工程师", exp1_period:"2025.09 – 至今", exp1_org:"Wipro",
+    exp1_desc:"服务于 SCB 的市场数据团队：整合内外部 Marketing Data，对外提供统一的数据访问 API。负责 MDS API 技术改造——访问日志写入 ClickHouse 并在 Grafana 做数据分析、实现历史数据迁移比对工具、推进 on-premise 到 AWS 的迁移。",
+    exp2_role:"Java 开发工程师 / Tech Leader", exp2_period:"2020.05 – 2025.08", exp2_org:"花旗集团",
+    exp2_desc:"负责批发信贷（Wholesale Lending）核心系统研发，覆盖贷款发起、审核、抵押品管理与贷后监控，并按巴塞尔协议Ⅲ等监管要求完成合规改造；作为 Tech Leader 把控项目风险与进度，带领小组完成端到端交付。",
+    exp3_role:"Java 开发工程师", exp3_period:"2017.09 – 2019.05", exp3_org:"苏宁软件技术",
+    exp3_desc:"负责支付决策、代扣、单笔出款系统的需求开发与生产运维。支付决策以工厂模式 + 多线程 + 责任链实现，决策因子（优先级、渠道可用性、手续费等）支持动态配置。",
+    exp4_role:"Java 开发工程师", exp4_period:"2016.07 – 2017.08", exp4_org:"中软国际",
+    exp4_desc:"华为电信业务线库存管理项目组：负责号码、SIM 卡、充值卡、终端等资源的分类管理与权限控制，覆盖入库、出库、调拨等流程。",
+    exp5_role:"电子信息科学与技术 · 本科", exp5_period:"2012.09 – 2016.06", exp5_org:"山东大学",
+    skills_stack:"Python · FastAPI · LangGraph · RAG（Milvus + ES 混合检索）· Redis · PostgreSQL · Docker · OTel",
     skills_kicker:"SKILLS", skills_title:"技术栈", skills_sub:"从语言、编排到部署的完整技术栈。",
     skill1_group:"语言与运行时", skill1_items:"Python 3.11+（类型注解 / asyncio）",
     skill2_group:"Web 与 API", skill2_items:"FastAPI、Uvicorn、Pydantic v2",
@@ -889,16 +918,19 @@ const I18N = {
     about_kicker:"ABOUT", about_title:"About me",
     about_p1:"10 years in software engineering, delivering core systems for wholesale lending and payment decisioning at Citi, Suning and others — leading a team of 9 and working to the stability, data-consistency and compliance bar of financial-grade systems.",
     about_p2:"I'm now shifting my primary language from Java to Python, focused on engineering LLM applications into production: RAG retrieval, agents and tool use, multi-model orchestration, packaging and delivery. I've independently shipped two AI applications from zero to one.",
-    about_stack:"Python · FastAPI · LangGraph · RAG (Milvus + ES hybrid retrieval) · Redis · PostgreSQL · Docker · OTel",
     stat1_n:"9", stat1_l:"team size led", stat2_n:"4", stat2_l:"companies served",
     stat3_n:"2", stat3_l:"AI apps shipped", stat4_n:"∞", stat4_l:"curiosity",
     exp_kicker:"EXPERIENCE", exp_title:"Experience",
-    exp1_role:"AI Application Engineer", exp1_period:"Feb 2023 – Present", exp1_org:"Internet company",
-    exp1_desc:"Led architecture and delivery of the enterprise RAG knowledge base, multi-agent analytics and the LLM gateway, serving thousands of internal users.",
-    exp2_role:"Backend Engineer", exp2_period:"Jul 2021 – Jan 2023", exp2_org:"Software company",
-    exp2_desc:"Built business-platform and data services — a solid foundation in distributed systems and service-oriented design.",
-    exp3_role:"B.Sc. in Computer Science", exp3_period:"Sep 2017 – Jun 2021", exp3_org:"University",
-    exp3_desc:"Focused on backend and systems; multiple university scholarships.",
+    exp1_role:"Java Engineer", exp1_period:"Sep 2025 – Present", exp1_org:"Wipro",
+    exp1_desc:"On the market-data team serving SCB: consolidating internal and external marketing data behind a unified data access API. Drove MDS API technical work — access logs into ClickHouse with Grafana analytics, a data-migration comparison tool, and the move from on-premise to AWS.",
+    exp2_role:"Java Engineer / Tech Leader", exp2_period:"May 2020 – Aug 2025", exp2_org:"Citi",
+    exp2_desc:"Built core systems for wholesale lending — loan origination, underwriting, collateral management and post-loan monitoring — and delivered regulatory compliance work such as Basel III. As Tech Leader, owned project risk and schedule and led a small team through end-to-end delivery.",
+    exp3_role:"Java Engineer", exp3_period:"Sep 2017 – May 2019", exp3_org:"Suning Software",
+    exp3_desc:"Developed and supported the payment-decisioning, direct-debit and single-payout systems. Payment decisioning used factory + multithreading + chain-of-responsibility, with decision factors (priority, channel availability, fees) configurable at runtime.",
+    exp4_role:"Java Engineer", exp4_period:"Jul 2016 – Aug 2017", exp4_org:"Chinasoft International",
+    exp4_desc:"Inventory management for Huawei's telecom line: classification, permission control, inbound/outbound and transfer of resources such as phone numbers, SIM cards, top-up cards and terminals.",
+    exp5_role:"B.Eng. in Electronic Information Science & Technology", exp5_period:"Sep 2012 – Jun 2016", exp5_org:"Shandong University",
+    skills_stack:"Python · FastAPI · LangGraph · RAG (Milvus + ES hybrid retrieval) · Redis · PostgreSQL · Docker · OTel",
     skills_kicker:"SKILLS", skills_title:"Tech stack", skills_sub:"The full stack — from language to orchestration to deployment.",
     skill1_group:"Language & Runtime", skill1_items:"Python 3.11+ (type hints / asyncio)",
     skill2_group:"Web & API", skill2_items:"FastAPI, Uvicorn, Pydantic v2",
@@ -962,8 +994,8 @@ const WORKS = [
   },
   {
     id:"wc-prediction", emoji:"⚽", color:"#d9561f",
-    detailUrl:"projects/world-cup-prediction.html",
-    tryUrl:"projects/world-cup-prediction.html",
+    detailUrl:"https://andyxu1234.github.io/world-cup-prediction/",
+    tryUrl:"https://andyxu1234.github.io/world-cup-prediction/",
     codeUrl:"https://github.com/andyxu1234/world-cup-prediction",
     tag:{zh:"全栈 · 多模型预测",en:"Full-stack · Multi-LLM"},
     period:{zh:"2026.04 – 2026.07",en:"Apr 2026 – Jul 2026"},
@@ -996,124 +1028,78 @@ const WORKS = [
     stack:["Taro 4.1","React 18","TypeScript","Zustand","FastAPI","SQLAlchemy 2.0","MySQL 8.0","LangGraph","OfoxAI","APScheduler","Docker Compose","Nginx"]
   },
   {
-    id:"rag-kb", emoji:"📚", color:"#4f46e5",
-    tag:{zh:"RAG · 检索增强",en:"RAG"},
-    period:{zh:"2025.02 – 至今",en:"Feb 2025 – Present"},
-    role:{zh:"架构设计与核心开发",en:"Architect & core developer"},
-    title:{zh:"企业知识库智能问答系统",en:"Enterprise Knowledge-Base QA"},
+    id:"marathon", emoji:"🏃", color:"#ff5c38",
+    detailUrl:"https://andyxu1234.github.io/marathon/",
+    tryUrl:"https://andyxu1234.github.io/marathon/",
+    codeUrl:"https://github.com/andyxu1234/marathon",
+    tag:{zh:"全栈 · 小程序",en:"Full-stack · Mini Program"},
+    period:{zh:"2026.08 – 至今",en:"Aug 2026 – Present"},
+    role:{zh:"独立开发（小程序前端 / 服务端 / 数据管道 / 设计系统）",en:"Solo developer (Mini Program, backend, data pipeline, design system)"},
+    title:{zh:"马拉松赛事追踪小程序",en:"Marathon Race Tracker"},
     summary:{
-      zh:"面向企业内部资料的智能问答系统：多格式文档解析、混合检索加重排、答案引用溯源，服务数千名员工，是公司内部使用最频繁的 AI 工具之一。",
-      en:"An internal Q&A system over company knowledge: multi-format document parsing, hybrid retrieval with reranking and citation-backed answers — serving thousands of employees as one of the most-used internal AI tools."
+      zh:"把「找赛事 → 判断要不要报名 → 盯报名 / 缴费 / 中签 → 沉淀个人战绩」这条散落在公众号与网页里的长链路，收进一个六个页面的小程序：全国赛事五维筛选、报名三维追踪、跑者排行榜与个人战绩统计。",
+      en:"Folds a long, scattered loop — find a race, decide whether to enter, track registration / payment / lottery, then bank the result — into a six-screen Mini Program: five-dimension race filtering, three-state entry tracking, a runner leaderboard and personal race stats."
     },
     desc:{
-      zh:"从 0 到 1 完成架构设计与核心研发。接入 Wiki、PDF、飞书文档等数十万篇内部资料，针对“答非所问”与幻觉两大痛点，设计了“分块调优 + BM25/向量混合检索 + Rerank 重排”的多级检索链路，并以引用溯源和“无依据不回答”策略守住可信底线。同时建立了离线评测集与 Bad Case 回流机制，让检索与问答质量可以量化、可持续迭代。",
-      en:"I designed the architecture end to end and built the core. It ingests hundreds of thousands of internal docs (Wiki, PDF, Feishu). To tackle irrelevant answers and hallucination, I built a multi-stage retrieval pipeline — chunking tuning, BM25 + vector hybrid search and a reranker — plus citation grounding and a “no evidence, no answer” policy. An offline eval set and a bad-case feedback loop keep quality measurable and improving."
+      zh:"从 0 到 1 独立完成全栈交付：前端用 Taro 4.1 + React 18 + TypeScript，一套代码编译微信小程序、抖音小程序与 H5；后端是 FastAPI + SQLAlchemy 2.0 异步服务（7 张业务表 / 26 个端点 / 7 个 Alembic 迁移版本），提供赛事列表与多维筛选、关注收藏、报名状态流转、跑者排行、个人战绩统计与配置字典六组接口。数据不靠人工整理，而是一条自建的赛事富化管道：抓取赛事列表卡片后用规则解析出结构化字段，再让 LLM 联网补全简介、路线、主办方、报名费等缺失信息并做二轮筛选，最后以赛事 ID 为增量键、关键卡片字段的 sha1 哈希判断内容是否变化，只对新增或变更的赛事重新富化，原始 / 富化 / 最终三态 JSON 全量留痕、可回溯审计；APScheduler 每天 06:30 定时运行，并支持手动触发与运行报告。产品上把报名状态拆成报名、缴费、中签三个独立维度，关注页用 chips 随手切换并反算开赛倒计时；跑者排行按比赛类型推算里程（全马 42.195 / 半马 21.0975 / 健康跑 5 / 越野 30 km）做四指标实时聚合。设计上自建「晨曦跑道」主题，珊瑚橙 × 青柠双主色与暖白纸面层级收敛为 SCSS token 自动注入每个样式文件，保证六个页面视觉语言一致；项目已在 GitHub Pages 上线介绍页。",
+      en:"Delivered the whole stack solo. The frontend is Taro 4.1 + React 18 + TypeScript, one codebase compiled to WeChat Mini Program, Douyin Mini Program and H5; the backend is an async FastAPI + SQLAlchemy 2.0 service (7 tables, 26 endpoints, 7 Alembic revisions) exposing six route groups — race listing and multi-dimension filtering, favourites, registration state transitions, runner rankings, personal stats and a config dictionary. Data is not curated by hand but produced by a self-built enrichment pipeline: race list cards are parsed by deterministic rules into structured fields, an LLM then fills the gaps (introduction, route, organiser, entry fee) over the web and a second filtering pass drops noise; finally the race ID acts as the incremental key and a sha1 hash over the key card fields decides whether anything changed, so only new or modified races are re-enriched. Original, enriched and final JSON are all persisted for a full audit trail, and APScheduler runs the job daily at 06:30 with manual triggering and run reports. On the product side, entry state is modelled as three independent dimensions — registered, paid, lottery — toggled with chips on the follow screen and paired with a countdown to race day; the leaderboard aggregates four metrics in real time (total distance, half-marathon PB, full-marathon PB, total spend) inferring distance from race type (42.195 / 21.0975 / 5 / 30 km). Visually the project ships a self-built “Dawn Track” theme — coral × lime on warm paper — collapsed into SCSS tokens auto-injected into every stylesheet, keeping all six screens visually consistent. A GitHub Pages landing page documents the project."
     },
     highlights:{
       zh:[
-        "多级检索链路：分块策略调优、BM25 + 向量混合召回、Cross-Encoder 重排，回答准确率显著提升",
-        "答案引用溯源 + “无依据不回答”策略，可信可审计",
-        "流式输出、多轮对话与权限隔离，贴合企业真实场景",
-        "离线评测集 + Bad Case 回流机制，质量可量化、可持续迭代"
+        "赛事数据富化管道：规则解析产出结构化字段，LLM 联网补全缺失信息后做二轮筛选；以赛事 ID 为增量键、关键卡片字段的 sha1 哈希判断内容是否变化，只重跑新增或变更的赛事",
+        "全链路可审计：原始卡片 / LLM 富化 / 二轮筛选三态 JSON 全量留痕，附来源 URL 与抓取时间；AI 只在规则解析失效时兜底，主链路保持确定性",
+        "报名 / 缴费 / 中签三维状态建模：三者独立落库并支持单场费用覆盖，同一张表承载完赛时间、参赛号码与 PB 标记，同时驱动关注页追踪、个人战绩与排行榜",
+        "跑者排行四指标实时聚合（总跑量 / 半马 PB / 全马 PB / 总花费），官方赛事与自定义赛事双数据源合并，按比赛类型推算里程并支持性别与年龄段筛选",
+        "Taro 一套代码编译微信小程序 / 抖音小程序 / H5，登录按端分流（微信与抖音 code 换 openid 静默登录、H5 保留密码登录），并用构建产物修正脚本消除多端配置差异",
+        "五维筛选的枚举值全部由后端从真实数据聚合返回，避免「选了却没有结果」的空枚举；首页排序由报名状态、热门与推荐共同驱动"
       ],
       en:[
-        "Multi-stage retrieval: chunking tuning, BM25 + vector hybrid recall and cross-encoder reranking — major accuracy gains",
-        "Citation grounding and a “no evidence, no answer” policy for trustworthy, auditable answers",
-        "Streaming output, multi-turn context and permission isolation for real enterprise scenarios",
-        "Offline eval set + bad-case feedback loop: quality stays measurable and keeps improving"
+        "Race-data enrichment pipeline: deterministic rules produce structured fields, an LLM fills the gaps over the web, then a second pass filters noise; the race ID plus a sha1 hash of key card fields decides what actually changed, so only new or updated races are re-enriched",
+        "Auditable end to end: raw card, LLM-enriched and final JSON are all persisted with source URL and fetch time, and AI is only a fallback when rule parsing yields nothing, keeping the main path deterministic",
+        "Three-dimensional entry modelling (registered / paid / lottery) with per-race fee override; the same row carries finish time, bib number and PB flags, driving the follow screen, personal stats and the leaderboard at once",
+        "Four leaderboard metrics aggregated in real time (total distance, half PB, full PB, total spend) across both official and user-created races, inferring distance from race type with gender and age-group filters",
+        "One Taro codebase compiled to WeChat Mini Program, Douyin Mini Program and H5, with per-platform login (WeChat/Douyin code-to-openid silent login, password login kept for H5) and a post-build script that removes platform config drift",
+        "All five filter dimensions are aggregated server-side from real data, so no enum ever returns an empty result; home ordering is driven by race status plus hot and recommended flags"
       ]
     },
-    stack:["Python","FastAPI","LangChain","Milvus","Elasticsearch","Redis","React","vLLM"]
+    stack:["Taro 4.1","React 18","TypeScript","Zustand","Sass","FastAPI","SQLAlchemy 2.0","MySQL 8.0","Alembic","APScheduler","httpx","JWT","BeautifulSoup4"]
   },
   {
-    id:"agent-bi", emoji:"🤖", color:"#0d9488",
-    tag:{zh:"Agent · 智能体",en:"Agents"},
-    period:{zh:"2024.05 – 2025.01",en:"May 2024 – Jan 2025"},
-    role:{zh:"主导设计与开发",en:"Led design & development"},
-    title:{zh:"多 Agent 数据分析助手",en:"Multi-Agent Data Analyst"},
+    id:"rush-hour", emoji:"🚗", color:"#e03131",
+    detailUrl:"https://andyxu1234.github.io/rush-hour/",
+    tryUrl:"https://andyxu1234.github.io/rush-hour/",
+    codeUrl:"https://github.com/andyxu1234/rush-hour",
+    tag:{zh:"双端游戏 · 关卡解谜",en:"Game · Puzzle levels"},
+    period:{zh:"2026.09 – 至今",en:"Sep 2026 – Present"},
+    role:{zh:"独立开发（玩法内核 / 渲染 / 双端构建 / 工程化）",en:"Solo developer (game core, renderer, dual-target build, tooling)"},
+    title:{zh:"rush-hour · 汽车华容道（H5 / 微信小游戏）",en:"rush-hour · Car Sliding Puzzle (H5 / WeChat Mini Game)"},
     summary:{
-      zh:"用自然语言问数据：Agent 自动拆解问题、生成并自检 SQL、执行分析，最后输出图表与结论式报告，让业务同学无需写 SQL 也能自助分析。",
-      en:"Ask data in plain language: agents decompose the question, generate and self-check SQL, run the analysis, then return charts and a conclusion-style report — self-serve analytics without writing SQL."
+      zh:"在 6×6 棋盘上把红车滑出右侧出口，步数越少越好：纯 TypeScript + Canvas 2D 手写的汽车华容道，不用任何游戏引擎，同一套内核同时编译出 H5 网页版与微信小游戏版，并配 BFS 最少步数求解器与求解器校验过的程序化关卡。",
+      en:"Slide the red car out through the right-hand exit in as few moves as possible: a 6×6 car-sliding puzzle hand-written in pure TypeScript + Canvas 2D with no game engine, where one core compiles to both a web build and a WeChat Mini Game, backed by a BFS minimum-move solver and solver-verified procedural levels."
     },
     desc:{
-      zh:"面向业务同学的“随身数据分析师”。基于 Function Calling 与多 Agent 协作：规划 Agent 负责拆解问题与分析路径，Text2SQL Agent 结合 schema linking 生成 SQL 并自检修正，分析 Agent 完成归因、可视化与结论生成。所有 SQL 在只读沙箱中执行，配合白名单校验与超时熔断，保证数据安全。",
-      en:"A pocket data analyst for business teams. Built on function calling and multi-agent collaboration: a planner decomposes the question and picks the analysis path, a Text2SQL agent generates SQL with schema linking and self-checks it, and an analyst agent handles attribution, charts and conclusions. Every query runs in a read-only sandbox with allowlist validation and timeouts for data safety."
+      zh:"从 0 到 1 独立完成，技术栈刻意收敛到纯 TypeScript + Canvas 2D，不使用 Cocos / Laya 类引擎，玩法与渲染都由自己实现。内核零平台依赖，拆成 model / moves / solver / game / save 六个模块；棋盘状态一律由走子序列重放得出，于是「撤销 = 弹栈」「存档 = 存 moves」「将来服务端重放防作弊」三件事共用同一份数据，永远不会互相漂移。平台差异被冻结进一个 Platform 接口（画布 / 存储 / 网络 / 音频 / 分享），H5 侧用 DOM + localStorage + WebAudio、小游戏侧用 wx.*，双端复用率约 95%，并由 ESLint 强制 core 与 render 两层不得出现 window / document / wx / localStorage / eval —— 小游戏没有 DOM/BOM 且禁用 eval，这是同一套代码能编译到两端的硬前提。关卡不走人工摆放：Python 参考求解器生成，TS 求解器复算，L2 跨语言一致性校验逐关比对最少步数、可达状态数、最优路径数与难度分档（当前 34 关：教学 8 + 经典 26，构建期内联为常量）；求解器同时支撑剩余步数与最优下一步提示。质量门是一键 npm run check：双端类型检查 + 单测 + 双端构建 + 产物红线（H5 ≤ 350KB、产物不含 solution 字段、不含 eval / new Function、小游戏主包 ≤ 4MB）；e2e 用 Playwright 覆盖 3 种视口，触摸用例经 CDP 派发带抖动的真实手势。美术侧把 4.4MB 原始贴图抠掉被「画上去」的伪透明棋盘格、裁到内容包围盒再压缩到 124KB，且贴图始终是可选增强——任何一张加载失败自动回落矢量绘制，素材不可能让游戏跑不起来。另交付项目落地页，含可直接试玩的网页版，截图由 Playwright 驱动真实构建产物生成，部署前的冒烟检查会拦下 404 图片与起不来的试玩页。",
+      en:"Delivered end to end solo, deliberately confined to pure TypeScript + Canvas 2D with no engine such as Cocos or Laya — gameplay and rendering are both implemented from scratch. The core has zero platform dependencies and is split into six modules (model / moves / solver / game / save); the board is always replayed from its move sequence, so undo (pop the stack), save (store the moves) and future server-side replay anti-cheat all share one source of truth and can never drift. Platform differences are frozen behind a single Platform interface (canvas, storage, network, audio, sharing): the web build uses DOM + localStorage + WebAudio while the Mini Game build uses wx.*, giving roughly 95% reuse — and ESLint forbids window / document / wx / localStorage / eval inside core and render, the hard precondition for one codebase to compile to both targets. Levels are not hand-placed: a Python reference solver generates them, the TypeScript solver recomputes them, and an L2 cross-language check compares minimum moves, reachable state counts, optimal path counts and difficulty bands level by level (34 levels today: 8 tutorial + 26 classic, inlined as a build-time constant); the same solver drives remaining-move counts and next-optimal-move hints. The quality gate is a single npm run check: dual-target type check, unit tests, both builds, plus artifact red lines (H5 ≤ 350KB, no solution field, no eval / new Function, Mini Game main bundle ≤ 4MB); Playwright e2e covers three viewports and dispatches jittered real touch gestures over CDP. On art, 4.4MB of raw sprites are stripped of their painted-on fake transparent checkerboard, cropped to their bounding box and compressed down to 124KB — and sprites stay optional, so any failed load falls back to vector drawing and assets can never break the game. A landing page with a playable web build ships alongside, with screenshots captured by Playwright from the real build artifacts and a pre-deploy smoke check that blocks 404 images and a play build that refuses to start."
     },
     highlights:{
       zh:[
-        "规划 / Text2SQL / 分析 多 Agent 协作流，复杂问题可拆解执行",
-        "Schema linking + SQL 自检重试，生成准确率经评测集持续优化",
-        "只读沙箱 + SQL 白名单 + 超时熔断，安全可控",
-        "自动产出 ECharts 图表与结论式分析报告"
+        "一套代码双端交付：纯 TypeScript + Canvas 2D 手写（不用 Cocos / Laya），同一内核编译到 H5 与微信小游戏，复用率约 95%；平台能力全部经冻结的 Platform 接口注入，ESLint 强制 core / render 两层禁触 window / document / wx / localStorage / eval",
+        "走子序列是唯一事实来源：棋盘状态一律由 moves 重放得出，撤销＝弹栈、存档＝存 moves、将来服务端重放防作弊共用一份数据，永不漂移",
+        "BFS 求解器 + 程序化关卡：Python 参考求解器生成、TS 求解器复算，L2 跨语言校验逐关比对最少步数 / 可达状态数 / 最优路径数 / 难度分档（34 关：教学 8 + 经典 26）；同一求解器提供剩余步数与最优下一步提示",
+        "输入手感按真机校准：轻点容差由 4px 提到 18px 并改欧氏距离判定，修掉 onMove 无条件清空基线导致结算弹窗按钮在真机点不动的问题；e2e 用 CDP 派发带 2px 抖动的真实触摸手势做回归",
+        "一键质量门：双端类型检查 + 单测 + 双端构建 + 产物红线（H5 ≤ 350KB、不含 solution 字段、不含 eval / new Function、小游戏主包 ≤ 4MB）；Playwright e2e 覆盖 smoke / gameplay / drag / touch，共 3 种视口",
+        "素材流水线：4.4MB 原始贴图 → 抠除被「画上去」的伪透明棋盘格（含车身阴影与棋盘格混合产生的中灰残留）+ 裁包围盒 + 压缩 → 124KB；贴图是可选增强，加载失败自动回落矢量绘制"
       ],
       en:[
-        "Planner / Text2SQL / analyst agent workflow that decomposes complex questions",
-        "Schema linking + SQL self-check & retry, tuned against a held-out eval set",
-        "Read-only sandbox, SQL allowlist and timeouts — safe and controllable",
-        "Auto-generated ECharts visuals and conclusion-style analysis reports"
+        "One codebase, two targets: hand-written in pure TypeScript + Canvas 2D (no Cocos or Laya), with the same core compiled to web and WeChat Mini Game at ~95% reuse; every platform capability is injected through a frozen Platform interface, and ESLint forbids window / document / wx / localStorage / eval inside core and render",
+        "The move sequence is the single source of truth: the board is always replayed from moves, so undo (pop), save (store moves) and future server-side replay anti-cheat share one dataset that cannot drift",
+        "BFS solver + procedural levels: generated by a Python reference solver and recomputed by the TypeScript one, with an L2 cross-language check comparing minimum moves, reachable states, optimal path counts and difficulty bands level by level (34 levels: 8 tutorial + 26 classic); the same solver powers remaining-move counts and next-move hints",
+        "Touch feel calibrated on real devices: the tap slop was raised from 4px to 18px with euclidean-distance judgement, fixing a bug where onMove cleared the gesture baseline unconditionally and made win-dialog buttons untappable on phones; e2e dispatches real touch gestures with 2px jitter over CDP as regression cover",
+        "A single quality gate: dual-target type check + unit tests + both builds + artifact red lines (H5 ≤ 350KB, no solution field, no eval / new Function, Mini Game main bundle ≤ 4MB); Playwright e2e covers smoke / gameplay / drag / touch across three viewports",
+        "Asset pipeline: 4.4MB of raw sprites → remove the painted-on fake transparent checkerboard (including mid-grey residue where car shadows blended with it), crop to bounding box, compress → 124KB; sprites are optional enhancement with automatic fallback to vector drawing"
       ]
     },
-    stack:["Python","LangGraph","Function Calling","MySQL","ECharts","Next.js","DeepSeek"]
-  },
-  {
-    id:"llm-gateway", emoji:"⚡", color:"#ea580c",
-    tag:{zh:"模型服务 · MaaS",en:"Model Serving"},
-    period:{zh:"2023.11 – 2024.04",en:"Nov 2023 – Apr 2024"},
-    role:{zh:"从 0 到 1 主导建设",en:"Built from zero to one"},
-    title:{zh:"LLM 网关与推理加速平台",en:"LLM Gateway & Inference Platform"},
-    summary:{
-      zh:"统一接入十余个大模型的内部网关：兼容 OpenAI 协议、多租户限流、语义缓存、故障降级与全链路成本观测，让上层应用像调用一个函数一样使用大模型。",
-      en:"An internal gateway unifying a dozen models: OpenAI-compatible API, multi-tenant rate limiting, semantic caching, failover routing and full-chain cost observability — so apps consume LLMs like a single function call."
-    },
-    desc:{
-      zh:"随着内部 AI 应用增多，模型调用散落各处、成本与稳定性失控。我主导搭建了统一的 LLM 网关：兼容 OpenAI 协议让存量应用零成本迁移，基于 Embedding 相似度的语义缓存大幅降低重复问题成本，配合多模型降级路由、令牌桶限流与 Prometheus/Grafana 观测大盘，token 花费与调用质量一目了然。",
-      en:"As internal AI apps multiplied, model calls sprawled and costs got out of control. I led the build of a unified gateway: OpenAI-compatible endpoints for zero-cost migration, embedding-based semantic caching that slashes repeated-question costs, multi-model failover, token-bucket rate limiting, and a Prometheus/Grafana dashboard making token spend and quality fully visible."
-    },
-    highlights:{
-      zh:[
-        "兼容 OpenAI 协议，一行配置切换或降级模型",
-        "语义缓存 + 多级缓存，重复问题成本大幅下降",
-        "多租户令牌桶限流与配额管理，保障核心业务稳定",
-        "全链路观测：调用日志、延迟分布与 Token 成本大盘"
-      ],
-      en:[
-        "OpenAI-compatible endpoints: switch or fail over models with one config line",
-        "Semantic + multi-level caching that cuts repeated-question costs sharply",
-        "Multi-tenant token-bucket rate limiting and quotas for core-business stability",
-        "Full observability: call logs, latency distributions and a token-cost dashboard"
-      ]
-    },
-    stack:["Python","vLLM","Redis","Prometheus","Grafana","Docker","Nginx"]
-  },
-  {
-    id:"cs-copilot", emoji:"💬", color:"#db2777",
-    tag:{zh:"NLP 应用",en:"NLP App"},
-    period:{zh:"2023.03 – 2023.10",en:"Mar 2023 – Oct 2023"},
-    role:{zh:"核心开发",en:"Core developer"},
-    title:{zh:"智能客服工单助手",en:"Customer-Service Copilot"},
-    summary:{
-      zh:"面向客服团队的 AI 副驾驶：进线工单自动分类、摘要与话术推荐，“AI 起草 + 人工确认”的人机协作模式让首次响应时长大幅下降。",
-      en:"An AI copilot for support teams: automatic ticket classification, summarization and reply suggestions. The “AI drafts, human confirms” workflow cut first-response time dramatically."
-    },
-    desc:{
-      zh:"客服团队每天面对大量重复咨询。系统对进线工单自动完成意图分类、情绪识别与内容摘要，结合知识库生成推荐话术；复杂问题一键转人工，并自动附带完整上下文摘要。采用“AI 起草 + 人工确认”的协作模式，在提升效率的同时守住服务质量底线。",
-      en:"Support teams face floods of repetitive tickets daily. The system classifies intent, detects sentiment and summarizes each incoming ticket, then drafts suggested replies from the knowledge base; complex cases jump to human agents with a full context summary attached. The “AI drafts, human confirms” loop boosts efficiency without compromising service quality."
-    },
-    highlights:{
-      zh:[
-        "意图分类 + 情绪识别 + 自动摘要的进线预处理",
-        "基于知识库的推荐话术，AI 起草、人工一键确认",
-        "转人工时自动附上下文摘要，交接零成本",
-        "上线后首次响应时长与平均处理时长显著下降"
-      ],
-      en:[
-        "Incoming-ticket preprocessing: intent classification, sentiment detection and auto summarization",
-        "Knowledge-base reply suggestions: AI drafts, agents confirm in one click",
-        "Auto context summaries on human handoff — zero-cost transitions",
-        "Marked drops in first-response time and average handling time after launch"
-      ]
-    },
-    stack:["Python","LoRA 微调","RAG","FastAPI","Vue 3","MySQL"]
+    stack:["TypeScript","Canvas 2D","Vite","esbuild","npm workspaces","Vitest","Playwright","ESLint","Python","微信小游戏","GitHub Actions"]
   }
 ];
 

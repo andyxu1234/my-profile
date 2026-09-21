@@ -26,20 +26,28 @@ I'm now shifting my primary language from Java to Python, focused on engineering
 
 ## Experience
 
-### AI Application Engineer ｜ Internet company
-`Feb 2023 – Present`
+### Java Engineer ｜ Wipro
+`Sep 2025 – Present`
 
-Led architecture and delivery of the enterprise RAG knowledge base, multi-agent analytics and the LLM gateway, serving thousands of internal users.
+On the market-data team serving SCB: consolidating internal and external marketing data behind a unified data access API. Drove MDS API technical work — access logs into ClickHouse with Grafana analytics, a data-migration comparison tool, and the move from on-premise to AWS.
 
-### Backend Engineer ｜ Software company
-`Jul 2021 – Jan 2023`
+### Java Engineer / Tech Leader ｜ Citi
+`May 2020 – Aug 2025`
 
-Built business-platform and data services — a solid foundation in distributed systems and service-oriented design.
+Built core systems for wholesale lending — loan origination, underwriting, collateral management and post-loan monitoring — and delivered regulatory compliance work such as Basel III. As Tech Leader, owned project risk and schedule and led a small team through end-to-end delivery.
 
-### B.Sc. in Computer Science ｜ University
-`Sep 2017 – Jun 2021`
+### Java Engineer ｜ Suning Software
+`Sep 2017 – May 2019`
 
-Focused on backend and systems; multiple university scholarships.
+Developed and supported the payment-decisioning, direct-debit and single-payout systems. Payment decisioning used factory + multithreading + chain-of-responsibility, with decision factors (priority, channel availability, fees) configurable at runtime.
+
+### Java Engineer ｜ Chinasoft International
+`Jul 2016 – Aug 2017`
+
+Inventory management for Huawei's telecom line: classification, permission control, inbound/outbound and transfer of resources such as phone numbers, SIM cards, top-up cards and terminals.
+
+### B.Eng. in Electronic Information Science & Technology ｜ Shandong University
+`Sep 2012 – Jun 2016`
 
 ## Skills
 
@@ -76,7 +84,7 @@ Architected and delivered end to end, taking every P0–P5 milestone to completi
 
 ### 2. AI Football Prediction Platform
 `Apr 2026 – Jul 2026` ｜ Solo developer (frontend / backend / AI orchestration / deploy) ｜ Full-stack · Multi-LLM
-[Source](https://github.com/andyxu1234/world-cup-prediction)
+[Source](https://github.com/andyxu1234/world-cup-prediction) ｜ [Live demo](https://andyxu1234.github.io/world-cup-prediction/)
 
 Ten mainstream LLMs predicting match outcomes and exact scores side by side: LangGraph-orchestrated parallel calls with consensus aggregation and a confidence index, plus human-vs-AI voting and dual leaderboards — delivered to WeChat Mini Program, Web and APK from one codebase.
 
@@ -92,69 +100,43 @@ Delivered the entire stack solo and open-sourced it (MIT, 79 commits). The backe
 
 **Tech stack**：Taro 4.1 · React 18 · TypeScript · Zustand · FastAPI · SQLAlchemy 2.0 · MySQL 8.0 · LangGraph · OfoxAI · APScheduler · Docker Compose · Nginx
 
-### 3. Enterprise Knowledge-Base QA
-`Feb 2025 – Present` ｜ Architect & core developer ｜ RAG
+### 3. Marathon Race Tracker
+`Aug 2026 – Present` ｜ Solo developer (Mini Program, backend, data pipeline, design system) ｜ Full-stack · Mini Program
+[Source](https://github.com/andyxu1234/marathon) ｜ [Live demo](https://andyxu1234.github.io/marathon/)
 
-An internal Q&A system over company knowledge: multi-format document parsing, hybrid retrieval with reranking and citation-backed answers — serving thousands of employees as one of the most-used internal AI tools.
+Folds a long, scattered loop — find a race, decide whether to enter, track registration / payment / lottery, then bank the result — into a six-screen Mini Program: five-dimension race filtering, three-state entry tracking, a runner leaderboard and personal race stats.
 
-I designed the architecture end to end and built the core. It ingests hundreds of thousands of internal docs (Wiki, PDF, Feishu). To tackle irrelevant answers and hallucination, I built a multi-stage retrieval pipeline — chunking tuning, BM25 + vector hybrid search and a reranker — plus citation grounding and a “no evidence, no answer” policy. An offline eval set and a bad-case feedback loop keep quality measurable and improving.
-
-**Highlights**
-
-- Multi-stage retrieval: chunking tuning, BM25 + vector hybrid recall and cross-encoder reranking — major accuracy gains
-- Citation grounding and a “no evidence, no answer” policy for trustworthy, auditable answers
-- Streaming output, multi-turn context and permission isolation for real enterprise scenarios
-- Offline eval set + bad-case feedback loop: quality stays measurable and keeps improving
-
-**Tech stack**：Python · FastAPI · LangChain · Milvus · Elasticsearch · Redis · React · vLLM
-
-### 4. Multi-Agent Data Analyst
-`May 2024 – Jan 2025` ｜ Led design & development ｜ Agents
-
-Ask data in plain language: agents decompose the question, generate and self-check SQL, run the analysis, then return charts and a conclusion-style report — self-serve analytics without writing SQL.
-
-A pocket data analyst for business teams. Built on function calling and multi-agent collaboration: a planner decomposes the question and picks the analysis path, a Text2SQL agent generates SQL with schema linking and self-checks it, and an analyst agent handles attribution, charts and conclusions. Every query runs in a read-only sandbox with allowlist validation and timeouts for data safety.
+Delivered the whole stack solo. The frontend is Taro 4.1 + React 18 + TypeScript, one codebase compiled to WeChat Mini Program, Douyin Mini Program and H5; the backend is an async FastAPI + SQLAlchemy 2.0 service (7 tables, 26 endpoints, 7 Alembic revisions) exposing six route groups — race listing and multi-dimension filtering, favourites, registration state transitions, runner rankings, personal stats and a config dictionary. Data is not curated by hand but produced by a self-built enrichment pipeline: race list cards are parsed by deterministic rules into structured fields, an LLM then fills the gaps (introduction, route, organiser, entry fee) over the web and a second filtering pass drops noise; finally the race ID acts as the incremental key and a sha1 hash over the key card fields decides whether anything changed, so only new or modified races are re-enriched. Original, enriched and final JSON are all persisted for a full audit trail, and APScheduler runs the job daily at 06:30 with manual triggering and run reports. On the product side, entry state is modelled as three independent dimensions — registered, paid, lottery — toggled with chips on the follow screen and paired with a countdown to race day; the leaderboard aggregates four metrics in real time (total distance, half-marathon PB, full-marathon PB, total spend) inferring distance from race type (42.195 / 21.0975 / 5 / 30 km). Visually the project ships a self-built “Dawn Track” theme — coral × lime on warm paper — collapsed into SCSS tokens auto-injected into every stylesheet, keeping all six screens visually consistent. A GitHub Pages landing page documents the project.
 
 **Highlights**
 
-- Planner / Text2SQL / analyst agent workflow that decomposes complex questions
-- Schema linking + SQL self-check & retry, tuned against a held-out eval set
-- Read-only sandbox, SQL allowlist and timeouts — safe and controllable
-- Auto-generated ECharts visuals and conclusion-style analysis reports
+- Race-data enrichment pipeline: deterministic rules produce structured fields, an LLM fills the gaps over the web, then a second pass filters noise; the race ID plus a sha1 hash of key card fields decides what actually changed, so only new or updated races are re-enriched
+- Auditable end to end: raw card, LLM-enriched and final JSON are all persisted with source URL and fetch time, and AI is only a fallback when rule parsing yields nothing, keeping the main path deterministic
+- Three-dimensional entry modelling (registered / paid / lottery) with per-race fee override; the same row carries finish time, bib number and PB flags, driving the follow screen, personal stats and the leaderboard at once
+- Four leaderboard metrics aggregated in real time (total distance, half PB, full PB, total spend) across both official and user-created races, inferring distance from race type with gender and age-group filters
+- One Taro codebase compiled to WeChat Mini Program, Douyin Mini Program and H5, with per-platform login (WeChat/Douyin code-to-openid silent login, password login kept for H5) and a post-build script that removes platform config drift
+- All five filter dimensions are aggregated server-side from real data, so no enum ever returns an empty result; home ordering is driven by race status plus hot and recommended flags
 
-**Tech stack**：Python · LangGraph · Function Calling · MySQL · ECharts · Next.js · DeepSeek
+**Tech stack**：Taro 4.1 · React 18 · TypeScript · Zustand · Sass · FastAPI · SQLAlchemy 2.0 · MySQL 8.0 · Alembic · APScheduler · httpx · JWT · BeautifulSoup4
 
-### 5. LLM Gateway & Inference Platform
-`Nov 2023 – Apr 2024` ｜ Built from zero to one ｜ Model Serving
+### 4. rush-hour · Car Sliding Puzzle (H5 / WeChat Mini Game)
+`Sep 2026 – Present` ｜ Solo developer (game core, renderer, dual-target build, tooling) ｜ Game · Puzzle levels
+[Source](https://github.com/andyxu1234/rush-hour) ｜ [Live demo](https://andyxu1234.github.io/rush-hour/)
 
-An internal gateway unifying a dozen models: OpenAI-compatible API, multi-tenant rate limiting, semantic caching, failover routing and full-chain cost observability — so apps consume LLMs like a single function call.
+Slide the red car out through the right-hand exit in as few moves as possible: a 6×6 car-sliding puzzle hand-written in pure TypeScript + Canvas 2D with no game engine, where one core compiles to both a web build and a WeChat Mini Game, backed by a BFS minimum-move solver and solver-verified procedural levels.
 
-As internal AI apps multiplied, model calls sprawled and costs got out of control. I led the build of a unified gateway: OpenAI-compatible endpoints for zero-cost migration, embedding-based semantic caching that slashes repeated-question costs, multi-model failover, token-bucket rate limiting, and a Prometheus/Grafana dashboard making token spend and quality fully visible.
-
-**Highlights**
-
-- OpenAI-compatible endpoints: switch or fail over models with one config line
-- Semantic + multi-level caching that cuts repeated-question costs sharply
-- Multi-tenant token-bucket rate limiting and quotas for core-business stability
-- Full observability: call logs, latency distributions and a token-cost dashboard
-
-**Tech stack**：Python · vLLM · Redis · Prometheus · Grafana · Docker · Nginx
-
-### 6. Customer-Service Copilot
-`Mar 2023 – Oct 2023` ｜ Core developer ｜ NLP App
-
-An AI copilot for support teams: automatic ticket classification, summarization and reply suggestions. The “AI drafts, human confirms” workflow cut first-response time dramatically.
-
-Support teams face floods of repetitive tickets daily. The system classifies intent, detects sentiment and summarizes each incoming ticket, then drafts suggested replies from the knowledge base; complex cases jump to human agents with a full context summary attached. The “AI drafts, human confirms” loop boosts efficiency without compromising service quality.
+Delivered end to end solo, deliberately confined to pure TypeScript + Canvas 2D with no engine such as Cocos or Laya — gameplay and rendering are both implemented from scratch. The core has zero platform dependencies and is split into six modules (model / moves / solver / game / save); the board is always replayed from its move sequence, so undo (pop the stack), save (store the moves) and future server-side replay anti-cheat all share one source of truth and can never drift. Platform differences are frozen behind a single Platform interface (canvas, storage, network, audio, sharing): the web build uses DOM + localStorage + WebAudio while the Mini Game build uses wx.*, giving roughly 95% reuse — and ESLint forbids window / document / wx / localStorage / eval inside core and render, the hard precondition for one codebase to compile to both targets. Levels are not hand-placed: a Python reference solver generates them, the TypeScript solver recomputes them, and an L2 cross-language check compares minimum moves, reachable state counts, optimal path counts and difficulty bands level by level (34 levels today: 8 tutorial + 26 classic, inlined as a build-time constant); the same solver drives remaining-move counts and next-optimal-move hints. The quality gate is a single npm run check: dual-target type check, unit tests, both builds, plus artifact red lines (H5 ≤ 350KB, no solution field, no eval / new Function, Mini Game main bundle ≤ 4MB); Playwright e2e covers three viewports and dispatches jittered real touch gestures over CDP. On art, 4.4MB of raw sprites are stripped of their painted-on fake transparent checkerboard, cropped to their bounding box and compressed down to 124KB — and sprites stay optional, so any failed load falls back to vector drawing and assets can never break the game. A landing page with a playable web build ships alongside, with screenshots captured by Playwright from the real build artifacts and a pre-deploy smoke check that blocks 404 images and a play build that refuses to start.
 
 **Highlights**
 
-- Incoming-ticket preprocessing: intent classification, sentiment detection and auto summarization
-- Knowledge-base reply suggestions: AI drafts, agents confirm in one click
-- Auto context summaries on human handoff — zero-cost transitions
-- Marked drops in first-response time and average handling time after launch
+- One codebase, two targets: hand-written in pure TypeScript + Canvas 2D (no Cocos or Laya), with the same core compiled to web and WeChat Mini Game at ~95% reuse; every platform capability is injected through a frozen Platform interface, and ESLint forbids window / document / wx / localStorage / eval inside core and render
+- The move sequence is the single source of truth: the board is always replayed from moves, so undo (pop), save (store moves) and future server-side replay anti-cheat share one dataset that cannot drift
+- BFS solver + procedural levels: generated by a Python reference solver and recomputed by the TypeScript one, with an L2 cross-language check comparing minimum moves, reachable states, optimal path counts and difficulty bands level by level (34 levels: 8 tutorial + 26 classic); the same solver powers remaining-move counts and next-move hints
+- Touch feel calibrated on real devices: the tap slop was raised from 4px to 18px with euclidean-distance judgement, fixing a bug where onMove cleared the gesture baseline unconditionally and made win-dialog buttons untappable on phones; e2e dispatches real touch gestures with 2px jitter over CDP as regression cover
+- A single quality gate: dual-target type check + unit tests + both builds + artifact red lines (H5 ≤ 350KB, no solution field, no eval / new Function, Mini Game main bundle ≤ 4MB); Playwright e2e covers smoke / gameplay / drag / touch across three viewports
+- Asset pipeline: 4.4MB of raw sprites → remove the painted-on fake transparent checkerboard (including mid-grey residue where car shadows blended with it), crop to bounding box, compress → 124KB; sprites are optional enhancement with automatic fallback to vector drawing
 
-**Tech stack**：Python · LoRA 微调 · RAG · FastAPI · Vue 3 · MySQL
+**Tech stack**：TypeScript · Canvas 2D · Vite · esbuild · npm workspaces · Vitest · Playwright · ESLint · Python · 微信小游戏 · GitHub Actions
 
 ---
 
