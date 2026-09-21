@@ -82,8 +82,11 @@ function snapshot(lang) {
     loc: L(lang, "hero_loc"),
     name: L(lang, "hero_name"),
     lead: txt(doc.querySelector(".hero p.lead")),
-    // 基本信息（首屏 profile 列表）
-    intent: all(".profile div").map((d) => [txt(d.querySelector("dt")), txt(d.querySelector("dd"))]),
+    // 基本信息（首屏 profile 列表；姓名在首屏主体、简历抬头也已有，故这里仍过滤 .me 行做护栏：
+    // 万一有人把姓名行塞回表内，简历不会重复出现一行「姓名」）
+    intent: all(".profile div")
+      .filter((d) => !d.classList.contains("me"))
+      .map((d) => [txt(d.querySelector("dt")), txt(d.querySelector("dd"))]),
     // 关于
     aboutParas: all(".about-grid p").map(txt).filter(Boolean),
     stats: all(".stat").map((s) => `${txt(s.querySelector("b"))} ${txt(s.querySelector("span"))}`),
@@ -94,12 +97,13 @@ function snapshot(lang) {
       org: txt(li.querySelector(".tl-org")),
       desc: txt(li.querySelector(".tl-desc")),
     })),
-    // 技能
-    skills: all(".skill-card").map((c) => ({
-      title: txt(c.querySelector("h3")),
-      sub: txt(c.querySelector(".skill-sub")),
-      pills: all(".skill-card").length ? Array.from(c.querySelectorAll(".pill")).map(txt) : [],
-    })),
+    // 技能（技术栈表格：th = 分组，td = 内容）
+    skills: all(".stack-table tr")
+      .map((tr) => ({
+        title: txt(tr.querySelector("th")),
+        items: txt(tr.querySelector("td")),
+      }))
+      .filter((k) => k.title && k.items),
     // 项目（取数据源，字段比卡片更全）
     works: WORKS.map((w) => ({
       title: pick(w.title), tag: pick(w.tag), period: pick(w.period), role: pick(w.role),
@@ -137,8 +141,9 @@ function build(lang) {
   }
 
   out.push(`## ${lb.skills}`, "");
+  const skillSep = lang === "zh" ? "：" : ": ";
   for (const k of s.skills) {
-    out.push(`- **${k.title}**：${k.pills.join(" · ")}`);
+    out.push(`- **${k.title}**${skillSep}${k.items}`);
   }
   out.push("");
 

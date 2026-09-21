@@ -252,14 +252,18 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
   await wait(80);
 
   check("J1 首屏主标题为姓名（zh）", tx(doc.querySelector(".hero h1")) === "徐振宇", tx(doc.querySelector(".hero h1")));
-  check("J2 姓名下附拉丁名", tx(doc.querySelector(".hero-name-sub")) === "Zhenyu Xu", tx(doc.querySelector(".hero-name-sub")));
+  check("J2 姓名在首屏主体（已不在基本信息表内）",
+    !!doc.querySelector(".hero-head .hero-intro h1") &&
+      !doc.querySelector(".hero .profile .me") && !doc.querySelector(".hero-top"),
+    "hero-intro h1=" + tx(doc.querySelector(".hero-head .hero-intro h1")) +
+      " / .profile .me=" + !!doc.querySelector(".hero .profile .me"));
 
   const pfPairs = [...doc.querySelectorAll(".profile div")].map((d) => [tx(d.querySelector("dt")), tx(d.querySelector("dd"))]);
   const expectPairs = [
     ["性别", "男"], ["年龄", "31 岁（1994.10）"], ["学历", "本科 · 山东大学"], ["专业", "电子信息科学与技术"],
     ["工作年限", "10 年"], ["现居", "上海"], ["电话", "13951008016"], ["邮箱", "13951008016@163.com"],
   ];
-  check("J3 基本信息 8 项顺序与取值全对",
+  check("J3 基本信息 8 项顺序与取值全对（姓名已上移到首屏主体）",
     JSON.stringify(pfPairs) === JSON.stringify(expectPairs),
     pfPairs.map((p) => p.join("=")).join(" / "));
 
@@ -286,7 +290,9 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
   await wait(150);
   check("J9 EN 首屏姓名切为拉丁名", tx(doc.querySelector(".hero h1")) === "Zhenyu Xu", tx(doc.querySelector(".hero h1")));
   check("J10 EN 基本信息标签已本地化",
-    tx(doc.querySelector(".profile dt")) === "Gender" && tx(doc.querySelectorAll(".profile div")[2].querySelector("dt")) === "Education",
+    tx(doc.querySelector(".profile dt")) === "Gender" &&
+      tx(doc.querySelectorAll(".profile div")[2].querySelector("dt")) === "Education" &&
+      tx(doc.querySelectorAll(".profile div")[1].querySelector("dt")) === "Age",
     tx(doc.querySelector(".profile dt")));
   click(doc.querySelector('[data-set-lang="zh"]'));
   await wait(150);
@@ -300,6 +306,101 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
   check("J11 全站与简历无占位邮箱/微信残留",
     phLeft.length === 0,
     phLeft.length ? phLeft.join(", ") : `已扫描 ${phFiles.length} 个文件`);
+
+  check("J12 状态行已下移到首屏主体（顶栏已移除）",
+    !doc.querySelector(".hero .hero-top") && tx(doc.querySelector(".hero .status")).includes("正在看机会"),
+    tx(doc.querySelector(".hero .status")));
+
+  const hIntro = doc.querySelector(".hero-head .hero-intro");
+  check("J13 姓名 + 拉丁名副行 + 证件照同处首屏主体（名在状态行之上）",
+    !!hIntro && !!doc.querySelector(".hero-head .portrait img") &&
+      !!hIntro.querySelector("h1") && !!hIntro.querySelector(".hero-name-sub") &&
+      !!(hIntro.querySelector("h1").compareDocumentPosition(hIntro.querySelector(".hero-status")) & window.Node.DOCUMENT_POSITION_FOLLOWING),
+    "intro: h1 → name-sub → status ／ 右侧 portrait");
+  check("J14 ZH 姓名副行为拉丁名", tx(doc.querySelector(".hero-name-sub")) === "Zhenyu Xu",
+    tx(doc.querySelector(".hero-name-sub")));
+
+  /* ============ K. 技术栈：表格 + 首屏一句话技术栈 ============ */
+  const stackRows = [...doc.querySelectorAll(".stack-table tr")].map((tr) => [
+    tx(tr.querySelector("th")), tx(tr.querySelector("td")),
+  ]);
+  const expectStack = [
+    ["语言与运行时", "Python 3.11+（类型注解 / asyncio）"],
+    ["Web 与 API", "FastAPI、Uvicorn、Pydantic v2"],
+    ["Agent 与编排", "LangChain、LangGraph、AutoGen、自研状态机"],
+    ["模型与网关", "OpenAI 兼容 API、vLLM / Ollama、提示词与工具 Schema 治理"],
+    ["检索与向量", "Milvus / Qdrant / Weaviate、Elasticsearch（BM25）、混合检索、bge-reranker 重排"],
+    ["数据与缓存", "PostgreSQL、Redis（会话 / 缓存 / 限流计数）"],
+    ["异步与消息", "Celery、Kafka、RabbitMQ"],
+    ["可观测", "OpenTelemetry、LangSmith / Langfuse、结构化日志"],
+    ["部署与工程", "Docker、Kubernetes、GitHub Actions / GitLab CI"],
+  ];
+  check("K1 技术栈以表格呈现（卡片网格已废弃）",
+    !!doc.querySelector("table.stack-table") && doc.querySelectorAll(".skill-card").length === 0,
+    "tr=" + stackRows.length + " / .skill-card=" + doc.querySelectorAll(".skill-card").length);
+  check("K2 技术栈 9 组分组与取值全对",
+    JSON.stringify(stackRows) === JSON.stringify(expectStack),
+    stackRows.length + " 组");
+  const stackEl = doc.querySelector("#about .stack-line");
+  const stackTxt = tx(stackEl);
+  check("K3 关于区一句话技术栈已渲染且含关键栈",
+    !!stackEl && ["Python", "FastAPI", "LangGraph", "Redis", "Docker"].every((k) => stackTxt.includes(k)),
+    stackTxt.slice(0, 56) + "…");
+  const aboutGridEl = doc.querySelector("#about .about-grid");
+  const statsRowEl = doc.querySelector("#about .stats-row");
+  check("K4 一句话技术栈位于关于区正文之后、数据条之前（2026-09-21 从首屏移入）",
+    !!stackEl && !!aboutGridEl && !!statsRowEl &&
+      !!(aboutGridEl.compareDocumentPosition(stackEl) & window.Node.DOCUMENT_POSITION_FOLLOWING) &&
+      !!(stackEl.compareDocumentPosition(statsRowEl) & window.Node.DOCUMENT_POSITION_FOLLOWING) &&
+      !doc.querySelector(".hero .hero-stack"),
+    "about-grid → stack-line → stats-row");
+
+  // 生成器靠 .stack-table 取技能，结构一变会静默丢内容，故用简历产物反查
+  const rzText = fs.readFileSync(path.join(ROOT, "resume.md"), "utf8");
+  const skillBlock = (rzText.match(/## 技能\n\n([\s\S]*?)\n\n## /) || [, ""])[1];
+  const skillLines = skillBlock.split("\n").filter((l) => l.trim().startsWith("- "));
+  check("K5 简历「技能」章节与页面表格同源，9 条无丢失",
+    skillLines.length === expectStack.length &&
+      skillLines.every((l, i) => l.includes(expectStack[i][0]) && l.includes(expectStack[i][1])),
+    skillLines.length + " 条");
+
+  click(doc.querySelector('.nav-links [data-set-lang="en"]'));
+  await wait(150);
+  check("K6 EN 技术栈表格与关于区技术栈行均已本地化",
+    tx(doc.querySelector(".stack-table th")) === "Language & Runtime" &&
+      tx(doc.querySelector("#about .stack-line")).startsWith("Python · FastAPI"),
+    tx(doc.querySelector(".stack-table th")));
+  click(doc.querySelector('[data-set-lang="zh"]'));
+  await wait(150);
+
+  /* ============ L. 首屏证件照 ============ */
+  const pimg = doc.querySelector(".hero .portrait img");
+  const picPath = path.join(ROOT, "picture.jpg");
+  const picOk = fs.existsSync(picPath) && fs.statSync(picPath).size > 5000;
+  check("L1 首屏照片已渲染且指向真实存在的文件",
+    !!pimg && pimg.getAttribute("src") === "picture.jpg" && picOk,
+    (pimg ? pimg.getAttribute("src") : "-") + " / " + (picOk ? fs.statSync(picPath).size + "B" : "文件缺失"));
+  check("L2 照片声明宽高，避免加载抖动（CLS）",
+    !!pimg && pimg.getAttribute("width") === "400" && pimg.getAttribute("height") === "556",
+    pimg ? pimg.getAttribute("width") + "x" + pimg.getAttribute("height") : "-");
+  const pBlock = doc.querySelector(".hero .profile-block");
+  check("L3 照片在首屏上半部、基本信息表之前",
+    !!doc.querySelector(".hero-head > .portrait") && !!pBlock &&
+      !!(pimg.compareDocumentPosition(pBlock) & window.Node.DOCUMENT_POSITION_FOLLOWING),
+    "hero-head .portrait → profile-block");
+
+  click(doc.querySelector('.nav-links [data-set-lang="en"]'));
+  await wait(150);
+  const altEn = doc.querySelector(".hero .portrait img").getAttribute("alt");
+  check("L4 EN 照片 alt 已本地化", /Zhenyu Xu/.test(altEn || ""), altEn);
+  check("L5 EN 姓名副行切为中文名（中英互补）", tx(doc.querySelector(".hero-name-sub")) === "徐振宇",
+    tx(doc.querySelector(".hero-name-sub")));
+  click(doc.querySelector('[data-set-lang="zh"]'));
+  await wait(150);
+  const altZh = doc.querySelector(".hero .portrait img").getAttribute("alt");
+  check("L6 ZH 照片 alt 回到中文", /徐振宇/.test(altZh || ""), altZh);
+  check("L7 ZH 姓名副行回到拉丁名", tx(doc.querySelector(".hero-name-sub")) === "Zhenyu Xu",
+    tx(doc.querySelector(".hero-name-sub")));
 
   const pass = results.filter((r) => r.pass).length;
   console.log("\n=== 验证 ===");

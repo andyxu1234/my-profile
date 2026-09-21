@@ -43,10 +43,15 @@ Focused on backend and systems; multiple university scholarships.
 
 ## Skills
 
-- **LLM App Development**：Prompt Engineering · RAG（分块 · 混合检索 · 重排） · Agent & Function Calling · MCP · 结构化输出 · 评测与 Bad Case 闭环 · 微调（LoRA · SFT）
-- **Models & Serving**：OpenAI / DeepSeek / Qwen API · vLLM 部署 · 量化（GPTQ · AWQ） · Embedding & Rerank · Ollama
-- **Backend & Data**：Python · FastAPI · Node.js · MySQL · PostgreSQL · pgvector · Redis · Milvus · FAISS · Elasticsearch
-- **Frontend & Tooling**：React · Next.js · Vue 3 · TypeScript · Tailwind · Docker · Nginx · CI/CD · Git · Linux
+- **Language & Runtime**: Python 3.11+ (type hints / asyncio)
+- **Web & API**: FastAPI, Uvicorn, Pydantic v2
+- **Agents & Orchestration**: LangChain, LangGraph, AutoGen, hand-rolled state machines
+- **Models & Gateway**: OpenAI-compatible APIs, vLLM / Ollama, prompt & tool-schema governance
+- **Retrieval & Vectors**: Milvus / Qdrant / Weaviate, Elasticsearch (BM25), hybrid retrieval, bge-reranker re-ranking
+- **Data & Caching**: PostgreSQL, Redis (sessions / cache / rate-limit counters)
+- **Async & Messaging**: Celery, Kafka, RabbitMQ
+- **Observability**: OpenTelemetry, LangSmith / Langfuse, structured logging
+- **Deployment & Engineering**: Docker, Kubernetes, GitHub Actions / GitLab CI
 
 ## Selected projects
 

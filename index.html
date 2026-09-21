@@ -193,14 +193,25 @@
      Hero
      ============================================================ */
   .hero{padding:clamp(52px,9vw,104px) 0 clamp(40px,6vw,60px);}
-  .hero-top{
-    display:flex;align-items:center;justify-content:space-between;gap:18px;
-    flex-wrap:wrap;padding-bottom:22px;border-bottom:1px solid var(--line);
+  /* 首屏上半部：左侧文字、右侧证件照 */
+  .hero-head{
+    display:grid;grid-template-columns:minmax(0,1fr) auto;
+    column-gap:clamp(26px,4.6vw,64px);align-items:start;
   }
+  .hero-intro{min-width:0;}
+  /* 证件照：白卡纸留边 + 发丝线，避免蓝底直接压在暖纸面上 */
+  .portrait{
+    margin:0;width:clamp(136px,15vw,178px);flex:none;
+    padding:5px;background:var(--surface);
+    border:1px solid var(--line-strong);border-radius:var(--radius);
+  }
+  .portrait img{display:block;width:100%;height:auto;border-radius:2px;background:var(--paper-2);}
+  /* 状态行：原顶栏里的「正在看机会」下移到姓名区 */
+  .hero-status{margin:clamp(18px,2.6vw,26px) 0 0;}
   .status{
     display:inline-flex;align-items:center;gap:9px;
     border:1px solid var(--line-strong);border-radius:2px;
-    padding:7px 13px;font-size:.84rem;font-weight:500;color:var(--ink-2);
+    padding:9px 15px;font-size:.9rem;font-weight:500;color:var(--ink-2);
     background:var(--surface);
   }
   .pulse{
@@ -209,35 +220,23 @@
     animation:pulse 2.4s ease-in-out infinite;
   }
   @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
-  .hero-top .loc{
-    font-family:var(--font-mono);font-size:.74rem;color:var(--faint);
-    letter-spacing:.08em;text-transform:uppercase;
-  }
-
   .hero-script{
     font-family:var(--font-script);font-style:italic;
     font-size:clamp(1.5rem,3.4vw,2.3rem);color:var(--accent);
-    margin:clamp(28px,5vw,42px) 0 4px;line-height:1.1;letter-spacing:.005em;
+    margin:0;line-height:1.1;letter-spacing:.005em;
   }
-  /* 姓名作为视觉锚点：超大衬线 + 一道会生长的朱红发丝线 */
+  /* 姓名回到首屏主体：与右侧证件照配成一组，字号克制（不用早期 5rem 超大版，偏张扬） */
   .hero h1{
     font-family:var(--font-display);font-weight:700;
-    font-size:clamp(2.6rem,7.6vw,5rem);
-    line-height:1.08;letter-spacing:-.022em;
-    margin:clamp(8px,1.4vw,14px) 0 0;position:relative;width:fit-content;
-    padding-bottom:clamp(12px,2vw,18px);
+    font-size:clamp(2.1rem,5vw,3.1rem);
+    line-height:1.1;letter-spacing:-.02em;
+    margin:clamp(8px,1.4vw,14px) 0 0;
   }
-  .hero h1::after{
-    content:"";position:absolute;left:0;right:0;bottom:0;height:1px;
-    background:var(--accent);opacity:.45;
-    transform:scaleX(0);transform-origin:left;
-  }
-  .js .hero h1::after{animation:rule .9s var(--ease) .5s forwards;}
-  @keyframes rule{to{transform:scaleX(1);}}
+  /* 拉丁名一行，中英互补（zh 显示 Zhenyu Xu，en 显示 徐振宇） */
   .hero-name-sub{
     font-family:var(--font-mono);font-size:.76rem;font-weight:400;
     letter-spacing:.24em;text-transform:uppercase;color:var(--faint);
-    margin:clamp(12px,2vw,16px) 0 0;
+    margin:clamp(10px,1.6vw,14px) 0 0;
   }
 
   .hero p.lead{
@@ -305,6 +304,17 @@
   .about-grid p{color:var(--ink-2);margin:0 0 1.1em;max-width:62ch;}
   .about-grid p:last-child{margin-bottom:0;}
 
+  /* 一句话技术栈：等宽小字，朱红方点起头。2026-09-21 从首屏移到关于区末尾（正文之后、数据条之前） */
+  .stack-line{
+    margin:clamp(22px,3.4vw,30px) 0 0;
+    font-family:var(--font-mono);font-size:.8rem;line-height:1.9;
+    letter-spacing:.005em;color:var(--muted);max-width:70ch;
+  }
+  .stack-line::before{
+    content:"";display:inline-block;width:6px;height:6px;background:var(--accent);
+    margin-right:10px;vertical-align:.08em;
+  }
+
   .stats-row{
     display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
     margin-top:clamp(34px,5vw,54px);border-top:1px solid var(--line-strong);
@@ -346,28 +356,20 @@
   /* ============================================================
      Skills
      ============================================================ */
-  .skills{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border-top:1px solid var(--line);}
-  .skill-card{
-    padding:clamp(22px,3vw,30px) clamp(20px,3vw,32px) clamp(22px,3vw,30px) 0;
-    border-bottom:1px solid var(--line);
-    border-right:1px solid var(--line);
+  .stack-wrap{border-top:1px solid var(--line);}
+  .stack-table{width:100%;border-collapse:collapse;font-size:.93rem;}
+  .stack-table th,.stack-table td{
+    text-align:left;vertical-align:baseline;
+    padding:14px 0;border-bottom:1px solid var(--line);
   }
-  .skill-card:nth-child(2n){border-right:0;padding-right:0;padding-left:clamp(20px,3vw,32px);}
-  .skill-head{display:flex;align-items:baseline;gap:12px;margin-bottom:10px;}
-  .skill-head .n{font-family:var(--font-mono);font-size:.72rem;color:var(--faint);letter-spacing:.08em;flex:none;transform:translateY(-2px);}
-  .skill-card h3{
-    margin:0;font-family:var(--font-display);font-weight:700;
-    font-size:clamp(1.1rem,2vw,1.32rem);letter-spacing:-.01em;
+  .stack-table th{
+    width:1%;padding-right:clamp(20px,3vw,36px);
+    font-family:var(--font-mono);font-size:.75rem;font-weight:500;
+    letter-spacing:.06em;color:var(--muted);white-space:nowrap;
   }
-  .skill-card .skill-sub{color:var(--muted);font-size:.93rem;margin:0 0 18px;}
+  .stack-table td{color:var(--ink-2);line-height:1.7;}
+  .stack-table tr:hover th{color:var(--accent-ink);}
   .chips{display:flex;flex-wrap:wrap;gap:7px;}
-  .pill{
-    display:inline-block;background:transparent;border:1px solid var(--line);
-    color:var(--ink-2);font-size:.82rem;font-weight:500;
-    padding:5px 11px;border-radius:2px;
-    transition:border-color .2s var(--ease),color .2s var(--ease);
-  }
-  .pill:hover{border-color:var(--accent);color:var(--accent-ink);}
 
   /* ============================================================
      Works
@@ -520,10 +522,8 @@
     .burger{display:flex;}
     .timeline li{grid-template-columns:1fr;gap:8px;}
     .tl-period{line-height:1.6;}
-    .skills{grid-template-columns:1fr;}
-    .skill-card,.skill-card:nth-child(2n){
-      border-right:0;padding-left:0;padding-right:0;
-    }
+    .stack-table th{width:1%;padding-right:16px;white-space:normal;}
+    .stack-table th,.stack-table td{padding:12px 0;font-size:.9rem;}
     .works{grid-template-columns:1fr;}
     .card,.card:nth-child(2n){
       border-right:0;padding-left:0;padding-right:0;
@@ -536,6 +536,11 @@
     .stat:nth-child(n+3){border-top:1px solid var(--line);padding-top:20px;}
     .sec-head{grid-template-columns:auto minmax(0,1fr);}
     .sec-kicker{display:none;}
+  }
+  @media(max-width:600px){
+    /* 窄屏：照片移到最上方，避免与标题抢宽度 */
+    .hero-head{grid-template-columns:minmax(0,1fr);row-gap:24px;}
+    .portrait{order:-1;width:124px;justify-self:start;}
   }
   @media(max-width:520px){
     body{font-size:16px;}
@@ -598,18 +603,25 @@
   <div class="wrap">
 
     <section class="hero">
-      <div class="hero-top reveal">
-        <span class="status"><span class="pulse"></span><span data-i18n="hero_eyebrow">正在看机会 · AI 应用开发工程师</span></span>
-        <span class="loc" data-i18n="hero_loc">上海 · 中国</span>
+      <div class="hero-head">
+        <div class="hero-intro">
+          <p class="hero-script reveal">AI Application Engineer</p>
+          <h1 class="reveal" style="--d:60ms" data-i18n="hero_name">徐振宇</h1>
+          <p class="hero-name-sub reveal" style="--d:120ms" data-i18n="hero_name_sub">Zhenyu Xu</p>
+          <p class="hero-status reveal" style="--d:180ms">
+            <span class="status"><span class="pulse"></span><span data-i18n="hero_eyebrow">正在看机会 · AI 应用开发工程师</span></span>
+          </p>
+
+          <p class="lead reveal" style="--d:240ms" data-i18n="hero_lead"></p>
+        </div>
+
+        <figure class="portrait reveal" style="--d:120ms">
+          <img src="picture.jpg" width="400" height="556" decoding="async"
+               data-i18n-alt="hero_photo_alt" alt="徐振宇 · 证件照">
+        </figure>
       </div>
 
-      <p class="hero-script reveal" style="--d:60ms">AI Application Engineer</p>
-      <h1 class="reveal" style="--d:120ms" data-i18n="hero_name">徐振宇</h1>
-      <p class="hero-name-sub reveal" style="--d:150ms" data-i18n="hero_name_sub">Zhenyu Xu</p>
-
-      <p class="lead reveal" style="--d:200ms" data-i18n="hero_lead"></p>
-
-      <div class="profile-block reveal" style="--d:240ms">
+      <div class="profile-block reveal" style="--d:300ms">
         <p class="profile-title" data-i18n="pf_title">基本信息</p>
         <dl class="profile">
           <div><dt data-i18n="pf_gender_k">性别</dt><dd data-i18n="pf_gender_v">男</dd></div>
@@ -623,7 +635,7 @@
         </dl>
       </div>
 
-      <div class="hero-actions reveal" style="--d:300ms">
+      <div class="hero-actions reveal" style="--d:360ms">
         <a class="btn btn-primary" href="#/#works" data-i18n="cta_works">查看项目 →</a>
         <a class="btn btn-ghost" id="resume-dl" href="resume.md" download="徐振宇-AI应用开发工程师-简历.md" data-i18n="cta_resume">下载简历</a>
         <a class="btn btn-ghost" href="#/#contact" data-i18n="cta_contact">联系我</a>
@@ -644,6 +656,9 @@
           <p data-i18n="about_p2"></p>
         </div>
       </div>
+
+      <p class="stack-line reveal" style="--d:120ms" data-i18n="about_stack"></p>
+
       <div class="stats-row reveal" style="--d:160ms">
         <div class="stat"><b data-i18n="stat1_n">9人</b><span data-i18n="stat1_l">团队管理规模</span></div>
         <div class="stat"><b data-i18n="stat2_n">4家</b><span data-i18n="stat2_l">服务过的企业</span></div>
@@ -691,39 +706,51 @@
         <span class="sec-num">03</span>
         <div>
           <h2 data-i18n="skills_title">技术栈</h2>
-          <p class="sub" data-i18n="skills_sub">围绕 LLM 应用开发的全栈技能。</p>
+          <p class="sub" data-i18n="skills_sub">从语言、编排到部署的完整技术栈。</p>
         </div>
         <span class="sec-kicker" data-i18n="skills_kicker">SKILLS</span>
       </div>
-      <div class="skills">
-        <div class="skill-card reveal">
-          <div class="skill-head"><span class="n">A</span><h3 data-i18n="skill1_title">LLM 应用开发</h3></div>
-          <p class="skill-sub" data-i18n="skill1_sub">RAG、Agent、评测与微调，覆盖 LLM 应用全链路。</p>
-          <div class="chips">
-            <span class="pill">Prompt Engineering</span><span class="pill">RAG（分块 · 混合检索 · 重排）</span><span class="pill">Agent & Function Calling</span><span class="pill">MCP</span><span class="pill">结构化输出</span><span class="pill">评测与 Bad Case 闭环</span><span class="pill">微调（LoRA · SFT）</span>
-          </div>
-        </div>
-        <div class="skill-card reveal" style="--d:80ms">
-          <div class="skill-head"><span class="n">B</span><h3 data-i18n="skill2_title">模型与服务</h3></div>
-          <p class="skill-sub" data-i18n="skill2_sub">多模型接入、推理部署与成本优化。</p>
-          <div class="chips">
-            <span class="pill">OpenAI / DeepSeek / Qwen API</span><span class="pill">vLLM 部署</span><span class="pill">量化（GPTQ · AWQ）</span><span class="pill">Embedding & Rerank</span><span class="pill">Ollama</span>
-          </div>
-        </div>
-        <div class="skill-card reveal" style="--d:160ms">
-          <div class="skill-head"><span class="n">C</span><h3 data-i18n="skill3_title">后端与数据</h3></div>
-          <p class="skill-sub" data-i18n="skill3_sub">支撑 AI 应用的高并发后端与检索存储。</p>
-          <div class="chips">
-            <span class="pill">Python · FastAPI</span><span class="pill">Node.js</span><span class="pill">MySQL · PostgreSQL · pgvector</span><span class="pill">Redis</span><span class="pill">Milvus · FAISS</span><span class="pill">Elasticsearch</span>
-          </div>
-        </div>
-        <div class="skill-card reveal" style="--d:240ms">
-          <div class="skill-head"><span class="n">D</span><h3 data-i18n="skill4_title">前端与工程化</h3></div>
-          <p class="skill-sub" data-i18n="skill4_sub">快速构建好用的 AI 产品界面与交付流程。</p>
-          <div class="chips">
-            <span class="pill">React · Next.js</span><span class="pill">Vue 3</span><span class="pill">TypeScript · Tailwind</span><span class="pill">Docker · Nginx</span><span class="pill">CI/CD · Git</span><span class="pill">Linux</span>
-          </div>
-        </div>
+      <div class="stack-wrap reveal">
+        <table class="stack-table">
+          <tbody>
+            <tr>
+              <th scope="row" data-i18n="skill1_group">语言与运行时</th>
+              <td data-i18n="skill1_items">Python 3.11+（类型注解 / asyncio）</td>
+            </tr>
+            <tr>
+              <th scope="row" data-i18n="skill2_group">Web 与 API</th>
+              <td data-i18n="skill2_items">FastAPI、Uvicorn、Pydantic v2</td>
+            </tr>
+            <tr>
+              <th scope="row" data-i18n="skill3_group">Agent 与编排</th>
+              <td data-i18n="skill3_items">LangChain、LangGraph、AutoGen、自研状态机</td>
+            </tr>
+            <tr>
+              <th scope="row" data-i18n="skill4_group">模型与网关</th>
+              <td data-i18n="skill4_items">OpenAI 兼容 API、vLLM / Ollama、提示词与工具 Schema 治理</td>
+            </tr>
+            <tr>
+              <th scope="row" data-i18n="skill5_group">检索与向量</th>
+              <td data-i18n="skill5_items">Milvus / Qdrant / Weaviate、Elasticsearch（BM25）、混合检索、bge-reranker 重排</td>
+            </tr>
+            <tr>
+              <th scope="row" data-i18n="skill6_group">数据与缓存</th>
+              <td data-i18n="skill6_items">PostgreSQL、Redis（会话 / 缓存 / 限流计数）</td>
+            </tr>
+            <tr>
+              <th scope="row" data-i18n="skill7_group">异步与消息</th>
+              <td data-i18n="skill7_items">Celery、Kafka、RabbitMQ</td>
+            </tr>
+            <tr>
+              <th scope="row" data-i18n="skill8_group">可观测</th>
+              <td data-i18n="skill8_items">OpenTelemetry、LangSmith / Langfuse、结构化日志</td>
+            </tr>
+            <tr>
+              <th scope="row" data-i18n="skill9_group">部署与工程</th>
+              <td data-i18n="skill9_items">Docker、Kubernetes、GitHub Actions / GitLab CI</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
@@ -795,6 +822,7 @@ const I18N = {
     hero_loc:"上海 · 中国",
     hero_name:"徐振宇",
     hero_name_sub:"Zhenyu Xu",
+    hero_photo_alt:"徐振宇 · 证件照",
     hero_lead:"10 年金融级系统研发经验，现在专注把大模型能力做成真能上线的产品。",
     cta_works:"查看项目 →", cta_resume:"下载简历", cta_contact:"联系我",
     pf_title:"基本信息",
@@ -809,6 +837,7 @@ const I18N = {
     about_kicker:"ABOUT", about_title:"关于我",
     about_p1:"10 年软件研发经验，先后在花旗集团、苏宁等企业负责批发信贷、支付决策等核心系统的研发与交付，作为小组长带过 9 人团队，熟悉金融级系统对稳定性、数据一致性与合规的要求。",
     about_p2:"目前正把主力语言从 Java 转向 Python，专注 LLM 应用的工程化落地：RAG 检索增强、Agent 与工具调用、多模型编排、打包与上线交付，已独立完成两个从 0 到 1 的 AI 应用。正在寻找 AI 应用开发工程师岗位。",
+    about_stack:"Python · FastAPI · LangGraph · RAG（Milvus + ES 混合检索）· Redis · PostgreSQL · Docker · OTel",
     stat1_n:"9人", stat1_l:"团队管理规模", stat2_n:"4家", stat2_l:"服务过的企业",
     stat3_n:"2个", stat3_l:"已上线 AI 应用", stat4_n:"∞", stat4_l:"好奇心",
     exp_kicker:"EXPERIENCE", exp_title:"经历",
@@ -818,11 +847,16 @@ const I18N = {
     exp2_desc:"负责业务中台与数据服务的后端研发，积累了扎实的分布式系统与服务化经验。",
     exp3_role:"计算机科学与技术 · 本科", exp3_period:"2017.09 – 2021.06", exp3_org:"某大学",
     exp3_desc:"主修后端与系统方向，多次获校级奖学金。",
-    skills_kicker:"SKILLS", skills_title:"技术栈", skills_sub:"围绕 LLM 应用开发的全栈技能。",
-    skill1_title:"LLM 应用开发", skill1_sub:"RAG、Agent、评测与微调，覆盖 LLM 应用全链路。",
-    skill2_title:"模型与服务", skill2_sub:"多模型接入、推理部署与成本优化。",
-    skill3_title:"后端与数据", skill3_sub:"支撑 AI 应用的高并发后端与检索存储。",
-    skill4_title:"前端与工程化", skill4_sub:"快速构建好用的 AI 产品界面与交付流程。",
+    skills_kicker:"SKILLS", skills_title:"技术栈", skills_sub:"从语言、编排到部署的完整技术栈。",
+    skill1_group:"语言与运行时", skill1_items:"Python 3.11+（类型注解 / asyncio）",
+    skill2_group:"Web 与 API", skill2_items:"FastAPI、Uvicorn、Pydantic v2",
+    skill3_group:"Agent 与编排", skill3_items:"LangChain、LangGraph、AutoGen、自研状态机",
+    skill4_group:"模型与网关", skill4_items:"OpenAI 兼容 API、vLLM / Ollama、提示词与工具 Schema 治理",
+    skill5_group:"检索与向量", skill5_items:"Milvus / Qdrant / Weaviate、Elasticsearch（BM25）、混合检索、bge-reranker 重排",
+    skill6_group:"数据与缓存", skill6_items:"PostgreSQL、Redis（会话 / 缓存 / 限流计数）",
+    skill7_group:"异步与消息", skill7_items:"Celery、Kafka、RabbitMQ",
+    skill8_group:"可观测", skill8_items:"OpenTelemetry、LangSmith / Langfuse、结构化日志",
+    skill9_group:"部署与工程", skill9_items:"Docker、Kubernetes、GitHub Actions / GitLab CI",
     works_kicker:"PROJECTS", works_title:"项目展示", works_sub:"点击任意项目，查看背景、方案与成果。",
     contact_kicker:"CONTACT", contact_title:"期待与你共事",
     contact_sub:"正在寻找 AI 应用开发工程师岗位。如果你在招人，或者想聊聊大模型应用，欢迎随时联系我。",
@@ -840,6 +874,7 @@ const I18N = {
     hero_loc:"Shanghai, China",
     hero_name:"Zhenyu Xu",
     hero_name_sub:"徐振宇",
+    hero_photo_alt:"Zhenyu Xu — portrait photo",
     hero_lead:"10 years building financial-grade systems — now focused on turning LLM capability into products that actually ship.",
     cta_works:"View projects →", cta_resume:"Download résumé", cta_contact:"Get in touch",
     pf_title:"Basic info",
@@ -854,6 +889,7 @@ const I18N = {
     about_kicker:"ABOUT", about_title:"About me",
     about_p1:"10 years in software engineering, delivering core systems for wholesale lending and payment decisioning at Citi, Suning and others — leading a team of 9 and working to the stability, data-consistency and compliance bar of financial-grade systems.",
     about_p2:"I'm now shifting my primary language from Java to Python, focused on engineering LLM applications into production: RAG retrieval, agents and tool use, multi-model orchestration, packaging and delivery. I've independently shipped two AI applications from zero to one.",
+    about_stack:"Python · FastAPI · LangGraph · RAG (Milvus + ES hybrid retrieval) · Redis · PostgreSQL · Docker · OTel",
     stat1_n:"9", stat1_l:"team size led", stat2_n:"4", stat2_l:"companies served",
     stat3_n:"2", stat3_l:"AI apps shipped", stat4_n:"∞", stat4_l:"curiosity",
     exp_kicker:"EXPERIENCE", exp_title:"Experience",
@@ -863,11 +899,16 @@ const I18N = {
     exp2_desc:"Built business-platform and data services — a solid foundation in distributed systems and service-oriented design.",
     exp3_role:"B.Sc. in Computer Science", exp3_period:"Sep 2017 – Jun 2021", exp3_org:"University",
     exp3_desc:"Focused on backend and systems; multiple university scholarships.",
-    skills_kicker:"SKILLS", skills_title:"Tech stack", skills_sub:"Full-stack skills centered on LLM application development.",
-    skill1_title:"LLM App Development", skill1_sub:"RAG, agents, evaluation and fine-tuning across the full LLM app chain.",
-    skill2_title:"Models & Serving", skill2_sub:"Multi-model integration, inference serving and cost optimization.",
-    skill3_title:"Backend & Data", skill3_sub:"High-concurrency backends and retrieval/storage for AI apps.",
-    skill4_title:"Frontend & Tooling", skill4_sub:"Shipping great AI product UX and delivery pipelines.",
+    skills_kicker:"SKILLS", skills_title:"Tech stack", skills_sub:"The full stack — from language to orchestration to deployment.",
+    skill1_group:"Language & Runtime", skill1_items:"Python 3.11+ (type hints / asyncio)",
+    skill2_group:"Web & API", skill2_items:"FastAPI, Uvicorn, Pydantic v2",
+    skill3_group:"Agents & Orchestration", skill3_items:"LangChain, LangGraph, AutoGen, hand-rolled state machines",
+    skill4_group:"Models & Gateway", skill4_items:"OpenAI-compatible APIs, vLLM / Ollama, prompt & tool-schema governance",
+    skill5_group:"Retrieval & Vectors", skill5_items:"Milvus / Qdrant / Weaviate, Elasticsearch (BM25), hybrid retrieval, bge-reranker re-ranking",
+    skill6_group:"Data & Caching", skill6_items:"PostgreSQL, Redis (sessions / cache / rate-limit counters)",
+    skill7_group:"Async & Messaging", skill7_items:"Celery, Kafka, RabbitMQ",
+    skill8_group:"Observability", skill8_items:"OpenTelemetry, LangSmith / Langfuse, structured logging",
+    skill9_group:"Deployment & Engineering", skill9_items:"Docker, Kubernetes, GitHub Actions / GitLab CI",
     works_kicker:"PROJECTS", works_title:"Selected projects", works_sub:"Click any project to see the context, approach and results.",
     contact_kicker:"CONTACT", contact_title:"Let's work together",
     contact_sub:"I'm looking for an AI application engineer role. If you're hiring — or just want to talk LLM apps — my inbox is open.",
@@ -1089,6 +1130,10 @@ function applyStatic(){
       if(el.getAttribute("data-html")==="1") el.innerHTML = I18N[lang][key];
       else el.textContent = I18N[lang][key];
     }
+  });
+  document.querySelectorAll("[data-i18n-alt]").forEach(el=>{
+    const key = el.getAttribute("data-i18n-alt");
+    if(I18N[lang][key]!==undefined) el.setAttribute("alt", I18N[lang][key]);
   });
   document.querySelectorAll("[data-set-lang]").forEach(btn=>{
     btn.classList.toggle("active", btn.getAttribute("data-set-lang")===lang);

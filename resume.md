@@ -43,10 +43,15 @@
 
 ## 技能
 
-- **LLM 应用开发**：Prompt Engineering · RAG（分块 · 混合检索 · 重排） · Agent & Function Calling · MCP · 结构化输出 · 评测与 Bad Case 闭环 · 微调（LoRA · SFT）
-- **模型与服务**：OpenAI / DeepSeek / Qwen API · vLLM 部署 · 量化（GPTQ · AWQ） · Embedding & Rerank · Ollama
-- **后端与数据**：Python · FastAPI · Node.js · MySQL · PostgreSQL · pgvector · Redis · Milvus · FAISS · Elasticsearch
-- **前端与工程化**：React · Next.js · Vue 3 · TypeScript · Tailwind · Docker · Nginx · CI/CD · Git · Linux
+- **语言与运行时**：Python 3.11+（类型注解 / asyncio）
+- **Web 与 API**：FastAPI、Uvicorn、Pydantic v2
+- **Agent 与编排**：LangChain、LangGraph、AutoGen、自研状态机
+- **模型与网关**：OpenAI 兼容 API、vLLM / Ollama、提示词与工具 Schema 治理
+- **检索与向量**：Milvus / Qdrant / Weaviate、Elasticsearch（BM25）、混合检索、bge-reranker 重排
+- **数据与缓存**：PostgreSQL、Redis（会话 / 缓存 / 限流计数）
+- **异步与消息**：Celery、Kafka、RabbitMQ
+- **可观测**：OpenTelemetry、LangSmith / Langfuse、结构化日志
+- **部署与工程**：Docker、Kubernetes、GitHub Actions / GitLab CI
 
 ## 项目经历
 
