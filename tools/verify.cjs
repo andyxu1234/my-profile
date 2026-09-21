@@ -463,12 +463,34 @@ const setHash = async (h) => { window.location.hash = h; await wait(220); };
   check("M5 经历段间距已收紧（padding/margin 各降到 14–18px）",
     /1\.9vw/.test(tlRule) && !/3\.6vw/.test(tlRule),
     tlRule.replace(/\s+/g, " ").slice(0, 98));
-  check("M6 经历区底部留白已单独收紧（#experience 覆盖全局 section padding）",
-    /#experience\{padding-bottom/.test(cssSrc), "#experience{padding-bottom:clamp(30px,4.4vw,52px)}");
+  check("M6 全局模块间距已收紧（section 上下留白 52–84px → 22–38px，二轮再收紧）",
+    /section\{padding:clamp\(22px,3\.2vw,38px\) 0;scroll-margin-top/.test(cssSrc) &&
+      !/section\{padding:clamp\(52px,7\.5vw,84px\)/.test(cssSrc) &&
+      !/section\{padding:clamp\(30px,4\.4vw,52px\)/.test(cssSrc),
+    "section{padding:clamp(22px,3.2vw,38px) 0}");
   check("M7 简历「经历」章节与页面同源（真实公司已同步、无占位残留）",
     ["Wipro", "花旗集团", "苏宁软件技术", "中软国际", "山东大学"].every((k) => rzText.includes(k)) &&
       !/某互联网公司|某软件公司|某大学/.test(rzText),
     "resume.md 经历已同源");
+
+  // 模块间距（2026-09-21 用户反馈「每一个模块之间的留白太大」）
+  const heroPadRule = (cssSrc.match(/\.hero\{padding:[^}]*\}/) || [""])[0];
+  check("M8 首屏上下留白已收紧（导航→首屏 24–40px、首屏→关于区 18–28px）",
+    /3\.4vw/.test(heroPadRule) && /2\.4vw/.test(heroPadRule) && !/9vw/.test(heroPadRule) && !/4\.4vw/.test(heroPadRule),
+    heroPadRule.replace(/\s+/g, " "));
+  check("M9 #experience 专用留白覆盖已移除（全局已覆盖，避免两套近似值并存）",
+    !/#experience\{padding-bottom/.test(cssSrc), "无 #experience{padding-bottom");
+  // 二轮收紧：标题组下沿 / 数据条上沿 / 页脚 / 详情页上下
+  const secHeadRule = (cssSrc.match(/\.sec-head\{[^}]*\}/) || [""])[0];
+  const statsRule = (cssSrc.match(/\.stats-row\{[^}]*\}/) || [""])[0];
+  const footerRule = (cssSrc.match(/footer\{[^}]*\}/) || [""])[0];
+  const detailWrapRule = (cssSrc.match(/\.detail-wrap\{[^}]*\}/) || [""])[0];
+  check("M10 二轮收紧已生效（标题组下沿 20–32 / 数据条 26–40 / 页脚 26 / 详情页 22–36+34–54）",
+    /margin-bottom:clamp\(20px,3vw,32px\)/.test(secHeadRule) &&
+      /margin-top:clamp\(26px,3\.6vw,40px\)/.test(statsRule) &&
+      /padding:26px 0/.test(footerRule) &&
+      /padding-top:clamp\(22px,3\.4vw,36px\);padding-bottom:clamp\(34px,4\.6vw,54px\)/.test(detailWrapRule),
+    "sec-head / stats-row / footer / detail-wrap 均已收紧");
 
   const pass = results.filter((r) => r.pass).length;
   console.log("\n=== 验证 ===");
